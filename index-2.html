@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Weary Souls — Beneath the Surface</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --black:#060606;--white:#f2ece0;--red:#8b0000;--red2:#c0392b;
+  --grey:#555;--greyl:#888;--paper:#ede7d9;--ink:#1c1c1c;
+  --dim:#1a1a1a;
+}
+body{background:var(--black);color:var(--white);font-family:'EB Garamond',serif;overflow-x:hidden;font-size:16px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.3}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--black)}::-webkit-scrollbar-thumb{background:var(--red)}
+
+/* ─── PASSWORD WALL ─── */
+#pw{position:fixed;inset:0;background:var(--black);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;padding:2rem;text-align:center}
+.pw-title{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(3rem,10vw,6.5rem);line-height:.95;animation:flicker 8s infinite}
+.pw-title span{color:var(--red);display:block}
+@keyframes flicker{0%,100%{opacity:1}93%{opacity:1}94%{opacity:.2}95%{opacity:1}98.5%{opacity:.1}99%{opacity:1}}
+.pw-sub{font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.45em;color:var(--greyl);text-transform:uppercase;margin-top:-.8rem}
+#cd{display:flex;align-items:stretch;border:1px solid #1a1a1a}
+.cd-u{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem 1.6rem;border-right:1px solid #1a1a1a;min-width:80px}
+.cd-u:last-child{border-right:none}
+.cd-n{font-family:'Courier Prime',monospace;font-size:clamp(1.8rem,5vw,3rem);font-weight:700;color:var(--white);line-height:1;transition:color .15s}
+.cd-u:hover .cd-n{color:var(--red)}
+.cd-l{font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.3em;color:#2a2a2a;text-transform:uppercase;margin-top:.35rem}
+.cd-sep{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--red);padding:0 .1rem}
+.pw-hint{font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.3em;color:#2a2a2a;text-transform:uppercase}
+.pw-row{display:flex;border:1px solid #1a1a1a}
+#pw-in{background:transparent;border:none;outline:none;color:var(--white);font-family:'Courier Prime',monospace;font-size:1rem;letter-spacing:.6em;padding:.65rem 1rem;width:145px;text-transform:uppercase}
+#pw-in::placeholder{color:#1e1e1e}
+#pw-go{background:var(--red);color:var(--white);border:none;font-family:'Courier Prime',monospace;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;padding:.65rem 1rem;cursor:pointer;transition:background .2s}
+#pw-go:hover{background:var(--red2)}
+#pw-err{font-family:'Courier Prime',monospace;font-size:.62rem;color:var(--red2);letter-spacing:.2em;min-height:1rem}
+.pw-q{font-family:'EB Garamond',serif;font-style:italic;font-size:.95rem;color:#2a2a2a;max-width:400px;line-height:1.8}
+
+/* ─── DRIPS ─── */
+.drip-wrap{position:absolute;top:0;left:0;right:0;height:0;overflow:visible;pointer-events:none}
+.drip{position:absolute;top:0;border-radius:0 0 3px 3px;background:linear-gradient(to bottom,var(--red),#3a0000 60%,transparent);animation:drip ease-in infinite}
+@keyframes drip{0%{height:0;opacity:0}10%{opacity:1}80%{opacity:.8}100%{height:160px;opacity:0}}
+
+/* ─── HAMBURGER NAV ─── */
+#hamburger{position:fixed;top:1.2rem;right:1.5rem;z-index:5000;background:transparent;border:1px solid #1a1a1a;padding:.55rem .7rem;cursor:pointer;display:flex;flex-direction:column;gap:5px;transition:border-color .2s}
+#hamburger:hover{border-color:var(--red)}
+#hamburger span{display:block;width:22px;height:1px;background:var(--white);transition:all .3s}
+#hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+#hamburger.open span:nth-child(2){opacity:0}
+#hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+.nav-brand-fixed{position:fixed;top:1rem;left:1.5rem;z-index:5000;font-family:'Playfair Display',serif;font-weight:900;font-size:1.2rem;color:var(--white);text-decoration:none}
+.nav-brand-fixed span{color:var(--red)}
+
+#side-menu{position:fixed;top:0;right:-320px;width:300px;height:100vh;background:#070707;border-left:1px solid #111;z-index:4000;display:flex;flex-direction:column;justify-content:center;padding:3rem 2.5rem;transition:right .4s cubic-bezier(.4,0,.2,1)}
+#side-menu.open{right:0}
+#side-menu::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#0a0000 0%,#070707 100%);z-index:-1}
+.menu-title{font-family:'Playfair Display',serif;font-weight:900;font-size:1.1rem;color:var(--red);letter-spacing:.1em;margin-bottom:2rem;text-transform:uppercase;font-size:.6rem;font-family:'Courier Prime',monospace;letter-spacing:.4em}
+.menu-links{display:flex;flex-direction:column;gap:.2rem}
+.menu-links a{font-family:'EB Garamond',serif;font-size:1.6rem;color:#2a2a2a;text-decoration:none;transition:color .2s;padding:.3rem 0;border-bottom:1px solid transparent;transition:all .2s;font-style:italic}
+.menu-links a:hover{color:var(--white);border-bottom-color:#1a0000;padding-left:.5rem}
+.menu-ig{margin-top:2rem;font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.25em;color:#1a1a1a;text-transform:uppercase}
+.menu-ig a{color:var(--red);text-decoration:none;transition:color .2s}
+.menu-ig a:hover{color:var(--red2)}
+.menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3500;opacity:0;pointer-events:none;transition:opacity .3s}
+.menu-overlay.open{opacity:1;pointer-events:all}
+
+/* ─── HERO ─── */
+#home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 35%,#1c0000 0%,var(--black) 65%)}
+.hero-content{position:relative;z-index:3;max-width:800px;padding:2rem;margin-top:2rem}
+.hero-eyebrow{font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.5em;color:var(--grey);text-transform:uppercase;margin-bottom:1.5rem;animation:fadeUp 1s .2s both}
+.hero-title{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(3.5rem,12vw,8.5rem);line-height:.9;color:var(--white);margin-bottom:.5rem;animation:fadeUp 1s .4s both}
+.hero-title .blood{color:var(--red)}
+.hero-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(1rem,2.2vw,1.3rem);color:var(--greyl);margin-bottom:2.5rem;letter-spacing:.08em;animation:fadeUp 1s .6s both}
+.hero-quote{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(.95rem,1.8vw,1.1rem);color:#333;line-height:1.9;border-left:2px solid var(--red);padding-left:1.4rem;text-align:left;max-width:560px;margin:0 auto;animation:fadeUp 1s .8s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* Transmission */
+.tx-box{background:#080000;border:1px solid #150000;border-left:3px solid var(--red);padding:1.2rem 1.6rem;margin-top:2rem;animation:fadeUp 1s 1s both}
+.tx-lbl{font-family:'Courier Prime',monospace;font-size:.55rem;letter-spacing:.4em;color:var(--red);text-transform:uppercase;margin-bottom:.5rem}
+.tx-txt{font-family:'EB Garamond',serif;font-style:italic;font-size:1.05rem;color:#444;line-height:1.7}
+#typed::after{content:'|';color:var(--red);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ─── SECTIONS ─── */
+.sec{max-width:1000px;margin:0 auto;padding:6rem 2rem}
+.sec-border{border-top:1px solid #0e0e0e}
+.s-tag{font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.4em;color:var(--red);text-transform:uppercase;margin-bottom:.7rem}
+.s-title{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.9rem,4.5vw,3rem);color:var(--white);margin-bottom:1.2rem;line-height:1.05}
+.s-intro{font-family:'EB Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--grey);line-height:1.8;max-width:580px}
+
+/* ─── FEELINGS ─── */
+.feel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:1px;background:#0d0d0d;border:1px solid #0d0d0d;margin-top:2rem}
+.feel-card{background:var(--black);padding:1.3rem .8rem;text-align:center;cursor:pointer;transition:background .25s;position:relative;overflow:hidden}
+.feel-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--red);transform:scaleX(0);transition:transform .3s;transform-origin:left}
+.feel-card:hover{background:#0d0000}.feel-card:hover::after{transform:scaleX(1)}
+.feel-icon{font-size:1.3rem;display:block;margin-bottom:.4rem}
+.feel-label{font-family:'EB Garamond',serif;font-size:.88rem;color:var(--greyl);transition:color .2s}
+.feel-card:hover .feel-label{color:var(--white)}
+
+/* Feeling response modal */
+#feel-modal{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .35s}
+#feel-modal.show{opacity:1;pointer-events:all}
+.feel-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.85)}
+.feel-box{position:relative;background:#080000;border:1px solid #1e0000;border-left:3px solid var(--red);max-width:580px;width:100%;padding:3rem;animation:slideUp .4s}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.feel-box-tag{font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.4em;color:var(--red);text-transform:uppercase;margin-bottom:.8rem}
+.feel-box-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;color:var(--white);margin-bottom:1.2rem}
+.feel-box-text{font-family:'EB Garamond',serif;font-style:italic;font-size:1.05rem;color:#888;line-height:1.85}
+.feel-box-quote{font-family:'EB Garamond',serif;font-style:italic;font-size:.95rem;color:#444;border-left:1px solid #1a0000;padding-left:1rem;margin-top:1.2rem;line-height:1.75}
+.feel-close{position:absolute;top:1rem;right:1rem;background:transparent;border:1px solid #1a1a1a;color:var(--greyl);font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;padding:.4rem .7rem;cursor:pointer;transition:all .2s}
+.feel-close:hover{border-color:var(--red);color:var(--red)}
+
+/* ─── BOOK ─── */
+.book-wrap{display:flex;align-items:flex-start;gap:3.5rem;margin-top:2.5rem}
+.book-scene{perspective:1400px;flex-shrink:0}
+.book-3d{width:210px;height:310px;transform-style:preserve-3d;transform:rotateY(-30deg) rotateX(4deg);transition:transform .6s ease;cursor:pointer;position:relative}
+.book-3d:hover{transform:rotateY(-8deg) rotateX(2deg)}
+.book-cover{position:absolute;inset:0;background:#0b0000;border:1px solid #200000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.8rem 1.3rem;box-shadow:10px 10px 40px rgba(0,0,0,.9),inset -2px 0 6px rgba(0,0,0,.5)}
+.book-cover::before{content:'';position:absolute;top:0;left:40%;width:2px;height:55%;background:linear-gradient(to bottom,var(--red),transparent);opacity:.35}
+.book-spine{position:absolute;left:-20px;top:0;bottom:0;width:20px;background:#060000;border:1px solid #110000;transform:rotateY(-90deg);transform-origin:right center;display:flex;align-items:center;justify-content:center}
+.spine-txt{font-family:'EB Garamond',serif;font-size:.58rem;color:#200000;writing-mode:vertical-rl;letter-spacing:.2em}
+.b-orn{font-size:1.2rem;color:var(--red);margin-bottom:1rem;opacity:.6}
+.b-title{font-family:'Playfair Display',serif;font-weight:900;font-size:1.35rem;color:var(--white);text-align:center;line-height:1.05;margin-bottom:.3rem}
+.b-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:.68rem;color:#300000;letter-spacing:.1em;text-align:center;margin-bottom:1.2rem}
+.b-line{width:40px;height:1px;background:#1a0000;margin:0 auto 1rem}
+.b-authors{font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.22em;color:#200000;text-transform:uppercase;text-align:center}
+
+/* Page reader */
+.page-reader{flex:1;min-width:0}
+.page-paper{background:var(--paper);color:var(--ink);padding:2.5rem 2.2rem;position:relative;border:1px solid #d9d0be;box-shadow:3px 3px 0 #d9d0be,6px 6px 18px rgba(0,0,0,.45);min-height:320px}
+.page-paper::before{content:'';position:absolute;left:3.2rem;top:0;bottom:0;width:1px;background:rgba(139,0,0,.18)}
+.pg-lbl{font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.2em;color:#aaa;text-align:center;margin-bottom:1.2rem}
+.pg-ch{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:.25rem}
+.pg-sub{font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.18em;color:#bbb;margin-bottom:1rem;text-transform:uppercase}
+.pg-txt{font-family:'EB Garamond',serif;font-size:.98rem;line-height:1.95;color:#2c2c2c}
+.pg-controls{display:flex;justify-content:space-between;align-items:center;margin-top:1rem}
+.pg-btn{background:transparent;border:1px solid #1e1e1e;color:var(--white);font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;padding:.45rem .9rem;cursor:pointer;transition:all .2s}
+.pg-btn:hover:not(:disabled){background:var(--red);border-color:var(--red)}
+.pg-btn:disabled{opacity:.22;cursor:default}
+
+/* ─── BREATHE ─── */
+.breathe-c{max-width:460px;margin:0 auto;text-align:center}
+.b-ring{width:160px;height:160px;border:1px solid #151515;border-radius:50%;margin:2rem auto;display:flex;align-items:center;justify-content:center;position:relative}
+.b-ring::before{content:'';position:absolute;inset:10px;border:1px solid #0d0d0d;border-radius:50%}
+.b-ring.inhale{animation:expand 4s ease-in-out forwards}
+.b-ring.exhale{animation:contract 8s ease-in-out forwards}
+@keyframes expand{to{transform:scale(1.35);box-shadow:0 0 45px rgba(139,0,0,.12)}}
+@keyframes contract{from{transform:scale(1.35)}to{transform:scale(1)}}
+.b-inner{font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.25em;color:#1a1a1a;text-transform:uppercase}
+.b-instr{font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;color:var(--grey)}
+.b-start{background:transparent;border:1px solid #1a1a1a;color:var(--greyl);font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;padding:.7rem 1.6rem;cursor:pointer;transition:all .3s;margin-top:1.2rem}
+.b-start:hover{border-color:var(--red);color:var(--red)}
+
+/* ─── CHARACTERS ─── */
+.chars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:#0d0d0d;border:1px solid #0d0d0d;margin-top:2rem}
+.char-card{background:var(--black);padding:2.2rem;position:relative;transition:background .3s;overflow:hidden}
+.char-card:hover{background:#0a0000}
+.char-card::after{content:'';position:absolute;top:0;left:0;width:2px;height:0;background:var(--red);transition:height .4s}
+.char-card:hover::after{height:100%}
+.char-num{font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.3em;color:#1a1a1a;margin-bottom:.65rem}
+.char-name{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;color:var(--white);margin-bottom:.15rem}
+.char-type{font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.25em;color:var(--red);text-transform:uppercase;margin-bottom:.85rem}
+.char-desc{font-family:'EB Garamond',serif;font-style:italic;font-size:.93rem;color:var(--grey);line-height:1.75}
+
+/* ─── QUIZ ─── */
+.qdots{display:flex;gap:.4rem;margin-bottom:1.6rem}
+.qdot{width:20px;height:2px;background:#111;transition:background .3s}
+.qdot.on{background:var(--red)}
+.quiz-q{font-family:'EB Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--white);line-height:1.65;margin-bottom:1.3rem}
+.quiz-opts{display:flex;flex-direction:column;gap:.6rem}
+.q-opt{background:transparent;border:1px solid #0f0f0f;color:var(--greyl);font-family:'EB Garamond',serif;font-size:.98rem;padding:.85rem 1.2rem;text-align:left;cursor:pointer;transition:all .2s;line-height:1.4}
+.q-opt:hover{border-color:var(--red);color:var(--white);background:#080000}
+.quiz-res{display:none;padding:1.8rem;border:1px solid #1a0000;background:#060000;margin-top:1.4rem}
+.qr-who{font-family:'Courier Prime',monospace;font-size:.55rem;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:.4rem}
+.qr-name{font-family:'Playfair Display',serif;font-weight:900;font-size:1.8rem;color:var(--white);margin-bottom:.6rem}
+.qr-desc{font-family:'EB Garamond',serif;font-style:italic;font-size:.98rem;color:var(--grey);line-height:1.75}
+
+/* ─── CREATORS ─── */
+.creators-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2rem;margin-top:2rem}
+.creator-card{padding:1.8rem;border:1px solid #0d0d0d;position:relative;transition:border-color .3s}
+.creator-card:hover{border-color:#1a0000}
+.creator-card::before{content:'';position:absolute;top:0;left:0;width:0;height:2px;background:var(--red);transition:width .4s}
+.creator-card:hover::before{width:100%}
+.cr-name{font-family:'Playfair Display',serif;font-weight:700;font-size:1.4rem;color:var(--white);margin-bottom:.15rem}
+.cr-role{font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:1rem}
+.cr-bio{font-family:'EB Garamond',serif;font-style:italic;font-size:.93rem;color:var(--grey);line-height:1.8}
+
+/* ─── DAILY JOKE ─── */
+.joke-box{background:#060000;border:1px solid #120000;border-left:3px solid var(--red);padding:1.8rem 2rem;margin-top:2rem}
+.joke-lbl{font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.4em;color:var(--red);text-transform:uppercase;margin-bottom:.85rem}
+.joke-setup{font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--greyl);line-height:1.7;margin-bottom:.65rem}
+.joke-punch{font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;color:#1e1e1e;line-height:1.6;cursor:pointer;transition:color .3s;user-select:none}
+.joke-punch.shown{color:var(--white)}
+.joke-hint{font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.2em;color:#111;text-transform:uppercase;margin-top:.4rem}
+
+/* ─── READER WALL ─── */
+.wall-form{margin-top:1.8rem;display:flex;flex-direction:column;gap:.65rem}
+.wall-ta{background:#060000;border:1px solid #0f0f0f;color:var(--white);font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;padding:1.1rem 1.3rem;resize:none;height:85px;outline:none;transition:border-color .2s;width:100%}
+.wall-ta:focus{border-color:#150000}
+.wall-sub{align-self:flex-end;background:transparent;border:1px solid #1a1a1a;color:var(--greyl);font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;padding:.55rem 1.1rem;cursor:pointer;transition:all .2s}
+.wall-sub:hover{background:var(--red);border-color:var(--red);color:var(--white)}
+.wall-msgs{margin-top:1.8rem;display:flex;flex-direction:column;gap:.85rem}
+.wall-msg{border-left:2px solid #100000;padding:.7rem 1.2rem;font-family:'EB Garamond',serif;font-style:italic;font-size:.97rem;color:#444;line-height:1.6}
+.wall-meta{font-family:'Courier Prime',monospace;font-size:.48rem;letter-spacing:.2em;color:#1a1a1a;margin-top:.25rem}
+
+/* ─── QUOTES ─── */
+.quotes-list{margin-top:1.8rem;display:flex;flex-direction:column;gap:1px;background:#0d0d0d;border:1px solid #0d0d0d}
+.q-item{background:var(--black);display:flex;align-items:center;gap:1.2rem;padding:1.3rem;transition:background .2s}
+.q-item:hover{background:#060000}
+.q-count{font-family:'Courier Prime',monospace;font-size:1.1rem;color:#111;min-width:2.2rem;text-align:center;transition:color .2s}
+.q-item:hover .q-count{color:var(--red)}
+.q-text{font-family:'EB Garamond',serif;font-style:italic;font-size:.98rem;color:var(--grey);line-height:1.6;flex:1}
+.vote-btn{background:transparent;border:1px solid #0f0f0f;color:#222;padding:.25rem .5rem;cursor:pointer;font-size:.7rem;transition:all .2s;flex-shrink:0}
+.vote-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* ─── PROGRESS ─── */
+.ch-list{margin-top:1.8rem;display:flex;flex-direction:column;gap:2px}
+.ch-row{display:flex;align-items:center;gap:.9rem;padding:.7rem 1rem;border:1px solid #0b0b0b;cursor:pointer;transition:border-color .2s}
+.ch-row:hover{border-color:#150000}
+.ch-check{width:12px;height:12px;border:1px solid #1a1a1a;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.ch-check.done{background:var(--red);border-color:var(--red)}
+.ch-check.done::after{content:'✓';font-size:.5rem;color:var(--white)}
+.ch-name{font-family:'EB Garamond',serif;font-style:italic;font-size:.93rem;color:#2a2a2a;transition:color .2s}
+.ch-row:hover .ch-name,.ch-row.done .ch-name{color:var(--white)}
+
+/* ─── SUPPORT ─── */
+.sup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:#0d0d0d;border:1px solid #0d0d0d;margin-top:1.8rem}
+.sup-item{background:var(--black);padding:1.8rem}
+.sup-name{font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.2em;color:var(--white);text-transform:uppercase;margin-bottom:.35rem}
+.sup-desc{font-family:'EB Garamond',serif;font-style:italic;font-size:.88rem;color:#2a2a2a;margin-bottom:.85rem}
+.sup-link{font-family:'Courier Prime',monospace;font-size:.58rem;color:var(--red);text-decoration:none;letter-spacing:.1em;border-bottom:1px solid #1a0000;transition:color .2s}
+.sup-link:hover{color:var(--red2)}
+
+/* ─── WARNINGS ─── */
+.warn-grid{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1.4rem}
+.warn-tag{font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.18em;text-transform:uppercase;color:#222;border:1px solid #110000;padding:.32rem .7rem;transition:all .2s}
+.warn-tag:hover{color:var(--red);border-color:var(--red)}
+
+/* ─── FOLLOW ─── */
+.follow-wrap{text-align:center;padding:5.5rem 2rem;border-top:1px solid #0d0d0d}
+.follow-ig{display:inline-flex;align-items:center;gap:.9rem;border:1px solid #0f0f0f;padding:.9rem 2.2rem;text-decoration:none;color:var(--greyl);font-family:'Courier Prime',monospace;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;margin-top:1.3rem;transition:all .3s}
+.follow-ig:hover{border-color:var(--red);color:var(--red);background:#060000}
+
+/* ─── FOOTER ─── */
+footer{border-top:1px solid #0a0a0a;padding:2rem 2rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.65rem}
+.footer-brand{font-family:'Playfair Display',serif;font-weight:900;font-size:1.6rem;color:#0f0f0f}
+.footer-brand span{color:#150000}
+.footer-copy{font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.25em;color:#0f0f0f;text-transform:uppercase}
+
+@media(max-width:680px){
+  .book-wrap{flex-direction:column;align-items:center}
+  .page-reader{width:100%}
+  #cd{flex-wrap:wrap}
+  .cd-u{min-width:60px;padding:.9rem 1rem}
+  .sec{padding:4rem 1.3rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ PASSWORD WALL ══ -->
+<div id="pw">
+  <div class="drip-wrap" id="pw-drips"></div>
+  <div class="pw-title">Weary<span>Souls</span></div>
+  <div class="pw-sub">· restricted access ·</div>
+
+  <div id="cd">
+    <div class="cd-u"><span class="cd-n" id="cd-d">00</span><span class="cd-l">Days</span></div>
+    <span class="cd-sep">·</span>
+    <div class="cd-u"><span class="cd-n" id="cd-h">00</span><span class="cd-l">Hours</span></div>
+    <span class="cd-sep">·</span>
+    <div class="cd-u"><span class="cd-n" id="cd-m">00</span><span class="cd-l">Mins</span></div>
+    <span class="cd-sep">·</span>
+    <div class="cd-u"><span class="cd-n" id="cd-s">00</span><span class="cd-l">Secs</span></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:.65rem">
+    <div class="pw-hint">Have early access?</div>
+    <div class="pw-row">
+      <input id="pw-in" type="password" placeholder="· · · · · ·" maxlength="20" autocomplete="off"/>
+      <button id="pw-go">Enter</button>
+    </div>
+    <div id="pw-err"></div>
+  </div>
+
+  <p class="pw-q">"The fountain in the center of the quad is a liar. It doesn't look like one. That's the thing about good liars — they commit."</p>
+</div>
+
+<!-- ══ HAMBURGER ══ -->
+<a href="#home" class="nav-brand-fixed">Weary <span>Souls</span></a>
+<button id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+<div class="menu-overlay" id="overlay"></div>
+<nav id="side-menu">
+  <div class="menu-title">// Navigate</div>
+  <div class="menu-links">
+    <a href="#home" class="nav-close">Home</a>
+    <a href="#feelings" class="nav-close">How Are You Feeling?</a>
+    <a href="#book" class="nav-close">Read the Book</a>
+    <a href="#breathe" class="nav-close">Breathe With Us</a>
+    <a href="#characters" class="nav-close">The Characters</a>
+    <a href="#quiz" class="nav-close">Which Character Are You?</a>
+    <a href="#creators" class="nav-close">The Creators</a>
+    <a href="#reader-wall" class="nav-close">Reader Wall</a>
+    <a href="#quotes" class="nav-close">Favourite Quotes</a>
+    <a href="#progress" class="nav-close">Reading Progress</a>
+    <a href="#support" class="nav-close">Get Support</a>
+    <a href="#warnings" class="nav-close">Content Warnings</a>
+  </div>
+  <div class="menu-ig">Follow us · <a href="https://instagram.com/wearysouls13" target="_blank">@wearysouls13</a></div>
+</nav>
+
+<!-- ══ FEELING MODAL ══ -->
+<div id="feel-modal">
+  <div class="feel-backdrop" id="feel-bg"></div>
+  <div class="feel-box">
+    <button class="feel-close" id="feel-close">✕ Close</button>
+    <div class="feel-box-tag">We hear you ·</div>
+    <div class="feel-box-title" id="fm-title"></div>
+    <p class="feel-box-text" id="fm-text"></p>
+    <div class="feel-box-quote" id="fm-quote"></div>
+  </div>
+</div>
+
+<!-- ══ HERO ══ -->
+<div id="home" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden">
+  <div class="hero-bg"></div>
+  <div class="drip-wrap" id="hero-drips"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">A Novel · 2025 · Mariam · Omar · Ganah</div>
+    <h1 class="hero-title">Beneath<br>the <span class="blood">Surface</span></h1>
+    <p class="hero-sub">six planets. one dead star. one truth no one would say.</p>
+    <blockquote class="hero-quote">"The whole beautiful display is powered by pressure — and sustained entirely by the refusal to examine what's underneath."</blockquote>
+    <div class="tx-box">
+      <div class="tx-lbl">⬛ Today's Transmission</div>
+      <p class="tx-txt"><span id="typed"></span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FEELINGS ══ -->
+<div id="feelings" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 02 — Check In</div>
+    <h2 class="s-title">How Are You Feeling?</h2>
+    <p class="s-intro">We see you. Pick what resonates — and we'll sit with you in it.</p>
+    <div class="feel-grid">
+      <div class="feel-card" data-feel="numb"><span class="feel-icon">🖤</span><span class="feel-label">Numb</span></div>
+      <div class="feel-card" data-feel="lost"><span class="feel-icon">🌫️</span><span class="feel-label">Lost</span></div>
+      <div class="feel-card" data-feel="angry"><span class="feel-icon">🔥</span><span class="feel-label">Angry</span></div>
+      <div class="feel-card" data-feel="hopeful"><span class="feel-icon">🕯️</span><span class="feel-label">Hopeful</span></div>
+      <div class="feel-card" data-feel="trapped"><span class="feel-icon">🕸️</span><span class="feel-label">Trapped</span></div>
+      <div class="feel-card" data-feel="grieving"><span class="feel-icon">🥀</span><span class="feel-label">Grieving</span></div>
+      <div class="feel-card" data-feel="unseen"><span class="feel-icon">🪞</span><span class="feel-label">Unseen</span></div>
+      <div class="feel-card" data-feel="conflicted"><span class="feel-icon">⚖️</span><span class="feel-label">Conflicted</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BOOK ══ -->
+<div id="book" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 03 — Read</div>
+    <h2 class="s-title">Beneath the Surface</h2>
+    <p class="s-intro">The real book. All eleven chapters. Turn the pages.</p>
+    <div class="book-wrap">
+      <div class="book-scene">
+        <div class="book-3d" title="Hover to open">
+          <div class="book-spine"><span class="spine-txt">Beneath the Surface · 2025</span></div>
+          <div class="book-cover">
+            <div class="b-orn">✦</div>
+            <div class="b-title">Beneath<br>the Surface</div>
+            <div class="b-sub">six planets. one dead star.</div>
+            <div class="b-line"></div>
+            <div class="b-authors">Mariam · Omar · Ganah</div>
+          </div>
+        </div>
+      </div>
+      <div class="page-reader">
+        <div class="page-paper">
+          <div class="pg-lbl" id="pg-lbl">Page 1 of 28</div>
+          <div class="pg-ch" id="pg-ch"></div>
+          <div class="pg-sub" id="pg-sub"></div>
+          <p class="pg-txt" id="pg-txt"></p>
+        </div>
+        <div class="pg-controls">
+          <button class="pg-btn" id="pg-prev" disabled>← Prev</button>
+          <button class="pg-btn" id="pg-next">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BREATHE ══ -->
+<div id="breathe" class="sec-border" style="padding:6rem 2rem">
+  <div class="breathe-c">
+    <div class="s-tag" style="text-align:center">// 04 — Breathe</div>
+    <h2 class="s-title" style="text-align:center">Breathe With Us</h2>
+    <p class="s-intro" style="text-align:center;margin:0 auto">A 4-7-8 exercise. Used by the characters when the static gets too loud.</p>
+    <div class="b-ring" id="b-ring"><div class="b-inner" id="b-inner">begin</div></div>
+    <div class="b-instr" id="b-instr">Press start when you're ready.</div>
+    <button class="b-start" id="b-btn">Start</button>
+  </div>
+</div>
+
+<!-- ══ CHARACTERS ══ -->
+<div id="characters" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 05 — The Six</div>
+    <h2 class="s-title">The Characters</h2>
+    <p class="s-intro">Six planets. One dead star. An orbit held together by everything they refuse to say.</p>
+    <div class="chars-grid">
+      <div class="char-card"><div class="char-num">01 ·</div><div class="char-name">Luke</div><div class="char-type">The Achiever</div><p class="char-desc">He's been awake since four-thirty every morning for six weeks. His planner looks like an evidence board in a murder investigation — colour-coded, dense, and held together by the terror of never being enough. He tells everyone he got an eighty-eight on his midterm. He got a seventy-three.</p></div>
+      <div class="char-card"><div class="char-num">02 ·</div><div class="char-name">Stephanie</div><div class="char-type">Luke's Sister</div><p class="char-desc">She moves like someone crossing a room full of tripwires only she can see. Luke's sister — though nobody at school knows it. She understands exactly what is happening to her body. Understanding it does nothing to stop it.</p></div>
+      <div class="char-card"><div class="char-num">03 ·</div><div class="char-name">Marcus</div><div class="char-type">The Anchor</div><p class="char-desc">He used to fill rooms without trying. Then his father became a phone number he stopped calling. Now he carries what he calls The Static — a low-frequency hum of meaninglessness that has been getting heavier for three years. He went to see Leo's mother. He hasn't told anyone what she said.</p></div>
+      <div class="char-card"><div class="char-num">04 ·</div><div class="char-name">Emily</div><div class="char-type">The Invisible One</div><p class="char-desc">She sits with her sleeves pulled to her knuckles in August heat. She learned early that the way to keep peace was to cost nothing. She's been seeing a counsellor — Dr. Reyes — for four months and told no one. She was waiting until she had something to report. She is still waiting for that moment.</p></div>
+      <div class="char-card"><div class="char-num">05 ·</div><div class="char-name">Liv</div><div class="char-type">The Performer</div><p class="char-desc">She didn't arrive. She detonated. Her laugh fills all available space the way sound does when something is terrified of silence. At the bottom of her bag is an acceptance letter from Whitmore University, twelve hundred miles away. She's been carrying it for three weeks. She hasn't told a single person.</p></div>
+      <div class="char-card"><div class="char-num">06 ·</div><div class="char-name">Tristan</div><div class="char-type">The Vigilant</div><p class="char-desc">His eyes assess the fountain as a non-threat, then move to the perimeter. He is performing wellness with the commitment of a method actor who's been in character so long he can't find the door out. He found a note in Leo's dorm the morning after. He read it. He put it back. He told no one.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div id="quiz" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 10 — Discover</div>
+    <h2 class="s-title">Which Character Are You?</h2>
+    <p class="s-intro" style="margin-bottom:1.8rem">Five questions. One honest answer.</p>
+    <div class="qdots" id="qdots">
+      <div class="qdot on"></div><div class="qdot"></div><div class="qdot"></div><div class="qdot"></div><div class="qdot"></div>
+    </div>
+    <div id="quiz-body">
+      <p class="quiz-q" id="q-txt"></p>
+      <div class="quiz-opts" id="q-opts"></div>
+    </div>
+    <div class="quiz-res" id="quiz-res">
+      <div class="qr-who">You are —</div>
+      <div class="qr-name" id="qr-name"></div>
+      <p class="qr-desc" id="qr-desc"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CREATORS ══ -->
+<div id="creators" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 07 — The Minds</div>
+    <h2 class="s-title">The Creators</h2>
+    <p class="s-intro">Three souls. One shared obsession with the things people carry quietly. We wrote this book because we couldn't find the words anywhere else — so we made them.</p>
+    <div class="creators-grid">
+      <div class="creator-card"><div class="cr-name">Mariam</div><div class="cr-role">Co-Author</div><p class="cr-bio">She has always been the one who notices things — the pause before someone answers, the way a room changes when certain people enter it. She wrote this to make space for the feelings that don't have clean names yet.</p></div>
+      <div class="creator-card"><div class="cr-name">Omar</div><div class="cr-role">Co-Author</div><p class="cr-bio">He grew up watching people pretend. He's been trying to write about that for years. This book is the first time it came out right — complicated, uncomfortable, more honest than he expected.</p></div>
+      <div class="creator-card"><div class="cr-name">Ganah</div><div class="cr-role">Co-Author</div><p class="cr-bio">She used to journal obsessively — pages and pages of things she would never say out loud. A lot of that is in here. She is terrified and relieved that it exists now, somewhere outside of her.</p></div>
+    </div>
+    <div class="joke-box">
+      <div class="joke-lbl">☠ Daily Dark Medicine</div>
+      <p class="joke-setup" id="joke-s"></p>
+      <p class="joke-punch" id="joke-p">[ tap to reveal punchline ]</p>
+      <p class="joke-hint">click to survive it</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ READER WALL ══ -->
+<div id="reader-wall" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 13 — You Were Heard</div>
+    <h2 class="s-title">Reader Wall</h2>
+    <p class="s-intro">Leave an anonymous message. How did this book make you feel?</p>
+    <div class="wall-form">
+      <textarea class="wall-ta" id="wall-ta" placeholder="Write something true…" maxlength="280"></textarea>
+      <button class="wall-sub" id="wall-btn">Leave a Mark →</button>
+    </div>
+    <div class="wall-msgs" id="wall-msgs">
+      <div class="wall-msg">I read it in one sitting. I didn't want it to end.<div class="wall-meta">Anonymous · earlier</div></div>
+      <div class="wall-msg">The fountain chapter broke something open in me. Thank you.<div class="wall-meta">Anonymous · earlier</div></div>
+      <div class="wall-msg">Marcus is me and I hate that I know it.<div class="wall-meta">Anonymous · earlier</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUOTES ══ -->
+<div id="quotes" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 14 — The Words That Hit</div>
+    <h2 class="s-title">Vote Your Favourite Quote</h2>
+    <p class="s-intro">Which line lives in your chest?</p>
+    <div class="quotes-list">
+      <div class="q-item"><span class="q-count" id="v0">18</span><span class="q-text">"The fountain in the center of the quad is a liar. It doesn't look like one. That's the thing about good liars — they commit."</span><button class="vote-btn" onclick="vote(0)">▲</button></div>
+      <div class="q-item"><span class="q-count" id="v1">12</span><span class="q-text">"This is the particular cruelty of families: the same environment can wound two children in two entirely different ways, leaving each convinced their damage is somehow their own fault."</span><button class="vote-btn" onclick="vote(1)">▲</button></div>
+      <div class="q-item"><span class="q-count" id="v2">10</span><span class="q-text">"Understanding it did nothing to interrupt it."</span><button class="vote-btn" onclick="vote(2)">▲</button></div>
+      <div class="q-item"><span class="q-count" id="v3">8</span><span class="q-text">"Her laugh fills all available space, the way sound does when something is terrified of silence."</span><button class="vote-btn" onclick="vote(3)">▲</button></div>
+      <div class="q-item"><span class="q-count" id="v4">7</span><span class="q-text">"We are a symphony playing in a key no one else can hear."</span><button class="vote-btn" onclick="vote(4)">▲</button></div>
+      <div class="q-item"><span class="q-count" id="v5">6</span><span class="q-text">"Silence isn't safe. Silence is where the ghosts live."</span><button class="vote-btn" onclick="vote(5)">▲</button></div>
+      <div class="q-item"><span class="q-count" id="v6">5</span><span class="q-text">"Waiting to be better before you let people in is how you stay worse."</span><button class="vote-btn" onclick="vote(6)">▲</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROGRESS ══ -->
+<div id="progress" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 12 — Your Journey</div>
+    <h2 class="s-title">Reading Progress</h2>
+    <p class="s-intro">Mark what you've read. Saves automatically.</p>
+    <div class="ch-list" id="ch-list"></div>
+  </div>
+</div>
+
+<!-- ══ SUPPORT ══ -->
+<div id="support" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 06 — Real Help</div>
+    <h2 class="s-title">Get Support</h2>
+    <p class="s-intro">The characters found ways through. So can you. These are real people, real lines.</p>
+    <div class="sup-grid">
+      <div class="sup-item"><div class="sup-name">988 Lifeline</div><p class="sup-desc">Call or text. Any time. They pick up.</p><a href="tel:988" class="sup-link">Call 988</a></div>
+      <div class="sup-item"><div class="sup-name">Crisis Text Line</div><p class="sup-desc">Text when talking feels like too much.</p><a href="sms:741741" class="sup-link">Text HOME to 741741</a></div>
+      <div class="sup-item"><div class="sup-name">Eating Disorders</div><p class="sup-desc">You don't have to explain it perfectly.</p><a href="tel:18009312237" class="sup-link">1-800-931-2237</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WARNINGS ══ -->
+<div id="warnings" class="sec-border">
+  <div class="sec">
+    <div class="s-tag">// 09 — Please Read First</div>
+    <h2 class="s-title">Content Warnings</h2>
+    <p class="s-intro">Written with care, honesty, and love. It deals with real things. If you are struggling — you are not alone.</p>
+    <div class="warn-grid">
+      <span class="warn-tag">Eating Disorders</span><span class="warn-tag">Self-Harm</span>
+      <span class="warn-tag">Grief & Loss</span><span class="warn-tag">Suicide Themes</span>
+      <span class="warn-tag">Depression</span><span class="warn-tag">Manipulation</span>
+      <span class="warn-tag">Emotional Abuse</span><span class="warn-tag">Trauma</span>
+      <span class="warn-tag">PTSD</span><span class="warn-tag">Family Dysfunction</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOLLOW ══ -->
+<div id="follow" class="follow-wrap">
+  <div class="s-tag">// 08 — Find Us</div>
+  <h2 class="s-title">Follow the Journey</h2>
+  <p class="s-intro" style="margin:0 auto;text-align:center">We live between the pages and the posts.</p>
+  <a href="https://instagram.com/wearysouls13" class="follow-ig" target="_blank">◈ &nbsp;@wearysouls13 &nbsp; on Instagram</a>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-brand">Weary <span>Souls</span></div>
+  <div class="footer-copy">© 2025 Mariam, Omar & Ganah · All Rights Reserved</div>
+  <div style="font-family:'EB Garamond',serif;font-style:italic;color:#100000;font-size:.82rem">"You were here. That matters."</div>
+</footer>
+
+<script>
+// ══ UTILS ══
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+
+// ══ COUNTDOWN — May 1 2025 ══
+const LAUNCH=new Date('2025-05-01T00:00:00');
+function tick(){
+  const diff=LAUNCH-new Date();
+  if(diff<=0){['cd-d','cd-h','cd-m','cd-s'].forEach(id=>$(id).textContent='00');return}
+  $('cd-d').textContent=pad(Math.floor(diff/86400000));
+  $('cd-h').textContent=pad(Math.floor((diff%86400000)/3600000));
+  $('cd-m').textContent=pad(Math.floor((diff%3600000)/60000));
+  $('cd-s').textContent=pad(Math.floor((diff%60000)/1000));
+}
+tick();setInterval(tick,1000);
+
+// ══ PASSWORD ══
+$('pw-go').addEventListener('click',tryPw);
+$('pw-in').addEventListener('keydown',e=>e.key==='Enter'&&tryPw());
+function tryPw(){
+  if($('pw-in').value.trim().toUpperCase()==='OMG'){
+    const w=$('pw');w.style.transition='opacity .8s';w.style.opacity='0';
+    setTimeout(()=>w.remove(),800);
+  } else {
+    $('pw-err').textContent='✕ Wrong password.';
+    $('pw-in').value='';
+    setTimeout(()=>$('pw-err').textContent='',2500);
+  }
+}
+
+// ══ DRIPS ══
+function makeDrips(container,count){
+  for(let i=0;i<count;i++){
+    const d=document.createElement('div');d.className='drip';
+    d.style.cssText=`left:${Math.random()*100}%;animation-duration:${3+Math.random()*8}s;animation-delay:${Math.random()*7}s;opacity:${.2+Math.random()*0.5};width:${1+Math.random()*2.5}px`;
+    container.appendChild(d);
+  }
+}
+makeDrips($('pw-drips'),20);
+makeDrips($('hero-drips'),24);
+
+// ══ TYPED TEXT ══
+const msgs=[
+  "Beneath the surface, the machinery churns.",
+  "Everyone at this table is bleeding. Nobody mentions it.",
+  "Understanding it did nothing to interrupt it.",
+  "He was performing wellness with the commitment of a method actor who can't find the door out.",
+  "We are a symphony playing in a key no one else can hear.",
+  "Waiting to be better before you let people in is how you stay worse.",
+  "The Static is where the ghosts live.",
+];
+let mi=0,ci=0,del=false;
+const tEl=$('typed');
+function typeLoop(){
+  const m=msgs[mi];
+  if(!del){tEl.textContent=m.slice(0,++ci);if(ci===m.length){del=true;setTimeout(typeLoop,2800);return}setTimeout(typeLoop,52);}
+  else{tEl.textContent=m.slice(0,--ci);if(ci===0){del=false;mi=(mi+1)%msgs.length;setTimeout(typeLoop,400);return}setTimeout(typeLoop,24);}
+}
+typeLoop();
+
+// ══ HAMBURGER ══
+const hamburger=$('hamburger'),sideMenu=$('side-menu'),overlay=$('overlay');
+hamburger.addEventListener('click',()=>{
+  hamburger.classList.toggle('open');
+  sideMenu.classList.toggle('open');
+  overlay.classList.toggle('open');
+});
+overlay.addEventListener('click',closeMenu);
+document.querySelectorAll('.nav-close').forEach(a=>a.addEventListener('click',closeMenu));
+function closeMenu(){hamburger.classList.remove('open');sideMenu.classList.remove('open');overlay.classList.remove('open')}
+
+// ══ FEELINGS ══
+const feelData={
+  numb:{title:"You feel numb.",text:"Numbness isn't emptiness — it's often the mind's way of protecting you from something that's too much to feel all at once. Marcus knows this. He called it The Static: not the electricity of anxiety or the fire of grief, but something quieter and more total. You don't have to force yourself to feel anything right now. Just being here counts.",quote:'"I\'ve just felt heavier, year by year, and slower, and more convinced that the effort of getting up and assembling himself every morning was not being repaid at an appropriate rate. He got up anyway." — Marcus'},
+  lost:{title:"You feel lost.",text:"Feeling lost isn't a character flaw. Liv spent years changing her hair, her aesthetic, her entire personality — not because she was flighty, but because she was searching. Genuinely searching. The book says the self isn't a fixed thing to be discovered — it's a practice to be developed. You're in the practice. That's not lost. That's in progress.",quote:'"She wasn\'t performing characters. She was looking for one that fit." — on Liv'},
+  angry:{title:"You feel angry.",text:"Anger is often grief or hurt with nowhere to go. Emily's quiet anger at being told she seemed fine — at a world that needed her to cost nothing — was one of the most real things in the book. Your anger is information. It's pointing at something that matters. Let it point.",quote:'"Can we stop treating people like math problems?" — Emily'},
+  hopeful:{title:"You feel hopeful.",text:"Hold onto that. The characters in this book had to fight through enormous weight to get to even the smallest version of hope. The fact that you feel it means something in you is still reaching toward something. That matters more than you know.",quote:'"I think I\'m still finding out. And I\'m starting to be okay with that being the answer." — Liv'},
+  trapped:{title:"You feel trapped.",text:"Stephanie felt trapped in a body she'd been taught to see as wrong, in a family where silence was the only safe option, in a disorder that understood itself perfectly and kept running anyway. She said: 'This isn't discipline. This is sick.' Naming the trap is the first crack in it. You don't have to escape it today. Just name it.",quote:'"She understood this circuit perfectly. Understanding it did nothing to interrupt it." — on Stephanie'},
+  grieving:{title:"You feel like you're grieving.",text:"Grief doesn't always come from loss of life. It comes from loss of anything — a version of yourself, a relationship, a future you thought you'd have. The group grieved Leo not just with tears but with arguments and cold pizza and saying his name out loud when it was too hard. Grief wants to be spoken. Even a little.",quote:'"Leo\'s name sits at the table not like a wound that keeps reopening, but like an empty seat that still holds the shape of a person." — on the group'},
+  unseen:{title:"You feel unseen.",text:"Emily was called 'the Anchor' — reliable, quiet, holding everything up — and nobody ever asked how it felt to be submerged in the cold while everyone else sailed. Being unseen by others often starts with not being seen by ourselves. Dr. Reyes told her: you're not a burden. You're a person. Those are different things.",quote:'"Nobody ever thinks to ask the anchor how it feels to be submerged in the dark." — Emily'},
+  conflicted:{title:"You feel conflicted.",text:"Tristan spent eighteen months carrying a secret — a note he'd read, a choice he'd made, a promise he hadn't been able to keep. Conflicted feelings don't mean you're weak. They mean you care about more than one thing at once, and that the situation is genuinely complicated. That's not a failure. That's honesty.",quote:'"He had made a choice in that dorm room. He was not sure, eighteen months later, whether that decision had been mercy or cowardice." — on Tristan'},
+};
+document.querySelectorAll('.feel-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+    const f=feelData[card.dataset.feel];
+    $('fm-title').textContent=f.title;
+    $('fm-text').textContent=f.text;
+    $('fm-quote').textContent=f.quote;
+    $('feel-modal').classList.add('show');
+  });
+});
+$('feel-bg').addEventListener('click',()=>$('feel-modal').classList.remove('show'));
+$('feel-close').addEventListener('click',()=>$('feel-modal').classList.remove('show'));
+
+// ══ BOOK PAGES (full book, all chapters) ══
+const pages=[
+  {ch:'A Note to the Reader',sub:'',txt:'This book is for anyone who has ever sat in a group of people and felt completely alone. For anyone who has perfected the performance of fine while something else entirely was happening underneath. For the ones who are carrying things they don\'t know how to say out loud yet.\n\nThe six people in this story are fictional. But the things they carry—the pressure to achieve, the need for control, the weight of a parent\'s silence, the particular loneliness of being seen without being known—are real. If you recognize yourself in any of them, that recognition is the point.\n\nThis story contains themes of eating disorders, self-harm, grief, suicide, and depression. If any of these are difficult for you personally, please read with care—and know that support is available.'},
+  {ch:'I. Six Planets, One Dead Star',sub:'on: belonging, and the loneliness of being surrounded',txt:'The fountain in the center of the quad is a liar. It doesn\'t look like one. That\'s the thing about good liars—they commit. This one commits with a gleaming stone basin, a perfect upward arc of water that catches the afternoon light like scattered diamonds, and a rhythmic, cheerful sound that says: everything here is fine. Everything here is controlled. Everything here is exactly as beautiful as it appears.\n\nBeneath the surface, the machinery churns. Recycled water forced upward through pipes that are slowly developing mineral deposits and hairline fractures that nobody has gotten around to fixing yet. The whole beautiful display is powered by pressure—and sustained entirely by the refusal to examine what\'s underneath.'},
+  {ch:'I. Six Planets, One Dead Star',sub:'Luke, before everything',txt:'Luke Sommer grew up in a house where the word "enough" was never used in a positive sense. It appeared in its negative forms only: not enough, never enough, this isn\'t good enough.\n\nLuke was nine when he first wrote out a schedule for himself on a yellow legal pad. His father studied it, pulled out a red pen, and restructured three blocks with the clinical precision of a man editing a junior colleague\'s memo. "You\'ve allocated forty minutes to outdoor time," his father said. "Reduce it to twenty."\n\nLuke had nodded. He had not cried. He had gone upstairs and rewritten the schedule with the twenty-minute block, and a tiny red mark in the margin where the forty had been—a small, private memorial to the half-hour he had been allowed, once, to consider his own.'},
+  {ch:'I. Six Planets, One Dead Star',sub:'Stephanie, before everything',txt:'Stephanie Sommer grew up in the same house and emerged from it with a completely different set of wounds from a completely identical set of causes. This is the particular cruelty of families: the same environment can wound two children in two entirely different ways, leaving each convinced their damage is somehow their own fault.\n\nLuke got the relentless pressure toward achievement. Stephanie got the relentless commentary on her body.\n\nThe first time Stephanie skipped a meal deliberately, she was thirteen. By sixteen, the control had become its own gravity well. It had stopped being a strategy and become a self. What Stephanie hadn\'t told anyone was that it wasn\'t just restriction anymore. The purging was the part she couldn\'t say out loud.'},
+  {ch:'I. Six Planets, One Dead Star',sub:'Marcus, Emily, Liv, Tristan',txt:'Marcus Webb had been the kind of teenager who filled a room without trying. All of that changed when his father left. The Static—Marcus\'s name for what lived in the back of his skull, that low-frequency hum of meaninglessness—had arrived during the eighteen months of watching his father become an absence.\n\nEmily Miller had grown up in a house full of nice things and very little noise. Emily was fourteen the first time she hurt herself. She had started seeing a counselor four months ago. She had not told the group.\n\nLiv Park had always been the one people looked at. The identity cycling—the hair colors, the aesthetic shifts—had started as performance and become a genuine search. The acceptance letter to Whitmore University had arrived three weeks ago. She had not told a single person.\n\nTristan Cole came from a family that understood strength as an heirloom. He was eighteen when Leo died. He had not told his father. His father would have understood completely. That was precisely why he couldn\'t tell him.'},
+  {ch:'I. Six Planets, One Dead Star',sub:'At the fountain',txt:'Luke was already there when I arrived. He\'d been awake since four-thirty. He\'d been awake since four-thirty every morning for six weeks. None of us knew it yet.\n\nStephanie moved like a woman crossing a room full of tripwires only she could see. "Hey," she whispered. Luke did not look up. "You\'re three minutes behind schedule." It was not a joke. It was a damage report.\n\nTristan arrived from the south. His eyes hit the fountain for half a second, assessed it as a non-threat, and moved to the perimeter. Liz didn\'t arrive. She detonated. "Please tell me someone brought caffeine, because I am officially declaring myself dead at the scene!"\n\nWe were all looking at different things. We always were.'},
+  {ch:'II. The Pressure Cooker',sub:'on: perfectionism, and the cost of never being enough',txt:'The fluorescent lights of the university library hummed at a frequency that seemed to vibrate not in the air but in the calcium of your teeth. It was three in the morning.\n\nLuke sat at the head—naturally, inevitably—his posture approaching architecture in its rigidity. He was on his third rewrite of the same paragraph. The seventy-three sat in the back of his skull like a splinter, working itself deeper every time he pressed against the certainty he\'d built around it.\n\nAcross the table, Stephanie was a statue. She had been treating the bag of pretzels like something with the potential to cause harm, leaning fractionally back every time the smell of salt reached her.\n\n"Can we stop treating people like math problems?" The voice was quiet. It stopped the room. Even Luke\'s pen stopped. A small dark blot spread on his pristine notes.'},
+  {ch:'II. The Pressure Cooker',sub:'continued',txt:'"We\'re falling apart!" Emily\'s words bounced off the Humanities building\'s brick face. "Look at us! Stephanie is running herself into a faint. Tristan looks like he\'s clearing a hot zone. And you"—she stepped toward Luke—"you\'re talking about breakfast blocks while your hands are shaking so hard you can barely hold a highlighter."\n\n"I have to get an A," Luke said. "If I don\'t get the A, the internship falls through. If the internship falls through—" He stopped. "I\'m just a kid from a house that expects too much."\n\n"We\'re all disappointments to someone," Marcus said quietly. "But right now you\'re being one to yourself by pretending you\'re made of stone."\n\nNone of us knew that in five days, the pipes would finally burst.'},
+  {ch:'III. What the Perfectly Still Man Carries',sub:'on: grief, depression, and the weight we inherit — Luke',txt:'The alarm clock doesn\'t wake me up. The alarm clock is simply the official acknowledgment of a state I\'ve been in for forty minutes—lying on my back, ceiling tiles memorized, brain already three steps into a day that hasn\'t started.\n\nMy room is not clean. Clean is insufficient. My room is perfect. Pillows at forty-five degrees. Every object exists in its assigned location because objects in their assigned locations cannot surprise you.\n\nThen the voice. It\'s my voice. All my voices are my voice, which is, I think, the problem. But this one is colder, like a scalpel left in a steel tray overnight. You missed a spot shaving. Pathetic.\n\nMy father\'s voice is not the voice. But my father\'s voice is the original. Everything that comes after it is derivative. A son learning fluency in his father\'s first language and becoming, in time, more grammatically ruthless than the native speaker.'},
+  {ch:'III. What the Perfectly Still Man Carries',sub:'continued',txt:'"You can\'t organize away the fact that Stephanie is disappearing in front of us and you\'re not saying anything to her," Marcus says. "The silence isn\'t protecting her. It\'s just protecting you from having to do something hard."\n\nI find the single-occupancy bathroom. The Mask doesn\'t stick. My hair is wrong. My eyes are bloodshot. I look like a person who has been holding something very heavy for a very long time.\n\nI reach out and try to fix the paper towel dispenser. The plastic cover snaps open with a crack, and the entire roll unravels onto the wet tile floor.\n\nI slide down the wall until I\'m sitting on the cold tile among the wreckage. My breath comes in jagged, irregular bursts. Marcus opens the door. He doesn\'t look surprised. He lowers himself to the floor opposite me.\n\n"We don\'t love you because you\'re useful," Marcus says. "We love you because you\'re one of us."'},
+  {ch:'IV. The Anchor\'s Secret Weight',sub:'on: self-harm, and the things we do to stay in the room — Emily',txt:'Every morning at seven I stand in front of the mirror and assemble the girl the world expects to see. Then the armor: long sleeves, regardless of temperature, because the weather is a factor I consider after the sleeves have gone on. Always after.\n\nI am called the Anchor. Anchors are useful, reliable, silent. They stay beneath the surface so the ship can hold position. Nobody ever thinks to ask the anchor how it feels to be submerged in the dark and the cold pressure of the deep, day after day, while everyone else sails.\n\nDr. Reyes was writing something when Emily came in, and finished the sentence before looking up. Emily had liked that. She\'d liked that she wasn\'t the event in the room.\n\n"I hurt myself," Emily heard herself say. "I\'ve been doing it for four years. I\'m not sure I want to hide it anymore." Dr. Reyes said: "That took courage." Not effusively. Just as a statement of observable fact.'},
+  {ch:'IV. The Anchor\'s Secret Weight',sub:'continued',txt:'"I\'m going to the bathroom," I said. I locked myself in the accessible stall and pressed my forehead against the cool metal door. I push up my sleeve. The old marks are there—faded, parallel, a language I developed before I had any other.\n\nThen the bathroom door opens. "Emily?" Stephanie\'s voice. She\'s crying. I open the stall door. And Stephanie—whose obsession with her own body has made her hyper-attuned to the physical reality of everyone else\'s—her eyes drop to my wrist. Not disgust. Not judgment. Fear. For me.\n\nFor three days I stayed in my room. Dr. Reyes said quietly: "You\'re not a burden, Emily. You\'re a person. Those are different things." I hadn\'t known I\'d been treating them as though they were the same.\n\n"I\'ve been seeing a counselor," I said. "For four months. I should have told you. Waiting to be better before you let people in is how you stay worse."'},
+  {ch:'V. The Man at the Bottom of the Lake',sub:'on: depression, and what it feels like from the inside — Marcus',txt:'The alarm clock doesn\'t wake me up. It\'s a heavy feeling—the air made of wet wool, my own limbs made of something denser than bone. This is the Static. Not the electricity of anxiety or the fire of grief—this is quieter and more total than either of those.\n\nI practice the smile in the mirror. My mother used to say it proudly, before she stopped looking at me directly and started looking at the space slightly to my right, as if the real Marcus had left and she was being polite to the one who remained.\n\nThe Static is not a broken brain but a brain running under conditions of scarcity. I know this. I know it from the sessions and from the reading I\'ve done quietly, alone, in the library. I know it and I still believe it at 3 AM. That\'s the thing about the Static: it doesn\'t care what you know.'},
+  {ch:'V. The Man at the Bottom of the Lake',sub:'Leo\'s mother',txt:'I had driven to the address I\'d looked up online. A small ranch with a brown lawn. Leo\'s mother had opened the door before I knocked. She was smaller than I\'d expected. She had Leo\'s eyes—which landed, in person, like a blow to the sternum.\n\nThe kitchen was clean and full of photographs. Leo at various ages. One photo showed him at this exact kitchen table with a mug in his hands and his eyes on something outside the frame. You could see the dark circles under his eyes. You could see the particular quality of his expression that I had looked at a hundred times in person and called "Leo being Leo"—which I understood now was a way of looking at a person and choosing not to see what was actually there.\n\nShe said: "He wrote to me. Before. He loved you all very much. He was worried about one of you, specifically. He was going to say something. And then he didn\'t."'},
+  {ch:'VI. The Thinnest Version of Yourself',sub:'on: eating disorders, and the language of control — Stephanie',txt:'Luke was always the favorite. I remember being seven years old the first time she "helped." The cookie tray had been circling the adults. She didn\'t yell. She didn\'t even change her expression. She just leaned down and whispered: "Careful, Steph. Your stomach is already looking a little soft in that dress."\n\nShe said it the way you\'d say wear a coat, it\'s cold. Like advice. Like a gift.\n\nI stood in front of the bathroom mirror that night, pulling my shirt tight against my stomach until the fabric left marks on my skin. I turned sideways. I pressed my hands flat against my midsection and tried to understand what she had seen, and whether I could fix it, and how long it would take.\n\nThat was the night mirrors stopped showing me who I was. They only showed me what was wrong.'},
+  {ch:'VI. The Thinnest Version of Yourself',sub:'continued',txt:'Restriction was the first strategy. Control what goes in. The satisfaction of the number going down. The satisfaction lasted approximately as long as the scale held the lower number, which was never very long, because the number was never low enough.\n\nThe purging started when I was sixteen. Not as a method for controlling weight but as a pressure release. I am not ashamed of it in the way I was before—before I understood that what I\'d developed was not a character flaw but a disorder. A specific, named, documented disorder.\n\nI turn off the water. I look in the mirror. I say, to my own reflection, for the first time: "This isn\'t discipline. This is sick." The dysmorphia doesn\'t lift. But something shifts—a very small tectonic movement. Tomorrow I am going to make an appointment at the health center. I am going to say the word. Tonight I am enough.'},
+  {ch:'VII. The Radio Between Stations',sub:'on: identity, and not knowing who you are yet — Liv',txt:'The person in the mirror today has electric blue hair and a vintage leather jacket that smells like someone else\'s memories. That\'s the metaphor I keep returning to: a radio dial. Spinning, searching, finding fragments of signal—a punk rebellion here, a studious intellectual there—but as soon as I try to settle on any of them, the frequency fades.\n\nI am the air between the stations. The hiss and static of a self that never quite resolves into a song.\n\nNadia had turned to me after philosophy class and said: "You argue against every position as soon as you take it. Have you noticed that?" I\'d been defensive for half a second. Then: yes. I\'ve noticed that.\n\n"The self is not a fixed thing to be discovered but a practice to be developed." I read that line six times. Then I applied to Whitmore. I received my acceptance three weeks ago. I have not told anyone.'},
+  {ch:'VII. The Radio Between Stations',sub:'continued',txt:'"I don\'t \'decide,\' Steph," I said. "I just don\'t know how to be the same." The Wit was gone. The Empath was gone. There was just a nerve left, raw and vibrating.\n\n"Do you know how exhausting it is to wake up every single day and have to audition for your own life? To look at you guys and try to figure out which version of Liv won\'t annoy you, or weigh you down, or make you leave?"\n\nEmily and Stephanie knocked at my door. Stephanie was holding a paper bag. "Marcus said you\'d want the cherry. He saved it from the bottom."\n\n"I\'m terrified that if I stop changing, there\'s nothing underneath to actually like," I said. "Just white noise. Just a box making noise."\n\n"Maybe you don\'t have to be a \'thing\' yet," Emily said. "Maybe you can just be the person who likes cherries in her melted milkshakes." I said: "I got into Whitmore." The room was very quiet.'},
+  {ch:'VIII. The Record That Won\'t Stop Skipping',sub:'on: trauma, and the thing no one will say out loud — Tristan',txt:'The stadium lights hummed at a frequency that settled in the marrow. Leo was two rows above me, elbows back, looking up at the patch of dark sky. He was wearing that hoodie—the grey one with the coffee stain near the pocket.\n\n"I don\'t know, Tris." The humor dropped out of his voice so fast it was like watching a light go off. "Sometimes I think about leaving, and I get this feeling like I\'m already gone. Like I\'m a placeholder for a person who\'s supposed to be here but isn\'t."\n\n"You\'re tired," I said. I steered toward the shallow end. That was where Leo and I operated. We didn\'t do the deep conversations. We did sarcasm and loyalty and quiet presence.\n\nAt the base of my neck: a prickle. The instinct said: something is wrong. And I chose not to know it. I chose the shallow end.'},
+  {ch:'VIII. The Record That Won\'t Stop Skipping',sub:'continued — the note',txt:'"Promise me something, Tristan. If one of us ever starts going completely off the rails—if the static gets too loud—the other one calls it out. No polite distance. You grab me by the collar and pull me back." He held out his hand. "Deal?"\n\n"Deal," I said.\n\nThree days later, Leo was gone. The warnings had been there, every one of them, threaded through every conversation like a current running beneath still water. We just hadn\'t wanted to touch the surface.\n\nThere was a note. I was the one who found it. I had read it. I had stood there in his room with the note in my hands, reading words that felt like the floor dropping away, and then I had refolded it and put it back on his desk. I had not mentioned it to the police. I had not told the group.\n\nI had decided the note was mine to carry. Eighteen months later, I was not sure whether that decision had been mercy or cowardice.'},
+  {ch:'IX. The Night Everything Broke',sub:'on: crisis, and what happens when the surface gives way',txt:'It started, as most catastrophes do, with something small. A Tuesday. November. We had arranged to meet at Tristan\'s apartment.\n\n"I need to tell you all something," Luke said. His planner was sitting closed on his knee for once, a fact which registered in the room the way a clock stopping registers. "I\'ve been lying to you. About my grades. About how I\'ve been doing." He told them about the seventy-three. About the four-thirty AM ceiling-watching.\n\n"Stephanie is disappearing in front of us," Marcus said. "Emily\'s sleeves. Tristan looks like he\'s clearing a hot zone." Stephanie said: "I\'ve been purging. Not just restricting. Purging. For over a year. Emily knows."\n\nLuke was doing the math. "I knew something was wrong. I kept not saying anything because I thought if I said it, I\'d have to admit that I\'d missed it for longer than I had."'},
+  {ch:'IX. The Night Everything Broke',sub:'continued — Tristan\'s secret',txt:'"You don\'t get to say his name," Tristan said. The whisper was more frightening than the shout. "You weren\'t there. You didn\'t see the note."\n\nThe words were out before he could stop them. "What note?" Marcus said.\n\nHe told them about the note. The whole of it this time—finding it, reading it, putting it back. What it had said. The specific things it had said about each of them—what Leo had seen, and worried about, and been working up to saying.\n\n"He was going to help us," Tristan said. "He saw us. All of us. The real things. And he was going to do what none of us have managed to do. Be honest about it."\n\nEmily\'s hand found his shoulder. "You\'ve been carrying that alone." "Yeah." "Is that why you\'ve been watching us so closely? Because you knew what he saw?" "Yeah," he said. "I think so."'},
+  {ch:'IX. The Night Everything Broke',sub:'the long night',txt:'What happened next was not clean. It lasted three hours. It was the kind of argument that a group builds toward over years without knowing it, packing it into the walls of every careful conversation, every time someone swallowed the true sentence.\n\n"Where were you, Luke?" Stephanie\'s voice stripped bare. "When I was fifteen and you were sitting with Dad at the kitchen table letting him use your A-minus as a stick to measure me with?"\n\n"I should have said something," he said. "I was afraid of her." Stephanie looked at him. Something in her face shifted—not forgiveness, not yet, but recognition. "I know," she said. "So am I."\n\nLiv told them about Whitmore. "I\'m probably going to go." Stephanie\'s expression moved through something complicated, and then resolved into something adjacent to happiness—the kind of feeling you have when someone you love does a brave thing that is going to cost you.'},
+  {ch:'X. The Room Without Armor',sub:'on: honesty, and what it costs to finally tell the truth',txt:'Dr. Aris\'s office smelled of stale coffee and lavender. Six mismatched chairs. Six people who spent every waking hour together, the distance between their seats feeling like miles.\n\n"A simple question," Dr. Aris said. "What do you think your friends—the people in this room—misunderstand most about you?"\n\nLuke spoke first. "They think I like it. The control. They think being perfect is a role I enjoy." A short, bitter exhalation. "I\'m not trying to be perfect. I\'m trying to not disappoint everyone. I\'m not a fortress. I\'m brittle. There\'s a difference."\n\nStephanie: "I know the mirror lies. But it doesn\'t matter what the mirror says—I feel wrong. Like I was born in a shape that doesn\'t fit the soul inside it. I made an appointment at the health center this week. I said the clinical word. The doctor used it back to me and I didn\'t die."'},
+  {ch:'X. The Room Without Armor',sub:'continued',txt:'Emily: "I think you all think I was trying to die. I wasn\'t trying to end it. I just couldn\'t hear myself over the noise. I wasn\'t looking for a way out. I was looking for a way to stay."\n\nLiv: "I thought if I stopped performing, no one would stay. I looked at all of you and I didn\'t see anything in me that could match it. The audience was never you. The audience was my own fear."\n\nMarcus: "I\'ve been going to see someone. Two months. The Static is—smaller. Like furniture that used to fill the whole room and now just takes up one corner. I can move around it."\n\nTristan: "I\'ve been trying to finish what Leo started—to watch and find the way to say it. I\'ve been trying to be the thing he was going to be. And in doing that I kept the note secret and kept myself at a remove that was its own form of the silence I inherited."'},
+  {ch:'XI. What Remains',sub:'on: recovery, and the long, ordinary work of getting better',txt:'The diner smells like burnt butter and old coffee, and nobody orders anything fancy. Luke stares at the menu and then orders pie. Not because it\'s strategic. Just because it looked good.\n\n"You\'re getting pie," Stephanie says. "I\'m getting pie," Luke confirms, like a man announcing a minor political miracle.\n\nMarcus is the one who says Leo\'s name. Not carefully. Not with stiff ceremonial reverence. He just says it the way you say the name of someone who mattered. "Leo used to order a chocolate shake and a side of fries and then eat the fries by dipping them in the shake. He called it \'flavor architecture.\'" "It was disgusting," Tristan says. "It was actually incredible," Emily says quietly.\n\nThey sit with it. The memory doesn\'t detonate. It settles over the table like warmth—the particular quality of grief that has softened just enough to let the love come through.'},
+  {ch:'XI. What Remains',sub:'January & February — eight weeks later',txt:'Stephanie has begun weekly appointments at the university health center. She has a dietitian and a therapist and a treatment plan taped to the inside of her closet door. The mirror still lies some days. But she has started to recognize it lying, which is different from not knowing. Recognizing a lie is the first step to not believing it.\n\nEmily continues seeing Dr. Reyes. She pushed her sleeves up in the diner last Tuesday and left them up for the whole meal. Nobody commented. She didn\'t pull them back down. That was its own form of progress.\n\nLiv sends a photograph from Oregon at 7:14 AM. The group responds. Stephanie sends: which Liv? There is a pause of forty seconds. Liv sends back: still figuring that out. Which is new. Which is honest.\n\nTristan has begun talking about Leo to people who knew him. The record needle lifts. The song doesn\'t stop. But it finally, mercifully, moves forward.'},
+  {ch:'XI. What Remains',sub:'Back at the fountain — the ending',txt:'Five of them are there. Liv sends a voice note from Oregon: "I can\'t be there in person but I\'m there in spirit and Marcus please for the love of everything eat more than half a sandwich today." Marcus is, in fact, eating a sandwich.\n\nStephanie is drawing the puddle that spills over the edge of the fountain basin. "It looks better when it\'s escaping. The fountain always felt like a cage. Now it just looks exhausting."\n\nTristan\'s phone buzzes. A notification. He goes to dismiss it. He stops. It\'s an email. Sent from Leo\'s account. Sent today. 7:14 AM. Eighteen months after he died. To all six of them.\n\nThe subject line reads: I knew. I always knew. And there\'s something I never told you.\n\n— end —\n\n"We are six people learning, day by day, that \'broken\' is just another word for \'open.\'"'},
+];
+let pg=0;
+function renderPage(){
+  const p=pages[pg];
+  $('pg-lbl').textContent=`Page ${pg+1} of ${pages.length}`;
+  $('pg-ch').textContent=p.ch;
+  $('pg-sub').textContent=p.sub;
+  $('pg-txt').textContent=p.txt;
+  $('pg-prev').disabled=pg===0;
+  $('pg-next').disabled=pg===pages.length-1;
+}
+renderPage();
+$('pg-prev').addEventListener('click',()=>{if(pg>0){pg--;renderPage();}});
+$('pg-next').addEventListener('click',()=>{if(pg<pages.length-1){pg++;renderPage();}});
+
+// ══ BREATHING ══
+let breathing=false,bTmr;
+const ring=$('b-ring'),bInner=$('b-inner'),bInstr=$('b-instr'),bBtn=$('b-btn');
+const phases=[{n:'inhale',s:4,i:'inhale',t:'Breathe in slowly… (4 seconds)'},{n:'hold',s:7,i:'hold',t:'Hold. You\'re safe. (7 seconds)'},{n:'exhale',s:8,i:'exhale',t:'Let it all out. (8 seconds)'}];
+let pi=0;
+function runBreath(){
+  const ph=phases[pi];bInner.textContent=ph.i;bInstr.textContent=ph.t;
+  ring.className='b-ring '+(ph.n==='exhale'?'exhale':ph.n==='inhale'?'inhale':'');
+  let t=ph.s;clearInterval(bTmr);
+  bTmr=setInterval(()=>{if(--t<=0){clearInterval(bTmr);pi=(pi+1)%phases.length;runBreath()}},1000);
+}
+bBtn.addEventListener('click',()=>{
+  if(!breathing){breathing=true;bBtn.textContent='Stop';pi=0;runBreath();}
+  else{breathing=false;bBtn.textContent='Start';clearInterval(bTmr);ring.className='b-ring';bInner.textContent='begin';bInstr.textContent="Press start when you're ready.";}
+});
+
+// ══ QUIZ ══
+const questions=[
+  {q:"When someone asks how you are, you—",opts:["Say 'fine' before they finish asking.","Redirect the question back to them.","Tell them everything, then immediately regret it.","Give a completely different answer every time."]},
+  {q:"The last time you felt truly understood was—",opts:["So long ago you can't place it.","By someone no longer in your life.","By a book, not a person.","You're honestly not sure you have been."]},
+  {q:"When things get too much, you—",opts:["Schedule harder. Control more.","Go very quiet and disappear inward.","Perform louder to fill the silence.","Go somewhere else in your head entirely."]},
+  {q:"Your relationship with your own feelings is—",opts:["Administrative. You manage them.","Avoidant. It's easier.","Complicated. They leak out sideways.","Searching. You're still looking for the names."]},
+  {q:"The person who knows you best—",opts:["Doesn't know everything.","Knows more than you'd like.","Is maybe you. Maybe.","Doesn't exist yet."]},
+];
+const results=[
+  {name:'Luke',desc:'You manage yourself with terrifying precision. The schedule isn\'t productivity — it\'s armour. Somewhere under all the colour-coded planning is someone who was told "not enough" so many times it became a personal policy. Luke learned, in a bathroom on the floor, that we don\'t love you because you\'re useful. That\'s for you too.'},
+  {name:'Tristan',desc:'You are always, quietly, scanning the room. You\'ve learned to keep still while a part of you stays on alert. You\'ve been performing fine for so long the performance has almost become you — almost. The record needle can move. You don\'t have to carry it alone.'},
+  {name:'Emily',desc:'You learned early that the way to survive was to cost nothing. To need nothing. To be fine. You are very good at it. Dr. Reyes said: you\'re not a burden. You\'re a person. Those are different things. That\'s for you too.'},
+  {name:'Stephanie',desc:'You understand exactly what\'s happening. You could probably write a paper on it. Understanding it does nothing to interrupt it. That is the most honest sentence in the book, and it belongs to you. The mirror lies. You are starting to recognise it lying. That\'s the first step.'},
+  {name:'Liv',desc:'You arrive like a firework in a fog bank. Bright, loud, filling all available space — because silence is where the real questions live. The self is not a fixed thing to be discovered. It is a practice to be developed. You\'re already in the practice.'},
+  {name:'Marcus',desc:'The Static arrived slowly. You didn\'t name it for a long time. You just felt heavier, year by year. You still show up. You still sit at the fountain. You still eat the sandwich. One kick at a time. One breath at a time. That\'s enough.'},
+];
+let qi=0,scores=[0,0,0,0,0,0];
+const dots=[...$('qdots').querySelectorAll('.qdot')];
+function renderQ(){
+  const q=questions[qi];$('q-txt').textContent=q.q;$('q-opts').innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='q-opt';b.textContent=o;
+    b.addEventListener('click',()=>{scores[i%6]++;scores[(i+1)%6]++;qi++;dots.forEach((d,di)=>d.classList.toggle('on',di<qi));if(qi>=questions.length)showRes();else renderQ();});
+    $('q-opts').appendChild(b);
+  });
+}
+function showRes(){
+  $('quiz-body').style.display='none';
+  const top=scores.indexOf(Math.max(...scores));
+  $('qr-name').textContent=results[top].name;$('qr-desc').textContent=results[top].desc;
+  $('quiz-res').style.display='block';
+}
+renderQ();
+
+// ══ DARK JOKES ══
+const jokes=[
+  {s:"Why did the therapist become a gardener?",p:"She was tired of people with deeply rooted issues. At least plants respond to treatment."},
+  {s:"My doctor told me I need to watch my drinking.",p:"So now I do it in front of a mirror. Progress."},
+  {s:"I asked my shadow how it was doing.",p:"It said it was always behind me no matter what I did. We've never been closer."},
+  {s:"Why don't pessimists bungee jump?",p:"They're convinced the cord will hold but somehow still be their fault."},
+  {s:"I told my psychiatrist I felt like a pair of curtains.",p:"She said to pull myself together. Oldest trick in the book. Still worked."},
+  {s:"Death is like a final exam.",p:"You spend your whole life preparing and still feel completely unprepared."},
+  {s:"My therapist says I have trouble letting things go.",p:"I've been thinking about that for eleven years."},
+  {s:"Why did the nihilist skip the gym?",p:"What's the point? The weights just go back down anyway."},
+  {s:"I've been reading a book about anti-gravity.",p:"It's impossible to put down. Much like my crippling existential dread."},
+  {s:"How many therapists does it take to change a lightbulb?",p:"One. But the lightbulb has to really want to change."},
+  {s:"My psychiatrist told me I'm paranoid.",p:"Well, he didn't exactly say that. But I know what he meant."},
+  {s:"I put my phone on airplane mode.",p:"Still crashed. Relatable."},
+];
+const j=jokes[new Date().getDate()%jokes.length];
+$('joke-s').textContent=j.s;
+const jp=$('joke-p');
+jp.addEventListener('click',()=>{if(!jp.classList.contains('shown')){jp.textContent=j.p;jp.classList.add('shown');}});
+
+// ══ READER WALL ══
+$('wall-btn').addEventListener('click',()=>{
+  const v=$('wall-ta').value.trim();if(!v)return;
+  const d=document.createElement('div');d.className='wall-msg';
+  d.innerHTML=v.replace(/</g,'&lt;')+'<div class="wall-meta">Anonymous · just now</div>';
+  $('wall-msgs').prepend(d);$('wall-ta').value='';
+});
+
+// ══ VOTES ══
+function vote(i){const e=$('v'+i);e.textContent=parseInt(e.textContent)+1;}
+
+// ══ READING PROGRESS ══
+const chapters=['A Note to the Reader','I. Six Planets, One Dead Star','II. The Pressure Cooker','III. What the Perfectly Still Man Carries','IV. The Anchor\'s Secret Weight','V. The Man at the Bottom of the Lake','VI. The Thinnest Version of Yourself','VII. The Radio Between Stations','VIII. The Record That Won\'t Stop Skipping','IX. The Night Everything Broke','X. The Room Without Armor','XI. What Remains'];
+let saved=[];try{saved=JSON.parse(localStorage.getItem('ws-ch')||'[]');}catch(e){}
+const cList=$('ch-list');
+chapters.forEach((c,i)=>{
+  const row=document.createElement('div');
+  const done=saved.includes(i);
+  row.className='ch-row'+(done?' done':'');
+  row.innerHTML=`<div class="ch-check${done?' done':''}"></div><div class="ch-name">${c}</div>`;
+  row.addEventListener('click',()=>{
+    let s=[];try{s=JSON.parse(localStorage.getItem('ws-ch')||'[]');}catch(e){}
+    const pos=s.indexOf(i),ck=row.querySelector('.ch-check');
+    if(pos===-1){s.push(i);ck.classList.add('done');row.classList.add('done');}
+    else{s.splice(pos,1);ck.classList.remove('done');row.classList.remove('done');}
+    try{localStorage.setItem('ws-ch',JSON.stringify(s));}catch(e){}
+  });
+  cList.appendChild(row);
+});
+</script>
+</body>
+</html>
