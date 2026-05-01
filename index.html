@@ -1,1045 +1,494 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Weary Souls — Beneath the Surface</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --ink: rgba(30, 28, 38, 0.92);
-      --ink-soft: rgba(30, 28, 38, 0.55);
-      --ink-faint: rgba(30, 28, 38, 0.25);
-      --cream: #f5f2ed;
-      --glass: rgba(245,242,237,0.38);
-      --glass-border: rgba(245,242,237,0.28);
-      --deep: rgba(22,18,30,0.82);
-      --accent: #7c6a8a;
-      --accent-light: rgba(124,106,138,0.18);
-      --font-display: 'Cormorant Garamond', Georgia, serif;
-      --font-body: 'DM Sans', ui-sans-serif, sans-serif;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: var(--font-body);
-      background-color: var(--cream);
-      color: var(--ink);
-      overflow-x: hidden;
-      font-weight: 300;
-    }
-
-    /* ─── HERO ─────────────────────────────────────────────────────── */
-    .hero-wrap {
-      width: 100%;
-      height: 100svh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      background-color: var(--cream);
-    }
-    @media (min-width: 768px) { .hero-wrap { padding: 20px; } }
-
-    .hero-section {
-      position: relative;
-      width: 100%;
-      max-width: 1536px;
-      height: 100%;
-      border-radius: 24px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(255,255,255,0.08);
-      box-shadow: 0 8px 64px rgba(22,18,30,0.10);
-    }
-    @media (min-width: 768px) { .hero-section { border-radius: 48px; } }
-
-    /* video bg */
-    .hero-video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 65%;
-      z-index: 0;
-    }
-    @media (min-width: 1024px) { .hero-video { object-position: center; } }
-
-    /* gradient overlay for legibility */
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      background: linear-gradient(
-        160deg,
-        rgba(245,242,237,0.55) 0%,
-        rgba(245,242,237,0.20) 50%,
-        rgba(22,18,30,0.18) 100%
-      );
-    }
-
-    /* content layer */
-    .hero-content {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* ─── NAVBAR ───────────────────────────────────────────────────── */
-    .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 24px 24px;
-      width: 100%;
-      position: relative;
-      z-index: 10;
-    }
-    @media (min-width: 768px) { .navbar { padding: 24px 40px; } }
-
-    .nav-spacer { flex: 1; display: none; }
-    @media (min-width: 768px) { .nav-spacer { display: block; } }
-
-    .nav-menu {
-      display: none;
-      list-style: none;
-      gap: 32px;
-      align-items: center;
-      color: var(--ink);
-      font-size: 13px;
-      font-weight: 400;
-      letter-spacing: 0.02em;
-    }
-    @media (min-width: 768px) { .nav-menu { display: flex; } }
-
-    .nav-menu li {
-      cursor: pointer;
-      opacity: 0.8;
-      transition: opacity 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .nav-menu li:hover { opacity: 1; }
-    .nav-menu li svg { width: 14px; height: 14px; transition: transform 0.2s; }
-    .nav-menu li:hover svg { transform: translateX(2px); }
-
-    .nav-mobile-logo {
-      display: block;
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 400;
-      letter-spacing: -0.02em;
-      color: var(--ink);
-    }
-    @media (min-width: 768px) { .nav-mobile-logo { display: none; } }
-
-    .nav-right { flex: 1; display: flex; justify-content: flex-end; }
-
-    .nav-cta {
-      display: flex;
-      align-items: center;
-      background: var(--deep);
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      padding: 8px 20px 8px 8px;
-      gap: 10px;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 400;
-      transition: background 0.2s, transform 0.15s;
-      letter-spacing: 0.01em;
-    }
-    .nav-cta:hover { background: rgba(22,18,30,0.95); transform: scale(1.02); }
-    .nav-cta:active { transform: scale(0.98); }
-
-    .nav-cta-icon {
-      background: rgba(255,255,255,0.18);
-      padding: 6px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .nav-cta-icon svg { width: 16px; height: 16px; color: #fff; }
-
-    /* ─── HERO TEXT ────────────────────────────────────────────────── */
-    .hero-text-wrap {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 32px 24px 0;
-      text-align: center;
-      max-width: 860px;
-    }
-
-    /* badge */
-    .hero-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 18px;
-      border-radius: 999px;
-      background: rgba(245,242,237,0.65);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-      margin-bottom: 16px;
-      animation: fadeUp 0.6s ease-out both;
-    }
-    .hero-badge svg { width: 15px; height: 15px; color: var(--accent); }
-    .hero-badge span {
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--ink);
-      letter-spacing: 0.04em;
-    }
-
-    .hero-h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.6rem, 7vw, 5.2rem);
-      font-weight: 300;
-      color: var(--ink);
-      letter-spacing: -0.02em;
-      line-height: 1.05;
-      margin-bottom: 12px;
-      animation: fadeScale 0.8s ease-out 0.2s both;
-    }
-
-    .hero-sub {
-      font-size: clamp(0.9rem, 1.5vw, 1.1rem);
-      color: var(--ink-soft);
-      line-height: 1.65;
-      max-width: 520px;
-      font-weight: 300;
-      animation: fadeIn 0.8s ease-out 0.4s both;
-    }
-
-    /* ─── BOTTOM LEFT CARD ─────────────────────────────────────────── */
-    .bottom-left-card {
-      position: absolute;
-      bottom: 112px;
-      right: 16px;
-      padding: 16px;
-      border-radius: 22px;
-      background: rgba(245,242,237,0.38);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-width: 145px;
-      animation: slideInLeft 0.8s ease-out 0.2s both;
-    }
-    @media (min-width: 768px) {
-      .bottom-left-card {
-        left: 24px;
-        right: auto;
-        bottom: 24px;
-        border-radius: 28px;
-        min-width: 160px;
-        padding: 20px;
-      }
-    }
-    @media (min-width: 1024px) {
-      .bottom-left-card {
-        left: 40px;
-        bottom: 40px;
-        border-radius: 36px;
-        min-width: 190px;
-        gap: 14px;
-        padding: 24px;
-      }
-    }
-
-    .blc-stat { font-family: var(--font-display); font-size: 2.2rem; font-weight: 300; color: var(--ink); letter-spacing: -0.03em; line-height: 1; }
-    @media (min-width: 768px) { .blc-stat { font-size: 2.8rem; } }
-    .blc-label { font-size: 10px; font-weight: 400; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 2px; }
-    @media (min-width: 768px) { .blc-label { font-size: 11px; } }
-
-    .blc-btn {
-      display: flex;
-      align-items: center;
-      background: #fff;
-      border: none;
-      border-radius: 999px;
-      padding: 6px 18px 6px 6px;
-      gap: 8px;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--ink);
-      transition: background 0.2s, transform 0.15s;
-      align-self: flex-start;
-    }
-    .blc-btn:hover { background: rgba(255,255,255,0.9); transform: scale(1.02); }
-    .blc-btn:active { transform: scale(0.98); }
-    .blc-btn-icon {
-      background: var(--accent-light);
-      padding: 5px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .blc-btn-icon svg { width: 14px; height: 14px; color: var(--accent); }
-
-    /* ─── BOTTOM RIGHT CORNER ──────────────────────────────────────── */
-    .bottom-right-corner {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      padding: 20px 12px 12px 32px;
-      background: var(--cream);
-      border-top-left-radius: 24px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      animation: slideInUp 0.8s ease-out 0.4s both;
-    }
-    @media (min-width: 640px) {
-      .bottom-right-corner { padding: 24px 16px 16px 40px; border-top-left-radius: 32px; gap: 16px; }
-    }
-    @media (min-width: 768px) {
-      .bottom-right-corner { padding: 32px 24px 24px 56px; border-top-left-radius: 56px; gap: 24px; }
-    }
-
-    /* corner masks */
-    .corner-mask-top {
-      position: absolute;
-      top: -24px; right: 0;
-      width: 24px; height: 24px;
-      pointer-events: none;
-    }
-    @media (min-width: 640px) { .corner-mask-top { top: -32px; width: 32px; height: 32px; } }
-    @media (min-width: 768px) { .corner-mask-top { top: -56px; width: 56px; height: 56px; } }
-
-    .corner-mask-left {
-      position: absolute;
-      bottom: 0; left: -24px;
-      width: 24px; height: 24px;
-      pointer-events: none;
-    }
-    @media (min-width: 640px) { .corner-mask-left { left: -32px; width: 32px; height: 32px; } }
-    @media (min-width: 768px) { .corner-mask-left { left: -56px; width: 56px; height: 56px; } }
-
-    .brc-icon-wrap {
-      background: rgba(30,28,38,0.05);
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(30,28,38,0.10);
-      flex-shrink: 0;
-    }
-    @media (min-width: 768px) { .brc-icon-wrap { width: 56px; height: 56px; } }
-    .brc-icon-wrap svg { width: 18px; height: 18px; color: var(--ink); }
-    @media (min-width: 768px) { .brc-icon-wrap svg { width: 22px; height: 22px; } }
-
-    .brc-title {
-      font-family: var(--font-display);
-      font-size: 17px;
-      font-weight: 400;
-      color: var(--ink);
-      letter-spacing: -0.01em;
-    }
-    @media (min-width: 768px) { .brc-title { font-size: 21px; } }
-
-    .brc-sub {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      color: var(--ink-soft);
-      cursor: pointer;
-      transition: color 0.2s;
-      margin-top: 2px;
-    }
-    .brc-sub:hover { color: var(--ink); }
-    .brc-sub span { font-size: 12px; font-weight: 400; }
-    @media (min-width: 768px) { .brc-sub span { font-size: 14px; } }
-    .brc-sub svg { width: 13px; height: 13px; }
-
-    /* ─── KEYFRAMES ────────────────────────────────────────────────── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeScale {
-      from { opacity: 0; transform: scale(0.98); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes slideInLeft {
-      from { opacity: 0; transform: translateX(-20px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes slideInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ─── QUOTE TICKER ─────────────────────────────────────────────── */
-    .ticker-wrap {
-      width: 100%;
-      overflow: hidden;
-      padding: 10px 0;
-      border-top: 1px solid var(--ink-faint);
-      border-bottom: 1px solid var(--ink-faint);
-      margin: 60px 0 0;
-      background: var(--cream);
-    }
-    .ticker-track {
-      display: flex;
-      gap: 64px;
-      width: max-content;
-      animation: ticker 30s linear infinite;
-    }
-    .ticker-item {
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-style: italic;
-      color: var(--ink-soft);
-      white-space: nowrap;
-      letter-spacing: 0.01em;
-    }
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-
-    /* ─── SECTION BASE ─────────────────────────────────────────────── */
-    section { width: 100%; max-width: 1200px; margin: 0 auto; padding: 80px 32px; }
-    @media (min-width: 768px) { section { padding: 100px 48px; } }
-
-    h2.sec-label {
-      font-family: var(--font-body);
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
-      margin-bottom: 12px;
-    }
-    h3.sec-title {
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 300;
-      color: var(--ink);
-      letter-spacing: -0.02em;
-      line-height: 1.1;
-      margin-bottom: 24px;
-    }
-    p.sec-body {
-      font-size: 15px;
-      line-height: 1.75;
-      color: var(--ink-soft);
-      font-weight: 300;
-      max-width: 620px;
-    }
-
-    /* ─── DIVIDER ──────────────────────────────────────────────────── */
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: var(--ink-faint);
-    }
-
-    /* ─── SUMMARY ──────────────────────────────────────────────────── */
-    #summary { display: grid; grid-template-columns: 1fr; gap: 48px; }
-    @media (min-width: 768px) { #summary { grid-template-columns: 1fr 1fr; align-items: start; gap: 80px; } }
-
-    .summary-pull {
-      font-family: var(--font-display);
-      font-size: clamp(1.4rem, 2.5vw, 1.9rem);
-      font-weight: 300;
-      font-style: italic;
-      color: var(--ink);
-      line-height: 1.35;
-      border-left: 2px solid var(--accent);
-      padding-left: 24px;
-      margin-top: 8px;
-    }
-
-    .summary-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-    .tag {
-      font-size: 11px;
-      font-weight: 400;
-      color: var(--ink-soft);
-      border: 1px solid var(--ink-faint);
-      border-radius: 999px;
-      padding: 5px 14px;
-      letter-spacing: 0.04em;
-    }
-
-    /* ─── CHARACTERS ───────────────────────────────────────────────── */
-    #characters { padding-top: 0; }
-    .chars-header { margin-bottom: 48px; }
-
-    .chars-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-    @media (min-width: 640px) { .chars-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (min-width: 1024px) { .chars-grid { grid-template-columns: repeat(6, 1fr); gap: 12px; } }
-
-    .char-card {
-      background: rgba(255,255,255,0.55);
-      border: 1px solid var(--ink-faint);
-      border-radius: 20px;
-      padding: 20px 16px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: default;
-    }
-    .char-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(22,18,30,0.08); }
-
-    .char-initial {
-      font-family: var(--font-display);
-      font-size: 2.4rem;
-      font-weight: 300;
-      color: var(--ink);
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-    .char-name { font-size: 13px; font-weight: 500; color: var(--ink); letter-spacing: 0.01em; }
-    .char-trait { font-size: 11px; font-weight: 300; color: var(--ink-soft); line-height: 1.5; margin-top: 2px; }
-
-    /* ─── PULL QUOTE SECTION ───────────────────────────────────────── */
-    #quote-block {
-      background: var(--deep);
-      padding: 80px 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .big-quote {
-      font-family: var(--font-display);
-      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
-      font-weight: 300;
-      font-style: italic;
-      color: rgba(245,242,237,0.92);
-      line-height: 1.4;
-      max-width: 780px;
-      letter-spacing: -0.01em;
-    }
-    .big-quote-attr {
-      margin-top: 20px;
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(245,242,237,0.35);
-    }
-
-    /* ─── ROTATING QUOTE ───────────────────────────────────────────── */
-    #from-pages { text-align: center; }
-    .rotating-quote-wrap {
-      position: relative;
-      min-height: 80px;
-      margin: 24px auto 16px;
-      max-width: 640px;
-    }
-    .rot-q {
-      font-family: var(--font-display);
-      font-size: clamp(1.1rem, 2vw, 1.5rem);
-      font-style: italic;
-      font-weight: 300;
-      color: var(--ink);
-      line-height: 1.5;
-      opacity: 0;
-      position: absolute;
-      inset: 0;
-      transition: opacity 0.7s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .rot-q.active { opacity: 1; position: relative; }
-
-    .quote-btns { display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
-    .q-btn {
-      font-family: var(--font-body);
-      font-size: 12px;
-      font-weight: 400;
-      color: var(--ink-soft);
-      background: none;
-      border: 1px solid var(--ink-faint);
-      border-radius: 999px;
-      padding: 7px 18px;
-      cursor: pointer;
-      transition: all 0.2s;
-      letter-spacing: 0.04em;
-    }
-    .q-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
-
-    /* ─── FEELING CHECK-IN ─────────────────────────────────────────── */
-    #check-in { text-align: center; }
-    .feeling-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 32px; }
-    .feeling-pill {
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--ink);
-      background: rgba(255,255,255,0.6);
-      border: 1px solid var(--ink-faint);
-      border-radius: 999px;
-      padding: 10px 22px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .feeling-pill:hover, .feeling-pill.selected {
-      background: var(--ink);
-      color: var(--cream);
-      border-color: var(--ink);
-    }
-    .feeling-response {
-      margin-top: 24px;
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-style: italic;
-      color: var(--ink-soft);
-      min-height: 32px;
-      transition: opacity 0.3s;
-    }
-
-    /* ─── BREATHING ────────────────────────────────────────────────── */
-    #breathe { text-align: center; }
-    .breath-circle-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 40px auto 24px;
-    }
-    .breath-circle {
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      background: var(--accent-light);
-      border: 2px solid rgba(124,106,138,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-style: italic;
-      color: var(--accent);
-      transition: transform 4s ease-in-out, background 1s;
-      cursor: pointer;
-    }
-    .breath-circle.inhale { transform: scale(1.5); background: rgba(124,106,138,0.28); }
-    .breath-circle.hold   { transform: scale(1.5); background: rgba(124,106,138,0.18); }
-    .breath-circle.exhale { transform: scale(1.0); background: rgba(124,106,138,0.08); }
-    .breath-label { font-size: 13px; color: var(--ink-soft); letter-spacing: 0.06em; margin-top: 12px; min-height: 20px; }
-
-    /* ─── ABOUT ────────────────────────────────────────────────────── */
-    #about { display: grid; grid-template-columns: 1fr; gap: 40px; }
-    @media (min-width: 768px) { #about { grid-template-columns: 1fr 1fr; align-items: center; gap: 80px; } }
-    .about-authors { font-family: var(--font-display); font-size: 3rem; font-weight: 300; color: var(--ink-faint); line-height: 1; letter-spacing: -0.04em; }
-
-    /* ─── BOOK CARD ────────────────────────────────────────────────── */
-    #book { text-align: center; }
-    .book-card {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      background: #fff;
-      border: 1px solid var(--ink-faint);
-      border-radius: 32px;
-      padding: 48px 40px;
-      margin-top: 40px;
-      max-width: 440px;
-      width: 100%;
-    }
-    .book-icon { font-size: 3rem; }
-    .book-card h4 {
-      font-family: var(--font-display);
-      font-size: 1.8rem;
-      font-weight: 300;
-      color: var(--ink);
-      letter-spacing: -0.02em;
-    }
-    .book-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.7; max-width: 320px; }
-
-    .dl-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--ink);
-      color: var(--cream);
-      border: none;
-      border-radius: 999px;
-      padding: 13px 28px;
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 400;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
-      letter-spacing: 0.02em;
-    }
-    .dl-btn:hover { background: rgba(22,18,30,0.8); transform: scale(1.02); }
-    .dl-btn svg { width: 16px; height: 16px; }
-    .dl-note { font-size: 11px; color: var(--ink-faint); letter-spacing: 0.06em; }
-
-    /* ─── BOOK SUPPORT ─────────────────────────────────────────────── */
-    #book-support .support-note {
-      background: rgba(124,106,138,0.08);
-      border: 1px solid rgba(124,106,138,0.18);
-      border-radius: 16px;
-      padding: 16px 20px;
-      font-size: 13px;
-      color: var(--ink-soft);
-      line-height: 1.65;
-      margin-top: 24px;
-      max-width: 580px;
-    }
-    .support-cards { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 32px; }
-    @media (min-width: 640px) { .support-cards { grid-template-columns: 1fr 1fr; } }
-    @media (min-width: 1024px) { .support-cards { grid-template-columns: repeat(3, 1fr); } }
-
-    .sc {
-      background: #fff;
-      border: 1px solid var(--ink-faint);
-      border-radius: 20px;
-      padding: 24px 20px;
-    }
-    .sc-char { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
-    .sc-text { font-family: var(--font-display); font-size: 1.05rem; font-style: italic; color: var(--ink); line-height: 1.55; }
-
-    /* ─── CONTENT WARNINGS ─────────────────────────────────────────── */
-    #warnings .warn-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-    .warn-chip {
-      font-size: 12px;
-      font-weight: 400;
-      color: var(--ink);
-      background: rgba(22,18,30,0.05);
-      border-radius: 999px;
-      padding: 7px 16px;
-      letter-spacing: 0.02em;
-    }
-
-    /* ─── READING PROGRESS ─────────────────────────────────────────── */
-    #progress .chapters { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; max-width: 560px; }
-    .ch-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      border: 1px solid var(--ink-faint);
-      border-radius: 12px;
-      background: #fff;
-      cursor: pointer;
-      transition: background 0.15s;
-      gap: 16px;
-    }
-    .ch-row:hover { background: rgba(124,106,138,0.06); }
-    .ch-row.done { background: rgba(124,106,138,0.10); border-color: rgba(124,106,138,0.25); }
-    .ch-num { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: var(--ink-faint); text-transform: uppercase; min-width: 24px; }
-    .ch-name { font-family: var(--font-display); font-size: 1rem; color: var(--ink); flex: 1; }
-    .ch-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--ink-faint); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .ch-row.done .ch-check { background: var(--accent); border-color: var(--accent); }
-    .ch-check svg { width: 11px; height: 11px; color: #fff; display: none; }
-    .ch-row.done .ch-check svg { display: block; }
-    .progress-bar-wrap { height: 3px; background: var(--ink-faint); border-radius: 999px; margin-top: 20px; max-width: 560px; }
-    .progress-bar { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.4s ease; }
-
-    /* ─── READER WALL ──────────────────────────────────────────────── */
-    #reader-wall .wall-input-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 28px;
-      max-width: 560px;
-    }
-    .wall-input {
-      flex: 1;
-      border: 1px solid var(--ink-faint);
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--ink);
-      background: #fff;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .wall-input:focus { border-color: var(--accent); }
-    .wall-post-btn {
-      background: var(--ink);
-      color: var(--cream);
-      border: none;
-      border-radius: 12px;
-      padding: 12px 22px;
-      font-family: var(--font-body);
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.2s;
-      white-space: nowrap;
-    }
-    .wall-post-btn:hover { background: rgba(22,18,30,0.78); }
-    .wall-messages { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; max-width: 560px; }
-    .wall-msg {
-      background: #fff;
-      border: 1px solid var(--ink-faint);
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-family: var(--font-display);
-      font-size: 0.98rem;
-      font-style: italic;
-      color: var(--ink);
-      line-height: 1.55;
-      animation: fadeUp 0.4s ease-out both;
-    }
-    .wall-anon { font-size: 10px; font-weight: 400; color: var(--ink-faint); font-style: normal; font-family: var(--font-body); letter-spacing: 0.06em; margin-top: 6px; text-transform: uppercase; }
-
-    /* ─── FAVOURITE QUOTES VOTE ────────────────────────────────────── */
-    #fav-quotes .fq-list { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; max-width: 640px; }
-    .fq-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      background: #fff;
-      border: 1px solid var(--ink-faint);
-      border-radius: 16px;
-      padding: 18px 20px;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-    }
-    .fq-item:hover { background: rgba(124,106,138,0.04); }
-    .fq-item.voted { border-color: var(--accent); background: rgba(124,106,138,0.07); }
-    .fq-radio {
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      border: 1.5px solid var(--ink-faint);
-      flex-shrink: 0;
-      margin-top: 2px;
-      transition: all 0.2s;
-    }
-    .fq-item.voted .fq-radio { background: var(--accent); border-color: var(--accent); }
-    .fq-text {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-style: italic;
-      color: var(--ink);
-      line-height: 1.55;
-    }
-    .fq-votes { font-size: 11px; color: var(--ink-faint); font-family: var(--font-body); margin-top: 4px; letter-spacing: 0.04em; }
-
-    /* ─── CHARACTER MAP ─────────────────────────────────────────────── */
-    #char-map { text-align: center; }
-    .cmap-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 40px;
-      position: relative;
-      min-height: 320px;
-    }
-    .cmap-svg { max-width: 560px; width: 100%; }
-
-    /* ─── GET SUPPORT ──────────────────────────────────────────────── */
-    #get-support {
-      background: var(--deep);
-      max-width: 100%;
-      padding: 80px 48px;
-      text-align: center;
-    }
-    #get-support h2.sec-label { color: rgba(245,242,237,0.4); }
-    #get-support h3.sec-title { color: rgba(245,242,237,0.92); margin: 0 auto 12px; }
-    #get-support p.sec-body { color: rgba(245,242,237,0.5); margin: 0 auto 40px; text-align: center; }
-
-    .support-grid { display: grid; grid-template-columns: 1fr; gap: 12px; max-width: 700px; margin: 0 auto; }
-    @media (min-width: 640px) { .support-grid { grid-template-columns: 1fr 1fr; } }
-
-    .support-item {
-      background: rgba(245,242,237,0.06);
-      border: 1px solid rgba(245,242,237,0.1);
-      border-radius: 18px;
-      padding: 22px 24px;
-      text-align: left;
-      transition: background 0.2s;
-    }
-    .support-item:hover { background: rgba(245,242,237,0.10); }
-    .support-item-title { font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,242,237,0.45); margin-bottom: 6px; }
-    .support-item-val { font-family: var(--font-display); font-size: 1.15rem; color: rgba(245,242,237,0.92); }
-    .support-item-desc { font-size: 12px; color: rgba(245,242,237,0.4); margin-top: 4px; line-height: 1.5; }
-
-    /* ─── QUIZ ──────────────────────────────────────────────────────── */
-    #quiz { text-align: center; }
-    .quiz-card {
-      display: inline-block;
-      max-width: 560px;
-      width: 100%;
-      text-align: left;
-      margin-top: 40px;
-    }
-    .quiz-q {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
-      font-weight: 300;
-      color: var(--ink);
-      margin-bottom: 16px;
-      line-height: 1.4;
-    }
-    .quiz-num { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; font-family: var(--font-body); }
-    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
-    .quiz-opt {
-      background: #fff;
-      border: 1px solid var(--ink-faint);
-      border-radius: 12px;
-      padding: 13px 18px;
-      font-size: 14px;
-      color: var(--ink);
-      cursor: pointer;
-      transition: all 0.15s;
-      text-align: left;
-    }
-    .quiz-opt:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
-    .quiz-result {
-      margin-top: 24px;
-      padding: 24px;
-      background: rgba(124,106,138,0.08);
-      border: 1px solid rgba(124,106,138,0.2);
-      border-radius: 16px;
-      display: none;
-    }
-    .quiz-result.show { display: block; }
-    .qr-name { font-family: var(--font-display); font-size: 1.8rem; color: var(--ink); font-weight: 300; }
-    .qr-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin-top: 8px; }
-    .quiz-restart { margin-top: 14px; background: none; border: 1px solid var(--ink-faint); border-radius: 999px; padding: 8px 20px; font-family: var(--font-body); font-size: 12px; color: var(--ink-soft); cursor: pointer; transition: all 0.2s; }
-    .quiz-restart:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
-
-    /* ─── PLAYLISTS ─────────────────────────────────────────────────── */
-    #playlists .pl-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 32px; }
-    @media (min-width: 768px) { #playlists .pl-grid { grid-template-columns: repeat(3, 1fr); } }
-    .pl-card {
-      background: #fff;
-      border: 1px solid var(--ink-faint);
-      border-radius: 18px;
-      padding: 20px 18px;
-      transition: transform 0.2s;
-    }
-    .pl-card:hover { transform: translateY(-2px); }
-    .pl-char { font-family: var(--font-display); font-size: 1.6rem; color: var(--ink-faint); font-weight: 300; line-height: 1; margin-bottom: 6px; }
-    .pl-name { font-size: 14px; font-weight: 500; color: var(--ink); }
-    .pl-vibe { font-size: 11px; color: var(--ink-soft); margin-top: 3px; line-height: 1.5; }
-    .pl-link { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--accent); margin-top: 10px; cursor: pointer; text-decoration: none; letter-spacing: 0.04em; }
-
-    /* ─── FIND YOURSELF ────────────────────────────────────────────── */
-    #find-yourself .fy-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-    .fy-chip {
-      font-size: 13px;
-      font-weight: 300;
-      color: var(--ink);
-      background: #fff;
-      border: 1px solid var(--ink-faint);
-      border-radius: 999px;
-      padding: 9px 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .fy-chip:hover, .fy-chip.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
-    .fy-result { margin-top: 24px; font-family: var(--font-display); font-size: 1.1rem; font-style: italic; color: var(--ink-soft); line-height: 1.6; min-height: 40px; transition: opacity 0.3s; }
-
-    /* ─── INSTAGRAM / FOLLOW ───────────────────────────────────────── */
-    #follow { text-align: center; }
-    .ig-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--ink);
-      color: var(--cream);
-      border: none;
-      border-radius: 999px;
-      padding: 14px 28px;
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 400;
-      cursor: pointer;
-      margin-top: 28px;
-      text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
-    }
-    .ig-btn:hover { background: rgba(22,18,30,0.8); transform: scale(1.02); }
-    .ig-btn svg { width: 18px; height: 18px; }
-
-    /* ─── CHARACTER MAP SVG ─────────────────────────────────────────── */
-    .cmap-node { cursor: default; }
-    .cmap-node circle { transition: r 0.2s; }
-    .cmap-node:hover circle { r: 28; }
-    .cmap-node text { font-family: 'Cormorant Garamond', serif; }
-
-    /* ─── FOOTER ────────────────────────────────────────────────────── */
-    footer {
-      width: 100%;
-      padding: 32px 48px;
-      border-top: 1px solid var(--ink-faint);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      text-align: center;
-    }
-    .footer-logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 300; color: var(--ink); letter-spacing: -0.02em; }
-    .footer-copy { font-size: 11px; color: var(--ink-faint); letter-spacing: 0.04em; line-height: 1.8; }
-    .footer-crisis { font-size: 12px; color: var(--ink-soft); line-height: 1.8; }
-    .footer-crisis a { color: var(--accent); text-decoration: none; }
-    .footer-crisis a:hover { text-decoration: underline; }
-
-    /* ─── NAV SCROLL HIGHLIGHT ──────────────────────────────────────── */
-    .site-nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(245,242,237,0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--ink-faint);
-      padding: 14px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transform: translateY(-100%);
-      transition: transform 0.35s ease;
-    }
-    .site-nav.visible { transform: translateY(0); }
-    .site-nav-logo { font-family: var(--font-display); font-size: 1.1rem; font-weight: 400; color: var(--ink); letter-spacing: -0.01em; }
-    .site-nav-links { display: flex; gap: 24px; list-style: none; }
-    .site-nav-links a { font-size: 12px; color: var(--ink-soft); text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s; }
-    .site-nav-links a:hover { color: var(--ink); }
-    @media (max-width: 640px) { .site-nav-links { display: none; } }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #d6d6da;
+    --bg-light:  #e4e4e8;
+    --chrome-hi: #ffffff;
+    --chrome-lo: #9898a8;
+    --chrome-mid:#c0c0cc;
+    --ink:       rgba(16,14,26,0.88);
+    --ink-soft:  rgba(16,14,26,0.48);
+    --ink-faint: rgba(16,14,26,0.16);
+    --glass:     rgba(255,255,255,0.20);
+    --glow:      rgba(255,255,255,0.75);
+    --font-d: 'Cormorant Garamond', Georgia, serif;
+    --font-b: 'DM Sans', ui-sans-serif, sans-serif;
+    --rcard: 28px;
+    --rpill: 999px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-b);
+    background-color: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+    font-weight: 300;
+  }
+
+  /* ── CANVAS ── */
+  #amb {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    width: 100%; height: 100%;
+  }
+
+  /* ── STICKY NAV ── */
+  .snav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 13px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    transform: translateY(-100%);
+    transition: transform .4s cubic-bezier(.4,0,.2,1);
+    background: rgba(210,210,218,.74);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border-bottom: 1px solid rgba(255,255,255,.38);
+    box-shadow: 0 1px 0 rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  .snav.vis { transform: translateY(0); }
+  .snav-logo { font-family:var(--font-d); font-size:1.12rem; font-weight:400; color:var(--ink); letter-spacing:-.01em; }
+  .snav-links { display:flex; gap:22px; list-style:none; }
+  .snav-links a { font-size:11px; color:var(--ink-soft); text-decoration:none; letter-spacing:.08em; text-transform:uppercase; transition:color .2s; }
+  .snav-links a:hover { color:var(--ink); }
+  @media(max-width:600px){ .snav-links{display:none;} }
+
+  /* ── HERO WRAP ── */
+  .hwrap {
+    position:relative; z-index:1;
+    width:100%; height:100svh;
+    display:flex; align-items:center; justify-content:center;
+    padding:14px;
+  }
+  @media(min-width:768px){ .hwrap{ padding:22px; } }
+
+  .hsec {
+    position:relative; width:100%; max-width:1536px; height:100%;
+    border-radius:32px; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center;
+    background: linear-gradient(135deg,rgba(255,255,255,.34) 0%,rgba(196,196,212,.18) 45%,rgba(155,155,175,.20) 100%);
+    border:1px solid rgba(255,255,255,.58);
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,.72),
+      inset 0 -1px 0 rgba(0,0,0,.07),
+      0 24px 80px rgba(0,0,0,.17),
+      0 4px 16px rgba(0,0,0,.10);
+  }
+  @media(min-width:768px){ .hsec{ border-radius:52px; } }
+
+  .hvid {
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; object-position:65%; z-index:0;
+    opacity:.48; mix-blend-mode:luminosity;
+  }
+  @media(min-width:1024px){ .hvid{ object-position:center; } }
+
+  .hov {
+    position:absolute; inset:0; z-index:1;
+    background:linear-gradient(160deg,rgba(228,228,238,.60) 0%,rgba(196,196,214,.26) 55%,rgba(136,136,158,.28) 100%);
+  }
+
+  .hcon { position:relative; z-index:10; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; }
+
+  /* navbar */
+  .navbar { display:flex; align-items:center; justify-content:space-between; padding:24px; width:100%; z-index:10; }
+  @media(min-width:768px){ .navbar{padding:24px 40px;} }
+  .nsp { flex:1; display:none; }
+  @media(min-width:768px){ .nsp{display:block;} }
+  .nmenu { display:none; list-style:none; gap:32px; align-items:center; font-size:11px; font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); }
+  @media(min-width:768px){ .nmenu{display:flex;} }
+  .nmenu li { cursor:pointer; opacity:.62; transition:opacity .2s; display:flex; align-items:center; gap:4px; }
+  .nmenu li:hover { opacity:1; }
+  .nmobi { display:block; font-family:var(--font-d); font-size:22px; font-weight:400; letter-spacing:-.02em; color:var(--ink); }
+  @media(min-width:768px){ .nmobi{display:none;} }
+  .nright { flex:1; display:flex; justify-content:flex-end; }
+  .ncta {
+    display:flex; align-items:center; gap:10px;
+    background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(198,198,216,.48));
+    border:1px solid rgba(255,255,255,.82); border-radius:var(--rpill);
+    padding:8px 20px 8px 8px; cursor:pointer;
+    font-family:var(--font-b); font-size:11px; font-weight:400; color:var(--ink);
+    letter-spacing:.06em; text-transform:uppercase;
+    box-shadow:0 2px 8px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.9);
+    transition:box-shadow .2s,transform .15s;
+  }
+  .ncta:hover{ transform:scale(1.02); box-shadow:0 4px 16px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.9); }
+  .ncta:active{ transform:scale(.98); }
+  .ncta-ic { background:rgba(255,255,255,.52); padding:6px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.7); }
+  .ncta-ic svg { width:14px; height:14px; color:var(--ink); }
+
+  /* hero text */
+  .htxt { width:100%; display:flex; flex-direction:column; align-items:center; padding:28px 24px 0; text-align:center; max-width:860px; }
+  .hbadge {
+    display:flex; align-items:center; gap:8px; padding:8px 18px; border-radius:var(--rpill);
+    background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(218,218,234,.48));
+    border:1px solid rgba(255,255,255,.82);
+    box-shadow:0 2px 8px rgba(0,0,0,.08),inset 0 1px 0 var(--glow);
+    margin-bottom:18px;
+    animation:fadeUp .7s ease-out both;
+  }
+  .hbadge svg { width:14px; height:14px; opacity:.55; }
+  .hbadge span { font-size:11px; font-weight:400; color:var(--ink); letter-spacing:.10em; text-transform:uppercase; }
+
+  .hh1 {
+    font-family:var(--font-d); font-size:clamp(3rem,8vw,6rem); font-weight:300;
+    letter-spacing:-.025em; line-height:1.02; margin-bottom:14px;
+    animation:fadeScale .9s ease-out .2s both;
+    background:linear-gradient(160deg,#16142a 0%,#484868 50%,#16142a 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .hsub {
+    font-size:clamp(.88rem,1.4vw,1.05rem); color:var(--ink-soft); line-height:1.7;
+    max-width:500px; font-weight:300;
+    animation:fadeIn .9s ease-out .4s both;
+  }
+
+  /* bottom-left card */
+  .blc {
+    position:absolute; bottom:108px; right:14px;
+    padding:18px; border-radius:26px;
+    background:linear-gradient(135deg,rgba(255,255,255,.54),rgba(208,208,224,.34));
+    backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,.72);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.8),0 12px 40px rgba(0,0,0,.12);
+    display:flex; flex-direction:column; gap:12px; min-width:148px;
+    animation:slideInLeft .9s ease-out .2s both;
+  }
+  @media(min-width:768px){ .blc{left:24px;right:auto;bottom:24px;border-radius:32px;min-width:168px;} }
+  @media(min-width:1024px){ .blc{left:40px;bottom:40px;border-radius:40px;min-width:192px;gap:16px;padding:24px;} }
+  .blc-stat {
+    font-family:var(--font-d); font-size:3rem; font-weight:300; letter-spacing:-.04em; line-height:1;
+    background:linear-gradient(160deg,#16142a 0%,#606088 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .blc-lbl { font-size:10px; font-weight:400; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.14em; margin-top:2px; }
+  .blc-btn {
+    display:flex; align-items:center;
+    background:linear-gradient(135deg,rgba(255,255,255,.84),rgba(218,218,234,.58));
+    border:1px solid rgba(255,255,255,.9); border-radius:var(--rpill);
+    padding:7px 18px 7px 7px; gap:8px; cursor:pointer;
+    font-family:var(--font-b); font-size:12px; font-weight:400; color:var(--ink);
+    box-shadow:0 2px 8px rgba(0,0,0,.09),inset 0 1px 0 var(--glow);
+    transition:box-shadow .2s,transform .15s; align-self:flex-start; letter-spacing:.04em;
+  }
+  .blc-btn:hover{ transform:scale(1.02); }
+  .blc-btn-ic { background:rgba(255,255,255,.52); padding:5px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .blc-btn-ic svg { width:13px; height:13px; color:var(--ink-soft); }
+
+  /* bottom-right corner */
+  .brc {
+    position:absolute; bottom:0; right:0;
+    padding:18px 12px 12px 30px;
+    background:var(--bg); border-top-left-radius:24px;
+    display:flex; align-items:center; gap:14px;
+    animation:slideInUp .9s ease-out .4s both;
+    box-shadow:-4px -4px 20px rgba(0,0,0,.06);
+  }
+  @media(min-width:640px){ .brc{padding:22px 16px 16px 40px;border-top-left-radius:32px;gap:18px;} }
+  @media(min-width:768px){ .brc{padding:30px 24px 24px 54px;border-top-left-radius:56px;gap:22px;} }
+  .cmask-t { position:absolute; top:-24px; right:0; width:24px; height:24px; pointer-events:none; }
+  .cmask-l { position:absolute; bottom:0; left:-24px; width:24px; height:24px; pointer-events:none; }
+  @media(min-width:640px){ .cmask-t{top:-32px;width:32px;height:32px;} .cmask-l{left:-32px;width:32px;height:32px;} }
+  @media(min-width:768px){ .cmask-t{top:-56px;width:56px;height:56px;} .cmask-l{left:-56px;width:56px;height:56px;} }
+  .brc-ic {
+    background:linear-gradient(135deg,rgba(255,255,255,.52),rgba(198,198,218,.28));
+    width:44px; height:44px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid rgba(255,255,255,.7);
+    box-shadow:0 2px 8px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.9);
+    flex-shrink:0;
+  }
+  @media(min-width:768px){ .brc-ic{width:56px;height:56px;} }
+  .brc-ic svg { width:17px; height:17px; color:var(--ink-soft); }
+  .brc-title { font-family:var(--font-d); font-size:16px; font-weight:400; color:var(--ink); letter-spacing:-.01em; }
+  @media(min-width:768px){ .brc-title{font-size:20px;} }
+  .brc-sub { display:flex; align-items:center; gap:4px; color:var(--ink-soft); cursor:pointer; transition:color .2s; margin-top:2px; }
+  .brc-sub:hover{ color:var(--ink); }
+  .brc-sub span { font-size:11px; font-weight:400; letter-spacing:.05em; }
+  .brc-sub svg { width:12px; height:12px; }
+
+  /* ── TICKER ── */
+  .ticker {
+    position:relative; z-index:1; width:100%; overflow:hidden; padding:12px 0;
+    background:linear-gradient(90deg,rgba(255,255,255,.28),rgba(198,198,218,.16),rgba(255,255,255,.28));
+    border-top:1px solid rgba(255,255,255,.55);
+    border-bottom:1px solid rgba(255,255,255,.32);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 8px rgba(0,0,0,.05);
+  }
+  .ticker-track { display:flex; gap:60px; width:max-content; animation:ticker 32s linear infinite; }
+  .ticker-item { font-family:var(--font-d); font-size:13px; font-style:italic; color:var(--ink-soft); white-space:nowrap; letter-spacing:.02em; }
+  @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* ── SECTION BASE ── */
+  .sw { position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 28px; }
+  section { padding:88px 0; }
+  @media(min-width:768px){ section{padding:108px 0;} }
+  h2.lbl { font-family:var(--font-b); font-size:10px; font-weight:500; letter-spacing:.20em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:12px; }
+  h3.ttl { font-family:var(--font-d); font-size:clamp(2rem,4vw,3rem); font-weight:300; color:var(--ink); letter-spacing:-.025em; line-height:1.08; margin-bottom:22px; }
+  p.body { font-size:15px; line-height:1.78; color:var(--ink-soft); font-weight:300; max-width:600px; }
+  .divr { position:relative; z-index:1; max-width:1180px; margin:0 auto; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.7) 20%,rgba(178,178,200,.4) 50%,rgba(255,255,255,.7) 80%,transparent); }
+
+  /* ── CHROME CARD ── */
+  .cc {
+    background:linear-gradient(145deg,rgba(255,255,255,.54) 0%,rgba(218,218,234,.28) 60%,rgba(188,188,210,.23) 100%);
+    border:1px solid rgba(255,255,255,.72); border-radius:var(--rcard);
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.90),inset 0 -1px 0 rgba(0,0,0,.05),0 8px 32px rgba(0,0,0,.10);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  }
+
+  /* ── SUMMARY ── */
+  .sg { display:grid; grid-template-columns:1fr; gap:48px; }
+  @media(min-width:768px){ .sg{grid-template-columns:1fr 1fr;align-items:start;gap:80px;} }
+  .spull {
+    font-family:var(--font-d); font-size:clamp(1.2rem,2.2vw,1.65rem); font-weight:300; font-style:italic; color:var(--ink);
+    line-height:1.42; padding:24px 28px; border-radius:20px; position:relative;
+  }
+  .spull::before { content:''; position:absolute; left:0; top:12px; bottom:12px; width:2px; background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(158,158,180,.4),rgba(255,255,255,.9)); border-radius:999px; }
+  .stags { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
+  .tag {
+    font-size:11px; font-weight:400; color:var(--ink-soft);
+    background:linear-gradient(135deg,rgba(255,255,255,.54),rgba(208,208,224,.28));
+    border:1px solid rgba(255,255,255,.68); border-radius:var(--rpill); padding:5px 15px;
+    letter-spacing:.05em; box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 2px 5px rgba(0,0,0,.05);
+  }
+
+  /* ── CHARACTERS ── */
+  .cg { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:12px; }
+  @media(min-width:640px){ .cg{grid-template-columns:repeat(3,1fr);} }
+  @media(min-width:1024px){ .cg{grid-template-columns:repeat(6,1fr);gap:10px;} }
+  .chcard { padding:22px 18px 18px; border-radius:22px; display:flex; flex-direction:column; gap:5px; transition:transform .25s,box-shadow .25s; cursor:default; position:relative; overflow:hidden; }
+  .chcard::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent); }
+  .chcard:hover { transform:translateY(-5px); box-shadow:0 16px 48px rgba(0,0,0,.13); }
+  .chin { font-family:var(--font-d); font-size:2.6rem; font-weight:300; line-height:1; margin-bottom:4px; background:linear-gradient(160deg,#16142a 0%,#6868a0 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .chname { font-size:13px; font-weight:500; color:var(--ink); letter-spacing:.02em; }
+  .chtrait { font-size:11px; font-weight:300; color:var(--ink-soft); line-height:1.55; margin-top:3px; }
+
+  /* ── PULL QUOTE BLOCK ── */
+  .pqwrap {
+    position:relative; z-index:1;
+    background:linear-gradient(160deg,#16142a 0%,#28264a 60%,#16142a 100%);
+    padding:90px 48px; display:flex; flex-direction:column; align-items:center; text-align:center; overflow:hidden;
+  }
+  .pqwrap::after { content:''; position:absolute; right:-80px; bottom:-80px; width:360px; height:360px; border-radius:50%; border:1px solid rgba(255,255,255,.05); box-shadow:0 0 0 40px rgba(255,255,255,.02),0 0 0 80px rgba(255,255,255,.01); pointer-events:none; }
+  .bq { font-family:var(--font-d); font-size:clamp(1.5rem,3.2vw,2.6rem); font-weight:300; font-style:italic; color:rgba(230,230,244,.88); line-height:1.45; max-width:760px; letter-spacing:-.01em; position:relative; z-index:1; }
+  .bqa { margin-top:22px; font-size:11px; font-weight:400; letter-spacing:.15em; text-transform:uppercase; color:rgba(198,198,220,.32); position:relative; z-index:1; }
+
+  /* ══ QUOTE CARD (reference-image style) ══ */
+  #from-pages { text-align:center; }
+  .rq-outer { position:relative; display:inline-block; margin:40px auto 0; width:100%; max-width:520px; }
+
+  .rq-card {
+    position:relative; padding:52px 36px 36px; border-radius:30px; overflow:hidden;
+    background:linear-gradient(145deg,rgba(255,255,255,.44) 0%,rgba(216,216,232,.28) 60%,rgba(188,188,212,.22) 100%);
+    border:1px solid rgba(255,255,255,.74);
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(0,0,0,.05),0 24px 64px rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.07);
+    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  }
+  /* floating dots */
+  .rq-dot { position:absolute; border-radius:50%; background:rgba(155,155,188,.32); pointer-events:none; }
+  .rq-dot:nth-child(1){ width:7px;height:7px;top:44%;right:22px; }
+  .rq-dot:nth-child(2){ width:5px;height:5px;bottom:24%;right:40px; }
+  .rq-dot:nth-child(3){ width:6px;height:6px;bottom:16%;left:48%; }
+  .rq-dot:nth-child(4){ width:4px;height:4px;top:32%;left:20px; }
+
+  /* big quote marks */
+  .rq-marks { position:absolute; top:18px; left:24px; font-family:var(--font-d); font-size:3.6rem; font-weight:500; color:var(--ink); line-height:1; letter-spacing:-.06em; opacity:.72; user-select:none; }
+
+  /* quote text zone */
+  .rq-txtwrap { min-height:110px; display:flex; align-items:center; justify-content:center; position:relative; }
+  .rq-txt {
+    font-family:var(--font-d); font-size:clamp(1.1rem,2.2vw,1.4rem); font-style:italic; font-weight:300; color:var(--ink);
+    line-height:1.56; text-align:center;
+    opacity:0; transform:translateY(7px);
+    transition:opacity .55s ease,transform .55s ease;
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:0 6px;
+  }
+  .rq-txt.active { opacity:1; transform:translateY(0); position:relative; inset:auto; }
+
+  /* attribution pill */
+  .rq-attr { display:flex; align-items:center; justify-content:center; margin-top:24px; }
+  .rq-pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(208,208,228,.38));
+    border:1px solid rgba(255,255,255,.80); border-radius:var(--rpill);
+    padding:7px 18px; font-size:10px; font-weight:400; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-soft);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 6px rgba(0,0,0,.06);
+    transition:opacity .4s;
+  }
+  .rq-pill::before { content:'—'; opacity:.45; margin-right:4px; }
+
+  /* action buttons */
+  .rq-actions { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+  .rq-btn {
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+    background:linear-gradient(135deg,rgba(255,255,255,.50),rgba(208,208,228,.30));
+    border:1px solid rgba(255,255,255,.74); border-radius:var(--rpill);
+    padding:12px 20px;
+    font-family:var(--font-b); font-size:11px; font-weight:400; letter-spacing:.10em; text-transform:uppercase;
+    color:var(--ink); cursor:pointer;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 8px rgba(0,0,0,.07);
+    transition:box-shadow .2s,transform .15s;
+  }
+  .rq-btn:hover{ transform:scale(1.015); box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 14px rgba(0,0,0,.10); }
+  .rq-btn:active{ transform:scale(.98); }
+  .rq-btnrow { display:flex; gap:10px; }
+  .rq-btnrow .rq-btn { flex:1; }
+  .rq-btn svg { width:13px; height:13px; opacity:.55; }
+
+  /* corner sparkle */
+  .rq-sparkle { position:absolute; bottom:-10px; right:-10px; width:80px; height:80px; opacity:.07; pointer-events:none; }
+
+  /* ── CHECK IN ── */
+  #check-in { text-align:center; }
+  .fg { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:32px; }
+  .fp {
+    font-family:var(--font-b); font-size:12px; font-weight:400; letter-spacing:.05em; color:var(--ink);
+    background:linear-gradient(135deg,rgba(255,255,255,.54),rgba(208,208,228,.30));
+    border:1px solid rgba(255,255,255,.70); border-radius:var(--rpill); padding:10px 22px;
+    cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 6px rgba(0,0,0,.06); transition:all .2s;
+  }
+  .fp:hover,.fp.sel { background:linear-gradient(135deg,rgba(22,18,48,.88),rgba(58,54,90,.82)); color:rgba(230,230,244,.92); border-color:rgba(22,18,48,.4); box-shadow:0 4px 16px rgba(0,0,0,.18); }
+  .fr { margin-top:28px; font-family:var(--font-d); font-size:1.1rem; font-style:italic; color:var(--ink-soft); min-height:36px; transition:opacity .3s; max-width:520px; margin-left:auto; margin-right:auto; line-height:1.6; }
+
+  /* ── BREATHE ── */
+  #breathe { text-align:center; }
+  .bwrap { display:flex; align-items:center; justify-content:center; margin:44px auto 0; }
+  .bring { position:relative; width:160px; height:160px; display:flex; align-items:center; justify-content:center; }
+  .bring::before,.bring::after { content:''; position:absolute; border-radius:50%; border:1px solid rgba(178,178,208,.32); transition:all 4s ease-in-out; }
+  .bring::before { inset:-16px; }
+  .bring::after  { inset:-32px; border-color:rgba(178,178,208,.14); }
+  .bcirc {
+    width:120px; height:120px; border-radius:50%;
+    background:linear-gradient(145deg,rgba(255,255,255,.54),rgba(198,198,220,.30));
+    border:1px solid rgba(255,255,255,.78);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.9),0 8px 32px rgba(0,0,0,.11);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-d); font-size:.95rem; font-style:italic; color:var(--ink-soft);
+    transition:transform 4s ease-in-out,box-shadow 2s;
+    cursor:pointer; user-select:none;
+  }
+  .bcirc.inhale { transform:scale(1.38); box-shadow:inset 0 2px 0 rgba(255,255,255,.9),0 16px 60px rgba(138,138,200,.20); }
+  .bcirc.hold   { transform:scale(1.38); }
+  .bcirc.exhale { transform:scale(1.0); box-shadow:inset 0 2px 0 rgba(255,255,255,.9),0 4px 12px rgba(0,0,0,.08); }
+  .blbl { font-size:12px; color:var(--ink-soft); letter-spacing:.08em; text-transform:uppercase; margin-top:20px; min-height:20px; }
+
+  /* ── BOOK ── */
+  #book { text-align:center; }
+  .bkcard { display:inline-flex; flex-direction:column; align-items:center; gap:20px; padding:48px 40px; border-radius:32px; margin-top:44px; max-width:440px; width:100%; position:relative; overflow:hidden; }
+  .bkcard::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent); }
+  .bkicon { font-size:3.2rem; }
+  .bkcard h4 { font-family:var(--font-d); font-size:1.9rem; font-weight:300; color:var(--ink); letter-spacing:-.025em; }
+  .bkcard p { font-size:13px; color:var(--ink-soft); line-height:1.75; max-width:300px; }
+  .dlbtn {
+    display:inline-flex; align-items:center; gap:10px;
+    background:linear-gradient(135deg,rgba(18,14,40,.90),rgba(48,44,80,.84));
+    color:rgba(230,230,244,.92); border:1px solid rgba(78,74,118,.38); border-radius:var(--rpill);
+    padding:14px 30px; font-family:var(--font-b); font-size:13px; font-weight:400; cursor:pointer; text-decoration:none;
+    letter-spacing:.05em; box-shadow:0 4px 20px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.12); transition:all .2s;
+  }
+  .dlbtn:hover{ transform:scale(1.02); box-shadow:0 8px 28px rgba(0,0,0,.24); }
+  .dlbtn svg { width:15px; height:15px; }
+  .dlnote { font-size:11px; color:var(--ink-faint); letter-spacing:.07em; }
+
+  /* ── BOOK SUPPORT ── */
+  .snote { border-radius:16px; padding:16px 22px; font-size:13px; color:var(--ink-soft); line-height:1.7; margin-top:24px; max-width:580px; border-left:2px solid rgba(198,198,218,.55); background:rgba(255,255,255,.20); }
+  .scards { display:grid; grid-template-columns:1fr; gap:14px; margin-top:36px; }
+  @media(min-width:640px){ .scards{grid-template-columns:1fr 1fr;} }
+  @media(min-width:1024px){ .scards{grid-template-columns:repeat(3,1fr);} }
+  .sc { padding:22px 20px; border-radius:20px; position:relative; overflow:hidden; }
+  .sc::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent); }
+  .sc-c { font-size:10px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:10px; }
+  .sc-t { font-family:var(--font-d); font-size:1.05rem; font-style:italic; color:var(--ink); line-height:1.6; }
+
+  /* ── WARNINGS ── */
+  .wgrid { display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+  .wchip { font-size:11px; font-weight:400; color:var(--ink-soft); background:linear-gradient(135deg,rgba(255,255,255,.46),rgba(208,208,228,.26)); border:1px solid rgba(255,255,255,.64); border-radius:var(--rpill); padding:6px 16px; letter-spacing:.04em; box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
+
+  /* ── READER WALL ── */
+  .wirow { display:flex; gap:10px; margin-top:30px; max-width:560px; }
+  .winput { flex:1; border:1px solid rgba(255,255,255,.62); border-radius:14px; padding:13px 18px; font-family:var(--font-b); font-size:13px; color:var(--ink); background:linear-gradient(135deg,rgba(255,255,255,.52),rgba(208,208,228,.26)); outline:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.84),inset 0 2px 6px rgba(0,0,0,.05); transition:border-color .2s; }
+  .winput:focus{ border-color:rgba(255,255,255,.9); }
+  .winput::placeholder{ color:var(--ink-faint); }
+  .wpostbtn { background:linear-gradient(135deg,rgba(18,14,40,.88),rgba(48,44,80,.82)); color:rgba(230,230,244,.9); border:1px solid rgba(78,74,118,.34); border-radius:14px; padding:13px 22px; font-family:var(--font-b); font-size:12px; font-weight:400; letter-spacing:.05em; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.18); transition:all .2s; white-space:nowrap; }
+  .wpostbtn:hover{ transform:scale(1.02); }
+  .wmsgs { display:flex; flex-direction:column; gap:10px; margin-top:20px; max-width:560px; }
+  .wmsg { padding:16px 20px; border-radius:16px; font-family:var(--font-d); font-size:1rem; font-style:italic; color:var(--ink); line-height:1.6; animation:fadeUp .4s ease-out both; position:relative; overflow:hidden; }
+  .wmsg::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent); }
+  .wanon { font-size:10px; font-weight:400; color:var(--ink-faint); font-style:normal; font-family:var(--font-b); letter-spacing:.08em; margin-top:7px; text-transform:uppercase; }
+
+  /* ── QUIZ ── */
+  #quiz { text-align:center; }
+  .qzcard { display:inline-block; max-width:560px; width:100%; text-align:left; margin-top:44px; padding:36px; border-radius:28px; position:relative; overflow:hidden; }
+  .qzcard::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent); }
+  .qznum { font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:10px; font-family:var(--font-b); }
+  .qzq { font-family:var(--font-d); font-size:1.35rem; font-weight:300; color:var(--ink); margin-bottom:22px; line-height:1.4; }
+  .qzopts { display:flex; flex-direction:column; gap:9px; }
+  .qzopt { background:linear-gradient(135deg,rgba(255,255,255,.50),rgba(208,208,228,.26)); border:1px solid rgba(255,255,255,.66); border-radius:14px; padding:13px 18px; font-size:13px; color:var(--ink); cursor:pointer; text-align:left; box-shadow:inset 0 1px 0 rgba(255,255,255,.84),0 2px 6px rgba(0,0,0,.06); transition:all .18s; }
+  .qzopt:hover { background:linear-gradient(135deg,rgba(18,14,40,.88),rgba(48,44,80,.82)); color:rgba(230,230,244,.92); border-color:rgba(78,74,118,.34); box-shadow:0 4px 16px rgba(0,0,0,.18); }
+  .qzres { margin-top:24px; padding:24px; border-radius:18px; display:none; }
+  .qzres.show{ display:block; }
+  .qrname { font-family:var(--font-d); font-size:2rem; color:var(--ink); font-weight:300; }
+  .qrdesc { font-size:13px; color:var(--ink-soft); line-height:1.75; margin-top:8px; }
+  .qrst { margin-top:16px; background:none; border:1px solid rgba(255,255,255,.58); border-radius:var(--rpill); padding:9px 22px; font-family:var(--font-b); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); cursor:pointer; transition:all .2s; box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
+  .qrst:hover{ background:rgba(18,14,40,.85); color:rgba(230,230,244,.9); }
+
+  /* ── ABOUT ── */
+  .ag { display:grid; grid-template-columns:1fr; gap:40px; }
+  @media(min-width:768px){ .ag{grid-template-columns:1fr 1fr;align-items:center;gap:80px;} }
+  .aauth { font-family:var(--font-d); font-size:4.5rem; font-weight:300; line-height:.95; letter-spacing:-.05em; background:linear-gradient(160deg,rgba(22,18,48,.16),rgba(22,18,48,.06)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .igbtn { display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,rgba(18,14,40,.88),rgba(48,44,80,.82)); color:rgba(230,230,244,.9); border:1px solid rgba(78,74,118,.34); border-radius:var(--rpill); padding:14px 28px; font-family:var(--font-b); font-size:13px; font-weight:400; cursor:pointer; margin-top:24px; text-decoration:none; letter-spacing:.04em; box-shadow:0 4px 20px rgba(0,0,0,.18); transition:all .2s; }
+  .igbtn:hover{ transform:scale(1.02); box-shadow:0 8px 28px rgba(0,0,0,.24); }
+  .igbtn svg { width:17px; height:17px; }
+
+  /* ── GET SUPPORT ── */
+  .gswrap { position:relative; z-index:1; background:linear-gradient(160deg,#16142a 0%,#28264a 60%,#16142a 100%); padding:90px 48px; text-align:center; overflow:hidden; }
+  .gswrap h2.lbl { color:rgba(198,198,220,.32); }
+  .gswrap h3.ttl { color:rgba(230,230,244,.88); margin:0 auto 12px; }
+  .gswrap p.body { color:rgba(198,198,220,.44); margin:0 auto 44px; text-align:center; }
+  .sgrid { display:grid; grid-template-columns:1fr; gap:12px; max-width:680px; margin:0 auto; position:relative; z-index:1; }
+  @media(min-width:640px){ .sgrid{grid-template-columns:1fr 1fr;} }
+  .sit { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:22px 24px; text-align:left; transition:background .2s; box-shadow:inset 0 1px 0 rgba(255,255,255,.07); }
+  .sit:hover{ background:rgba(255,255,255,.08); }
+  .sit-t { font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(198,198,220,.32); margin-bottom:7px; }
+  .sit-v { font-family:var(--font-d); font-size:1.15rem; color:rgba(230,230,244,.88); font-weight:300; }
+  .sit-d { font-size:12px; color:rgba(198,198,220,.32); margin-top:5px; line-height:1.55; }
+
+  /* ── FOOTER ── */
+  footer { position:relative; z-index:1; padding:36px 48px; border-top:1px solid rgba(255,255,255,.26); display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; background:linear-gradient(0deg,rgba(214,214,218,1) 0%,rgba(222,222,226,.55) 100%); }
+  .ftlogo { font-family:var(--font-d); font-size:1.5rem; font-weight:300; color:var(--ink); letter-spacing:-.02em; }
+  .ftcopy { font-size:11px; color:var(--ink-faint); letter-spacing:.05em; line-height:1.8; }
+  .ftcris { font-size:12px; color:var(--ink-soft); line-height:1.8; }
+  .ftcris a { color:var(--ink); text-decoration:underline; text-decoration-color:rgba(16,14,26,.22); }
+  .ftcris a:hover{ text-decoration-color:var(--ink); }
+
+  /* ── KEYFRAMES ── */
+  @keyframes fadeUp    { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeScale { from{opacity:0;transform:scale(.97)}       to{opacity:1;transform:scale(1)} }
+  @keyframes fadeIn    { from{opacity:0}                             to{opacity:1} }
+  @keyframes slideInLeft { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes slideInUp   { from{opacity:0;transform:translateY(20px)}  to{opacity:1;transform:translateY(0)} }
   </style>
 </head>
 <body>
 
-<!-- ── STICKY NAV (appears after hero) ── -->
-<nav class="site-nav" id="stickyNav">
-  <span class="site-nav-logo">Weary Souls</span>
-  <ul class="site-nav-links">
+<canvas id="amb"></canvas>
+
+<!-- sticky nav -->
+<nav class="snav" id="snav">
+  <span class="snav-logo">Weary Souls</span>
+  <ul class="snav-links">
     <li><a href="#summary">Story</a></li>
     <li><a href="#characters">Characters</a></li>
     <li><a href="#book">Book</a></li>
@@ -1048,121 +497,72 @@
   </ul>
 </nav>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     HERO
-═══════════════════════════════════════════════════════════════════ -->
 <main>
-<div class="hero-wrap">
-  <section class="hero-section" style="padding:0; max-width:1536px;">
 
-    <!-- Video background -->
-    <video class="hero-video" autoplay muted loop playsinline
-      poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1'height='1'/%3E">
+<!-- ── HERO ── -->
+<div class="hwrap">
+  <section class="hsec" style="padding:0;max-width:1536px;">
+    <video class="hvid" autoplay muted loop playsinline>
       <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260428_193507_4286c423-2fd9-4efd-92bd-91a939453fc1.mp4" type="video/mp4">
     </video>
-    <div class="hero-overlay"></div>
-
-    <!-- Content layer -->
-    <div class="hero-content">
-
-      <!-- Navbar -->
+    <div class="hov"></div>
+    <div class="hcon">
       <nav class="navbar">
-        <div class="nav-spacer"></div>
-
-        <!-- Desktop menu -->
-        <ul class="nav-menu">
-          <li onclick="document.getElementById('summary').scrollIntoView({behavior:'smooth'})">Story</li>
-          <li onclick="document.getElementById('characters').scrollIntoView({behavior:'smooth'})">
-            Characters
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </li>
-          <li onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">Book</li>
-          <li onclick="document.getElementById('get-support').scrollIntoView({behavior:'smooth'})">
-            Support
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </li>
+        <div class="nsp"></div>
+        <ul class="nmenu">
+          <li onclick="sto('summary')">Story</li>
+          <li onclick="sto('characters')">Characters <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></li>
+          <li onclick="sto('book')">Book</li>
+          <li onclick="sto('get-support')">Support <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></li>
         </ul>
-
-        <!-- Mobile logo -->
-        <div class="nav-mobile-logo">Weary Souls</div>
-
-        <!-- CTA button -->
-        <div class="nav-right">
-          <button class="nav-cta" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">
-            <div class="nav-cta-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </div>
+        <div class="nmobi">Weary Souls</div>
+        <div class="nright">
+          <button class="ncta" onclick="sto('book')">
+            <div class="ncta-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
             Download Free
           </button>
         </div>
       </nav>
 
-      <!-- Hero text -->
-      <div class="hero-text-wrap">
-        <!-- Badge -->
-        <div class="hero-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.912 5.813a2 2 0 001.272 1.272L21 12l-5.816 1.916a2 2 0 00-1.272 1.272L12 21l-1.912-5.812a2 2 0 00-1.272-1.272L3 12l5.816-1.915a2 2 0 001.272-1.272L12 3z"/></svg>
+      <div class="htxt">
+        <div class="hbadge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l1.912 5.813a2 2 0 001.272 1.272L21 12l-5.816 1.916a2 2 0 00-1.272 1.272L12 21l-1.912-5.812a2 2 0 00-1.272-1.272L3 12l5.816-1.915a2 2 0 001.272-1.272L12 3z"/></svg>
           <span>Beneath the Surface — Volume I</span>
         </div>
-
-        <!-- Headline -->
-        <h1 class="hero-h1">Weary Souls</h1>
-
-        <!-- Subline -->
-        <p class="hero-sub">Six students. One fountain that lies. A slow-burning semester in which every performance finally stops holding.</p>
+        <h1 class="hh1">Weary Souls</h1>
+        <p class="hsub">Six students. One fountain that lies. A slow-burning semester in which every performance finally stops holding.</p>
       </div>
 
-      <!-- Bottom Left Card -->
-      <div class="bottom-left-card">
+      <!-- BL card -->
+      <div class="blc cc">
         <div>
           <div class="blc-stat">6</div>
-          <div class="blc-label">Characters</div>
+          <div class="blc-lbl">Characters</div>
         </div>
-        <button class="blc-btn" onclick="document.getElementById('characters').scrollIntoView({behavior:'smooth'})">
-          <div class="blc-btn-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-          </div>
+        <button class="blc-btn" onclick="sto('characters')">
+          <div class="blc-btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
           Meet Them
         </button>
       </div>
 
-      <!-- Bottom Right Corner -->
-      <div class="bottom-right-corner">
-        <!-- Top mask -->
-        <div class="corner-mask-top">
-          <svg width="100%" height="100%" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M56 56V0C56 30.9279 30.9279 56 0 56H56Z" fill="#f5f2ed"/>
-          </svg>
-        </div>
-        <!-- Left mask -->
-        <div class="corner-mask-left">
-          <svg width="100%" height="100%" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M56 56H0C30.9279 56 56 30.9279 56 0V56Z" fill="#f5f2ed"/>
-          </svg>
-        </div>
-
-        <!-- Icon -->
-        <div class="brc-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        </div>
-
-        <!-- Info -->
+      <!-- BR corner -->
+      <div class="brc">
+        <div class="cmask-t"><svg width="100%" height="100%" viewBox="0 0 56 56" fill="none"><path d="M56 56V0C56 30.9279 30.9279 56 0 56H56Z" fill="#d6d6da"/></svg></div>
+        <div class="cmask-l"><svg width="100%" height="100%" viewBox="0 0 56 56" fill="none"><path d="M56 56H0C30.9279 56 56 30.9279 56 0V56Z" fill="#d6d6da"/></svg></div>
+        <div class="brc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
         <div>
           <div class="brc-title">Read the Book</div>
-          <div class="brc-sub" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">
-            <span>Free PDF</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
+          <div class="brc-sub" onclick="sto('book')"><span>Free PDF</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
         </div>
       </div>
 
-    </div><!-- /hero-content -->
+    </div>
   </section>
-</div><!-- /hero-wrap -->
+</div>
 
-<!-- ── TICKER ── -->
-<div class="ticker-wrap">
-  <div class="ticker-track" id="ticker">
+<!-- ticker -->
+<div class="ticker">
+  <div class="ticker-track">
     <span class="ticker-item">"The fountain in the center of the quad is a liar. It doesn't look like one."</span>
     <span class="ticker-item">✦ Eleven Chapters</span>
     <span class="ticker-item">"She moved like a woman crossing a room full of tripwires only she could see."</span>
@@ -1182,742 +582,466 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     SUMMARY
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<div id="summary">
-  <div>
-    <h2 class="sec-label">The Story</h2>
-    <h3 class="sec-title">Beneath the Surface</h3>
-    <p class="sec-body">On a university campus that looks the way good lies look — polished, sunny, frictionless — six students orbit each other and a fountain in the middle of the quad. From the outside they are fine. From the inside, each one is carrying something they have never said out loud.</p>
-    <p class="sec-body" style="margin-top:16px;">Beneath the Surface follows them across one slow-burning semester in which the performances stop holding. Not all at once. Not dramatically. Just a hairline crack in each of them, in a different week, until the weight finally arrives at the surface.</p>
-    <div class="summary-tags">
-      <span class="tag">Mental Health</span>
-      <span class="tag">University Life</span>
-      <span class="tag">Coming-of-Age</span>
-      <span class="tag">Identity</span>
-      <span class="tag">Grief</span>
-      <span class="tag">Recovery</span>
-      <span class="tag">Friendship</span>
-    </div>
-  </div>
-  <div>
-    <blockquote class="summary-pull">"This is a book about the loneliness of being surrounded. About the particular ache of being seen without being known."</blockquote>
-    <p class="sec-body" style="margin-top:24px;">The final chapter doesn't promise that anyone is healed. It promises something quieter and more honest: that the performance is finally over.</p>
-    <p class="sec-body" style="margin-top:16px;">Read it if you have ever sat in a group of people and felt completely alone.</p>
-  </div>
-</div>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     CHARACTERS
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="characters" style="padding-top:80px;">
-  <div class="chars-header">
-    <h2 class="sec-label">The Six Planets</h2>
-    <h3 class="sec-title">Characters</h3>
-  </div>
-  <div class="chars-grid">
-    <div class="char-card">
-      <div class="char-initial">L</div>
-      <div class="char-name">Luke</div>
-      <div class="char-trait">Color-codes his life so nothing can break.</div>
-    </div>
-    <div class="char-card">
-      <div class="char-initial">S</div>
-      <div class="char-name">Stephanie</div>
-      <div class="char-trait">Eats the way other people pray — privately, with rules.</div>
-    </div>
-    <div class="char-card">
-      <div class="char-initial">M</div>
-      <div class="char-name">Marcus</div>
-      <div class="char-trait">Carries something he calls The Static — a low-frequency hum where his father used to be.</div>
-    </div>
-    <div class="char-card">
-      <div class="char-initial">E</div>
-      <div class="char-name">Emily</div>
-      <div class="char-trait">A ritual she performs in the bathroom. A smile she performs everywhere else.</div>
-    </div>
-    <div class="char-card">
-      <div class="char-initial">L</div>
-      <div class="char-name">Liv</div>
-      <div class="char-trait">Reinventing herself every seven to ten days, looking for a version that fits.</div>
-    </div>
-    <div class="char-card">
-      <div class="char-initial">T</div>
-      <div class="char-name">Tristan</div>
-      <div class="char-trait">Inherited a silence from a father who taught him strength was a thing you wear.</div>
-    </div>
-  </div>
-</section>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     PULL QUOTE
-═══════════════════════════════════════════════════════════════════ -->
-<div id="quote-block">
-  <p class="big-quote">"The fountain in the center of the quad is a liar. It doesn't look like one. That's the thing about good liars — they commit."</p>
-  <p class="big-quote-attr">— Opening Line, Weary Souls</p>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     FROM THE PAGES (rotating quotes)
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="from-pages">
-  <h2 class="sec-label" style="text-align:center;">From the Pages</h2>
-  <h3 class="sec-title" style="text-align:center;margin:0 auto 8px;">Lines That Stay With You</h3>
-
-  <div class="rotating-quote-wrap">
-    <p class="rot-q active" id="rq-0">"She moved like a woman crossing a room full of tripwires only she could see."</p>
-    <p class="rot-q" id="rq-1">"None of them are villains. All of them are good at hiding. That's the problem the book is interested in."</p>
-    <p class="rot-q" id="rq-2">"There is only the small, specific bravery of staying in the room."</p>
-    <p class="rot-q" id="rq-3">"The room without armor is also, somehow, the warmest one in the house."</p>
-    <p class="rot-q" id="rq-4">"The silence between them has texture now — words inside it, not just absence."</p>
-  </div>
-
-  <div class="quote-btns">
-    <button class="q-btn" onclick="nextQuote(-1)">← Previous</button>
-    <button class="q-btn" onclick="nextQuote(1)">Next →</button>
-    <button class="q-btn" onclick="copyQuote()">⎘ Copy</button>
-  </div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     QUIZ
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="quiz">
-  <h2 class="sec-label">Discover Yourself</h2>
-  <h3 class="sec-title">Which Character Are You?</h3>
-  <p class="sec-body" style="margin:0 auto;text-align:center;">Five questions. One honest answer.</p>
-
-  <div class="quiz-card" id="quizCard">
-    <div class="quiz-num" id="quizNum">Question 1 of 5</div>
-    <div class="quiz-q" id="quizQ">When something is wrong, your first instinct is to…</div>
-    <div class="quiz-options" id="quizOpts">
-      <button class="quiz-opt" onclick="quizAnswer(0)">Organise everything around you until it feels manageable</button>
-      <button class="quiz-opt" onclick="quizAnswer(1)">Follow a quiet private ritual that steadies you</button>
-      <button class="quiz-opt" onclick="quizAnswer(2)">Go somewhere loud so you can't hear your own thoughts</button>
-      <button class="quiz-opt" onclick="quizAnswer(3)">Reinvent something about yourself</button>
-      <button class="quiz-opt" onclick="quizAnswer(4)">Say nothing. Wait for it to pass.</button>
-      <button class="quiz-opt" onclick="quizAnswer(5)">Carry it alone — strength is a thing you wear</button>
-    </div>
-    <div class="quiz-result" id="quizResult">
-      <div class="qr-name" id="qrName"></div>
-      <div class="qr-desc" id="qrDesc"></div>
-      <button class="quiz-restart" onclick="restartQuiz()">Start Over</button>
-    </div>
-  </div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     CHECK IN
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="check-in">
-  <h2 class="sec-label">Check In</h2>
-  <h3 class="sec-title">How Are You Feeling?</h3>
-  <p class="sec-body" style="margin:0 auto;text-align:center;">We see you. Pick what resonates.</p>
-  <div class="feeling-grid">
-    <button class="feeling-pill" onclick="selectFeeling(this,'Overwhelmed')">Overwhelmed</button>
-    <button class="feeling-pill" onclick="selectFeeling(this,'Numb')">Numb</button>
-    <button class="feeling-pill" onclick="selectFeeling(this,'Anxious')">Anxious</button>
-    <button class="feeling-pill" onclick="selectFeeling(this,'Lonely')">Lonely</button>
-    <button class="feeling-pill" onclick="selectFeeling(this,'Fine (but not really)')">Fine (but not really)</button>
-    <button class="feeling-pill" onclick="selectFeeling(this,'Tired')">Tired</button>
-    <button class="feeling-pill" onclick="selectFeeling(this,'Hopeful')">Hopeful</button>
-    <button class="feeling-pill" onclick="selectFeeling(this,'Seen')">Seen</button>
-  </div>
-  <div class="feeling-response" id="feelingResponse"></div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     BREATHE
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="breathe">
-  <h2 class="sec-label">Take a Moment</h2>
-  <h3 class="sec-title">Breathe With Us</h3>
-  <p class="sec-body" style="margin:0 auto;text-align:center;">A 4-7-8 breathing exercise. Used by the characters when the static gets too loud.</p>
-  <div class="breath-circle-wrap">
+<!-- ── SUMMARY ── -->
+<div class="sw"><section id="summary">
+  <div class="sg">
     <div>
-      <div class="breath-circle" id="breathCircle" onclick="startBreath()">Begin</div>
-      <div class="breath-label" id="breathLabel"></div>
+      <h2 class="lbl">The Story</h2>
+      <h3 class="ttl">Beneath the Surface</h3>
+      <p class="body">On a university campus that looks the way good lies look — polished, sunny, frictionless — six students orbit each other and a fountain in the middle of the quad. From the outside they are fine. From the inside, each one is carrying something they have never said out loud.</p>
+      <p class="body" style="margin-top:16px;">Beneath the Surface follows them across one slow-burning semester in which the performances stop holding. Not all at once. Not dramatically. Just a hairline crack.</p>
+      <div class="stags">
+        <span class="tag">Mental Health</span><span class="tag">University Life</span><span class="tag">Coming-of-Age</span>
+        <span class="tag">Identity</span><span class="tag">Grief</span><span class="tag">Recovery</span><span class="tag">Friendship</span>
+      </div>
+    </div>
+    <div>
+      <blockquote class="spull cc">"This is a book about the loneliness of being surrounded. About the particular ache of being seen without being known."</blockquote>
+      <p class="body" style="margin-top:24px;">The final chapter doesn't promise healing — it promises something quieter: that the performance is finally over.</p>
     </div>
   </div>
-</section>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── CHARACTERS ── -->
+<div class="sw"><section id="characters">
+  <h2 class="lbl">The Six Planets</h2>
+  <h3 class="ttl">Characters</h3>
+  <div class="cg">
+    <div class="chcard cc"><div class="chin">L</div><div class="chname">Luke</div><div class="chtrait">Color-codes his life so nothing can break.</div></div>
+    <div class="chcard cc"><div class="chin">S</div><div class="chname">Stephanie</div><div class="chtrait">Eats the way other people pray — privately, with rules.</div></div>
+    <div class="chcard cc"><div class="chin">M</div><div class="chname">Marcus</div><div class="chtrait">Carries something he calls The Static.</div></div>
+    <div class="chcard cc"><div class="chin">E</div><div class="chname">Emily</div><div class="chtrait">A ritual she performs in the bathroom. A smile everywhere else.</div></div>
+    <div class="chcard cc"><div class="chin">L</div><div class="chname">Liv</div><div class="chtrait">Reinventing herself every seven to ten days.</div></div>
+    <div class="chcard cc"><div class="chin">T</div><div class="chname">Tristan</div><div class="chtrait">Inherited a silence from a father who called it strength.</div></div>
+  </div>
+</section></div>
+
+<!-- ── PULL QUOTE ── -->
+<div class="pqwrap">
+  <p class="bq">"The fountain in the center of the quad is a liar. It doesn't look like one. That's the thing about good liars — they commit."</p>
+  <p class="bqa">— Opening Line, Weary Souls</p>
 </div>
 
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
+<!-- ── FROM THE PAGES (reference-style card) ── -->
+<div class="sw"><section id="from-pages" style="text-align:center;">
+  <h2 class="lbl">From the Pages</h2>
+  <h3 class="ttl" style="text-align:center;margin:0 auto 8px;">Lines That Stay</h3>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     BOOK
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="book">
-  <h2 class="sec-label">The Book</h2>
-  <h3 class="sec-title">Beneath the Surface</h3>
+  <div class="rq-outer">
+    <div class="rq-card">
+      <div class="rq-dot"></div><div class="rq-dot"></div><div class="rq-dot"></div><div class="rq-dot"></div>
+      <div class="rq-marks">❝❝</div>
+
+      <div class="rq-txtwrap" id="rqWrap">
+        <p class="rq-txt active" data-attr="Chapter One, Weary Souls">"She moved like a woman crossing a room full of tripwires only she could see."</p>
+        <p class="rq-txt" data-attr="Chapter Three, Weary Souls">"None of them are villains. All of them are good at hiding. That's the problem the book is interested in."</p>
+        <p class="rq-txt" data-attr="Chapter Nine, Weary Souls">"There is only the small, specific bravery of staying in the room."</p>
+        <p class="rq-txt" data-attr="Chapter Eleven, Weary Souls">"The room without armor is also, somehow, the warmest one in the house."</p>
+        <p class="rq-txt" data-attr="Chapter Four, Weary Souls">"The mirror is a liar. But it's a liar I've learned to trust."</p>
+      </div>
+
+      <div class="rq-attr"><div class="rq-pill" id="rqAttr">Chapter One, Weary Souls</div></div>
+
+      <div class="rq-actions">
+        <button class="rq-btn" onclick="nextRQ(1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5.61"/></svg>
+          Another
+        </button>
+        <div class="rq-btnrow">
+          <button class="rq-btn" id="cpyBtn" onclick="copyRQ()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+          <button class="rq-btn" onclick="shareRQ()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            Share
+          </button>
+        </div>
+      </div>
+
+      <svg class="rq-sparkle" viewBox="0 0 80 80" fill="none">
+        <path d="M40 5 L43 37 L75 40 L43 43 L40 75 L37 43 L5 40 L37 37 Z" fill="rgba(22,18,48,0.18)"/>
+      </svg>
+    </div>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── CHECK IN ── -->
+<div class="sw"><section id="check-in" style="text-align:center;">
+  <h2 class="lbl">Check In</h2>
+  <h3 class="ttl">How Are You Feeling?</h3>
+  <p class="body" style="margin:0 auto;text-align:center;">We see you. Pick what resonates.</p>
+  <div class="fg">
+    <button class="fp" onclick="selF(this,'Overwhelmed')">Overwhelmed</button>
+    <button class="fp" onclick="selF(this,'Numb')">Numb</button>
+    <button class="fp" onclick="selF(this,'Anxious')">Anxious</button>
+    <button class="fp" onclick="selF(this,'Lonely')">Lonely</button>
+    <button class="fp" onclick="selF(this,'Fine (but not really)')">Fine (but not really)</button>
+    <button class="fp" onclick="selF(this,'Tired')">Tired</button>
+    <button class="fp" onclick="selF(this,'Hopeful')">Hopeful</button>
+    <button class="fp" onclick="selF(this,'Seen')">Seen</button>
+  </div>
+  <div class="fr" id="feelResp"></div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── BREATHE ── -->
+<div class="sw"><section id="breathe" style="text-align:center;">
+  <h2 class="lbl">Take a Moment</h2>
+  <h3 class="ttl">Breathe With Us</h3>
+  <p class="body" style="margin:0 auto;text-align:center;">A 4-7-8 breathing exercise. Used by the characters when the static gets too loud.</p>
+  <div class="bwrap">
+    <div>
+      <div class="bring">
+        <div class="bcirc" id="bcirc" onclick="startBreath()">Begin</div>
+      </div>
+      <div class="blbl" id="blbl"></div>
+    </div>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── BOOK ── -->
+<div class="sw"><section id="book" style="text-align:center;">
+  <h2 class="lbl">The Book</h2>
+  <h3 class="ttl">Beneath the Surface</h3>
   <div style="display:flex;justify-content:center;">
-    <div class="book-card">
-      <div class="book-icon">📖</div>
+    <div class="bkcard cc">
+      <div class="bkicon">📖</div>
       <h4>Beneath the Surface</h4>
-      <p>Weary Souls — Volume I<br>A novel by Mariam, Omar & Ganah<br>Eleven chapters. Six characters. One fountain that doesn't lie.</p>
-      <a href="#" class="dl-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <p>Weary Souls — Volume I<br>A novel by Mariam, Omar &amp; Ganah<br>Eleven chapters. Six characters. One fountain that doesn't lie.</p>
+      <a href="#" class="dlbtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download PDF — Free
       </a>
-      <span class="dl-note">PDF · Instant download · No sign-up required</span>
+      <span class="dlnote">PDF · Instant download · No sign-up required</span>
     </div>
   </div>
-</section>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── BOOK SUPPORT ── -->
+<div class="sw"><section id="book-support">
+  <h2 class="lbl">Within the Pages</h2>
+  <h3 class="ttl">Book Support</h3>
+  <p class="body">How the characters found support — or how support found them. Moments from the book, not prescriptions for real life.</p>
+  <div class="snote">These are fictional depictions of support. If you're struggling, please see the Get Support section. You deserve actual help, not just a story about it.</div>
+  <div class="scards">
+    <div class="sc cc"><div class="sc-c">Luke</div><div class="sc-t">"He started with the smallest drawer. Not because it mattered, but because it was something he could finish."</div></div>
+    <div class="sc cc"><div class="sc-c">Marcus</div><div class="sc-t">"He named the static. That was the first step — giving the hum a word so it couldn't be everything."</div></div>
+    <div class="sc cc"><div class="sc-c">Emily</div><div class="sc-t">"She told one person. Not everything. Just enough that the secret had company."</div></div>
+    <div class="sc cc"><div class="sc-c">Stephanie</div><div class="sc-t">"She sat at the table without a plan for once. That counted."</div></div>
+    <div class="sc cc"><div class="sc-c">Liv</div><div class="sc-t">"She stopped changing her hair. Stayed in one version of herself long enough to ask: is this one real?"</div></div>
+    <div class="sc cc"><div class="sc-c">Tristan</div><div class="sc-t">"He put the armour down. Not forever. Just for the length of that room."</div></div>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── CONTENT WARNINGS ── -->
+<div class="sw"><section id="warnings">
+  <h2 class="lbl">Please Read First</h2>
+  <h3 class="ttl">Content Warnings</h3>
+  <p class="body">This book was written with care, honesty, and love. It deals with real things. If you are struggling — you are not alone.</p>
+  <div class="wgrid">
+    <span class="wchip">Disordered Eating</span><span class="wchip">Grief &amp; Loss</span><span class="wchip">Depression</span>
+    <span class="wchip">Anxiety</span><span class="wchip">Self-Harm (referenced)</span><span class="wchip">Mental Health Crisis</span>
+    <span class="wchip">Parental Loss</span><span class="wchip">Identity Distress</span>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── READER WALL ── -->
+<div class="sw"><section id="reader-wall">
+  <h2 class="lbl">Reader Wall</h2>
+  <h3 class="ttl">How Did This Make You Feel?</h3>
+  <p class="body">Leave an anonymous message. You are not alone in this.</p>
+  <div class="wirow">
+    <input class="winput" id="wallIn" type="text" maxlength="200" placeholder="Say something…"/>
+    <button class="wpostbtn" onclick="postWall()">Post</button>
+  </div>
+  <div class="wmsgs" id="wallMsgs"></div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── QUIZ ── -->
+<div class="sw"><section id="quiz" style="text-align:center;">
+  <h2 class="lbl">Discover Yourself</h2>
+  <h3 class="ttl">Which Character Are You?</h3>
+  <p class="body" style="margin:0 auto;text-align:center;">Five questions. One honest answer.</p>
+  <div class="qzcard cc" id="qzcard">
+    <div class="qznum" id="qznum">Question 1 of 5</div>
+    <div class="qzq" id="qzq"></div>
+    <div class="qzopts" id="qzopts"></div>
+    <div class="qzres cc" id="qzres">
+      <div class="qrname" id="qrname"></div>
+      <div class="qrdesc" id="qrdesc"></div>
+      <button class="qrst" onclick="restartQuiz()">Start Over</button>
+    </div>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── ABOUT ── -->
+<div class="sw"><section id="about">
+  <div class="ag">
+    <div>
+      <h2 class="lbl">The Minds Behind the Madness</h2>
+      <h3 class="ttl">About Us</h3>
+      <p class="body">Three souls. One shared obsession with the things people carry quietly.</p>
+      <p class="body" style="margin-top:16px;">We wrote this book because we couldn't find the words anywhere else — so we made them.</p>
+      <a href="https://www.instagram.com/wearysouls11" target="_blank" rel="noopener" class="igbtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        @wearysouls11
+      </a>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;">
+      <div class="aauth">M<br>O<br>G</div>
+    </div>
+  </div>
+</section></div>
+
+<!-- ── GET SUPPORT ── -->
+<div class="gswrap" id="get-support">
+  <h2 class="lbl">You Don't Have to Carry This Alone</h2>
+  <h3 class="ttl">Get Support</h3>
+  <p class="body">Real resources for real things.</p>
+  <div class="sgrid">
+    <div class="sit"><div class="sit-t">Crisis Line</div><div class="sit-v">988 Lifeline</div><div class="sit-d">Call or text 988 · 24/7</div></div>
+    <div class="sit"><div class="sit-t">Crisis Text</div><div class="sit-v">Text HOME to 741741</div><div class="sit-d">Crisis Text Line · Free &amp; confidential</div></div>
+    <div class="sit"><div class="sit-t">Eating Disorders</div><div class="sit-v">1-800-931-2237</div><div class="sit-d">National Alliance for Eating Disorders</div></div>
+    <div class="sit"><div class="sit-t">Find a Therapist</div><div class="sit-v">Psychology Today</div><div class="sit-d">psychologytoday.com/us/therapists</div></div>
+  </div>
 </div>
 
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     BOOK SUPPORT
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="book-support">
-  <h2 class="sec-label">Within the Pages</h2>
-  <h3 class="sec-title">Book Support</h3>
-  <p class="sec-body">This is how the characters in Beneath the Surface found support — or how support found them. These are moments from the book, not prescriptions for real life.</p>
-  <div class="support-note">These are fictional depictions of support. If you're struggling, please see the Get Support section for real resources. You deserve actual help, not just a story about it.</div>
-  <div class="support-cards">
-    <div class="sc">
-      <div class="sc-char">Luke</div>
-      <div class="sc-text">"He started with the smallest drawer. Not because it mattered, but because it was something he could finish."</div>
-    </div>
-    <div class="sc">
-      <div class="sc-char">Marcus</div>
-      <div class="sc-text">"He named the static. That was the first step — giving the hum a word so it couldn't be everything."</div>
-    </div>
-    <div class="sc">
-      <div class="sc-char">Emily</div>
-      <div class="sc-text">"She told one person. Not everything. Just enough that the secret had company."</div>
-    </div>
-    <div class="sc">
-      <div class="sc-char">Stephanie</div>
-      <div class="sc-text">"She sat at the table without a plan for once. That counted."</div>
-    </div>
-    <div class="sc">
-      <div class="sc-char">Liv</div>
-      <div class="sc-text">"She stopped changing her hair. Stayed in one version of herself long enough to ask: is this one real?"</div>
-    </div>
-    <div class="sc">
-      <div class="sc-char">Tristan</div>
-      <div class="sc-text">"He put the armour down. Not forever. Just for the length of that room."</div>
-    </div>
-  </div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     CONTENT WARNINGS
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="warnings">
-  <h2 class="sec-label">Please Read First</h2>
-  <h3 class="sec-title">Content Warnings</h3>
-  <p class="sec-body">This book was written with care, honesty, and love. It deals with real things. If you are struggling — you are not alone. Resources are in the Get Support section.</p>
-  <div class="warn-grid">
-    <span class="warn-chip">Disordered Eating</span>
-    <span class="warn-chip">Grief & Loss</span>
-    <span class="warn-chip">Depression</span>
-    <span class="warn-chip">Anxiety</span>
-    <span class="warn-chip">Self-Harm (referenced)</span>
-    <span class="warn-chip">Mental Health Crisis</span>
-    <span class="warn-chip">Parental Loss</span>
-    <span class="warn-chip">Identity Distress</span>
-  </div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     PLAYLISTS
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="playlists">
-  <h2 class="sec-label">The Soundtrack</h2>
-  <h3 class="sec-title">Character Playlists</h3>
-  <p class="sec-body">Every weary soul has a sound.</p>
-  <div class="pl-grid">
-    <div class="pl-card">
-      <div class="pl-char">Luke</div>
-      <div class="pl-name">Controlled Chaos</div>
-      <div class="pl-vibe">Lo-fi, ambient, precise. Music that organises the noise.</div>
-    </div>
-    <div class="pl-card">
-      <div class="pl-char">Stephanie</div>
-      <div class="pl-name">Quiet Rules</div>
-      <div class="pl-vibe">Piano ballads, slow folk. Private and prayerful.</div>
-    </div>
-    <div class="pl-card">
-      <div class="pl-char">Marcus</div>
-      <div class="pl-name">The Static</div>
-      <div class="pl-vibe">R&B grief anthems. Songs that hum like a memory.</div>
-    </div>
-    <div class="pl-card">
-      <div class="pl-char">Emily</div>
-      <div class="pl-name">Both Sides</div>
-      <div class="pl-vibe">Upbeat on the surface, devastated underneath.</div>
-    </div>
-    <div class="pl-card">
-      <div class="pl-char">Liv</div>
-      <div class="pl-name">New Me Again</div>
-      <div class="pl-vibe">Indie pop reinventions. A different genre every week.</div>
-    </div>
-    <div class="pl-card">
-      <div class="pl-char">Tristan</div>
-      <div class="pl-name">Armor Off</div>
-      <div class="pl-vibe">Alt-rock, instrumentals. What strength sounds like, resting.</div>
-    </div>
-  </div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     READING PROGRESS
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="progress">
-  <h2 class="sec-label">Track Your Journey</h2>
-  <h3 class="sec-title">Reading Progress</h3>
-  <p class="sec-body">Mark chapters as you finish them.</p>
-  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
-  <div class="chapters" id="chapterList">
-    <!-- Rendered by JS -->
-  </div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     READER WALL
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="reader-wall">
-  <h2 class="sec-label">Reader Wall</h2>
-  <h3 class="sec-title">How Did This Make You Feel?</h3>
-  <p class="sec-body">Leave an anonymous message. You are not alone in this.</p>
-  <div class="wall-input-row">
-    <input class="wall-input" id="wallInput" type="text" maxlength="200" placeholder="Say something…" />
-    <button class="wall-post-btn" onclick="postWall()">Post</button>
-  </div>
-  <div class="wall-messages" id="wallMessages"></div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     FAVOURITE QUOTES
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="fav-quotes">
-  <h2 class="sec-label">Favorite Lines</h2>
-  <h3 class="sec-title">Vote for Your Favorite Quote</h3>
-  <p class="sec-body">One vote per reader. Choose the line that hit different.</p>
-  <div class="fq-list" id="fqList">
-    <!-- Rendered by JS -->
-  </div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     FIND YOURSELF
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="find-yourself">
-  <h2 class="sec-label">You Are In Here</h2>
-  <h3 class="sec-title">Find Yourself in the Story</h3>
-  <p class="sec-body">Select what feels true. Find which chapter speaks your language.</p>
-  <div class="fy-grid">
-    <button class="fy-chip" onclick="fySelect(this,'Luke','You live by systems. Try Chapter 2: "The Colour-Coded Life."')">I plan everything</button>
-    <button class="fy-chip" onclick="fySelect(this,'Stephanie','You understand quiet rules. Try Chapter 4: "Privately, With Rules."')">I have rituals no one knows about</button>
-    <button class="fy-chip" onclick="fySelect(this,'Marcus','You know The Static. Try Chapter 3: "Low Frequency."')">I carry old grief</button>
-    <button class="fy-chip" onclick="fySelect(this,'Emily','You live between two faces. Try Chapter 5: "Both Sides."')">I perform being okay</button>
-    <button class="fy-chip" onclick="fySelect(this,'Liv','You reinvent. Try Chapter 6: "Every Seven to Ten Days."')">I keep restarting myself</button>
-    <button class="fy-chip" onclick="fySelect(this,'Tristan','Strength is your armour. Try Chapter 7: "What You Wear."')">I can't ask for help</button>
-    <button class="fy-chip" onclick="fySelect(this,'All Six','You're at the centre of it. Try Chapter 10: "The Night Everything Broke."')">I've felt all of these</button>
-  </div>
-  <div class="fy-result" id="fyResult"></div>
-</section>
-</div>
-
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     CHARACTER MAP
-═══════════════════════════════════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="char-map">
-  <h2 class="sec-label">The Web Between Them</h2>
-  <h3 class="sec-title">Character Map</h3>
-  <p class="sec-body" style="margin:0 auto;text-align:center;">Six planets. One dead star. Every connection a thread.</p>
-  <div class="cmap-wrap">
-    <svg class="cmap-svg" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
-      <!-- threads -->
-      <line x1="250" y1="200" x2="100" y2="100" stroke="rgba(30,28,38,0.1)" stroke-width="1.5"/>
-      <line x1="250" y1="200" x2="400" y2="100" stroke="rgba(30,28,38,0.1)" stroke-width="1.5"/>
-      <line x1="250" y1="200" x2="60" y2="260" stroke="rgba(30,28,38,0.1)" stroke-width="1.5"/>
-      <line x1="250" y1="200" x2="440" y2="260" stroke="rgba(30,28,38,0.1)" stroke-width="1.5"/>
-      <line x1="250" y1="200" x2="150" y2="350" stroke="rgba(30,28,38,0.1)" stroke-width="1.5"/>
-      <line x1="250" y1="200" x2="350" y2="350" stroke="rgba(30,28,38,0.1)" stroke-width="1.5"/>
-      <line x1="100" y1="100" x2="400" y2="100" stroke="rgba(30,28,38,0.06)" stroke-width="1"/>
-      <line x1="60" y1="260" x2="440" y2="260" stroke="rgba(30,28,38,0.06)" stroke-width="1"/>
-      <line x1="150" y1="350" x2="350" y2="350" stroke="rgba(30,28,38,0.06)" stroke-width="1"/>
-      <!-- dead star (fountain) -->
-      <circle cx="250" cy="200" r="16" fill="rgba(124,106,138,0.15)" stroke="rgba(124,106,138,0.35)" stroke-width="1.5"/>
-      <text x="250" y="205" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="10" fill="rgba(124,106,138,0.8)" font-style="italic">◉</text>
-      <!-- Luke -->
-      <g class="cmap-node">
-        <circle cx="100" cy="100" r="24" fill="rgba(245,242,237,0.9)" stroke="rgba(30,28,38,0.15)" stroke-width="1.5"/>
-        <text x="100" y="97" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="14" fill="rgba(30,28,38,0.85)" font-weight="300">L</text>
-        <text x="100" y="110" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="rgba(30,28,38,0.45)">LUKE</text>
-      </g>
-      <!-- Stephanie -->
-      <g class="cmap-node">
-        <circle cx="400" cy="100" r="24" fill="rgba(245,242,237,0.9)" stroke="rgba(30,28,38,0.15)" stroke-width="1.5"/>
-        <text x="400" y="97" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="14" fill="rgba(30,28,38,0.85)" font-weight="300">S</text>
-        <text x="400" y="110" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="rgba(30,28,38,0.45)">STEPHANIE</text>
-      </g>
-      <!-- Marcus -->
-      <g class="cmap-node">
-        <circle cx="60" cy="260" r="24" fill="rgba(245,242,237,0.9)" stroke="rgba(30,28,38,0.15)" stroke-width="1.5"/>
-        <text x="60" y="257" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="14" fill="rgba(30,28,38,0.85)" font-weight="300">M</text>
-        <text x="60" y="270" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="rgba(30,28,38,0.45)">MARCUS</text>
-      </g>
-      <!-- Emily -->
-      <g class="cmap-node">
-        <circle cx="440" cy="260" r="24" fill="rgba(245,242,237,0.9)" stroke="rgba(30,28,38,0.15)" stroke-width="1.5"/>
-        <text x="440" y="257" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="14" fill="rgba(30,28,38,0.85)" font-weight="300">E</text>
-        <text x="440" y="270" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="rgba(30,28,38,0.45)">EMILY</text>
-      </g>
-      <!-- Liv -->
-      <g class="cmap-node">
-        <circle cx="150" cy="355" r="24" fill="rgba(245,242,237,0.9)" stroke="rgba(30,28,38,0.15)" stroke-width="1.5"/>
-        <text x="150" y="352" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="14" fill="rgba(30,28,38,0.85)" font-weight="300">L</text>
-        <text x="150" y="365" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="rgba(30,28,38,0.45)">LIV</text>
-      </g>
-      <!-- Tristan -->
-      <g class="cmap-node">
-        <circle cx="350" cy="355" r="24" fill="rgba(245,242,237,0.9)" stroke="rgba(30,28,38,0.15)" stroke-width="1.5"/>
-        <text x="350" y="352" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="14" fill="rgba(30,28,38,0.85)" font-weight="300">T</text>
-        <text x="350" y="365" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="rgba(30,28,38,0.45)">TRISTAN</text>
-      </g>
-    </svg>
-  </div>
-</section>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     ABOUT
-═══════════════════════════════════════════════════════════════════ -->
-<div class="divider" style="max-width:1200px;margin:0 auto;"></div>
-<div style="max-width:1200px;margin:0 auto;padding:0 32px;">
-<section id="about">
-  <div>
-    <h2 class="sec-label">The Minds Behind the Madness</h2>
-    <h3 class="sec-title">About Us</h3>
-    <p class="sec-body">Three souls. One shared obsession with the things people carry quietly.</p>
-    <p class="sec-body" style="margin-top:16px;">We wrote this book because we couldn't find the words anywhere else — so we made them.</p>
-    <a href="https://www.instagram.com/wearysouls11" target="_blank" rel="noopener" class="ig-btn" style="margin-top:24px;display:inline-flex;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-      @wearysouls11
-    </a>
-  </div>
-  <div>
-    <div class="about-authors">M<br>O<br>G</div>
-  </div>
-</section>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     GET SUPPORT
-═══════════════════════════════════════════════════════════════════ -->
-<section id="get-support">
-  <h2 class="sec-label">You Don't Have to Carry This Alone</h2>
-  <h3 class="sec-title" style="text-align:center;">Get Support</h3>
-  <p class="sec-body" style="text-align:center;">Real resources for real things.</p>
-  <div class="support-grid">
-    <div class="support-item">
-      <div class="support-item-title">Crisis Line</div>
-      <div class="support-item-val">988 Lifeline</div>
-      <div class="support-item-desc">Call or text 988 · Available 24/7</div>
-    </div>
-    <div class="support-item">
-      <div class="support-item-title">Crisis Text</div>
-      <div class="support-item-val">Text HOME to 741741</div>
-      <div class="support-item-desc">Crisis Text Line · Free & confidential</div>
-    </div>
-    <div class="support-item">
-      <div class="support-item-title">Eating Disorders</div>
-      <div class="support-item-val">1-800-931-2237</div>
-      <div class="support-item-desc">National Alliance for Eating Disorders</div>
-    </div>
-    <div class="support-item">
-      <div class="support-item-title">Find a Therapist</div>
-      <div class="support-item-val">Psychology Today</div>
-      <div class="support-item-desc">psychologytoday.com/us/therapists</div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     FOOTER
-═══════════════════════════════════════════════════════════════════ -->
 <footer>
-  <div class="footer-logo">Weary Souls</div>
-  <div class="footer-copy">© 2026 Mariam, Omar & Ganah · All Rights Reserved<br>Beneath the Surface — Volume I</div>
-  <div class="footer-crisis">
+  <div class="ftlogo">Weary Souls</div>
+  <div class="ftcopy">© 2026 Mariam, Omar &amp; Ganah · All Rights Reserved<br>Beneath the Surface — Volume I</div>
+  <div class="ftcris">
     If you're struggling: <a href="tel:988">988 Lifeline</a> · <a href="sms:741741">Text HOME to 741741</a> · Eating Disorders: <a href="tel:18009312237">1-800-931-2237</a>
   </div>
 </footer>
+
 </main>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     JAVASCRIPT
-═══════════════════════════════════════════════════════════════════ -->
 <script>
-// ── STICKY NAV ──────────────────────────────────────────────────────
-const heroSection = document.querySelector('.hero-wrap');
-const stickyNav = document.getElementById('stickyNav');
-const observer = new IntersectionObserver(([e]) => {
-  stickyNav.classList.toggle('visible', !e.isIntersecting);
-}, { threshold: 0.1 });
-observer.observe(heroSection);
+/* ── UTIL ── */
+function sto(id){ document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }
 
-// ── ROTATING QUOTES ─────────────────────────────────────────────────
-let currentQ = 0;
-const quotes = document.querySelectorAll('.rot-q');
-function showQ(i) {
-  quotes[currentQ].classList.remove('active');
-  currentQ = (i + quotes.length) % quotes.length;
-  quotes[currentQ].classList.add('active');
-}
-function nextQuote(dir) { showQ(currentQ + dir); }
-function copyQuote() {
-  const text = quotes[currentQ].textContent.trim();
-  navigator.clipboard.writeText(text).catch(() => {});
-}
-setInterval(() => nextQuote(1), 6000);
+/* ── STICKY NAV ── */
+new IntersectionObserver(([e])=>document.getElementById('snav').classList.toggle('vis',!e.isIntersecting),{threshold:.1})
+  .observe(document.querySelector('.hwrap'));
 
-// ── FEELING CHECK-IN ─────────────────────────────────────────────────
-const feelingMap = {
-  'Overwhelmed': 'That's Luke. Chapter Two. He colour-codes everything so the overwhelm has somewhere to go.',
-  'Numb': 'That's Tristan. Chapter Seven. He learned silence from someone who called it strength.',
-  'Anxious': 'That's Liv. Chapter Six. Every reinvention is just anxiety wearing a new outfit.',
-  'Lonely': 'That's the whole book. You're not as alone in that room as you think.',
-  'Fine (but not really)': 'That's Emily. Chapter Five. She has a whole performance for "fine."',
-  'Tired': 'That's Marcus. Chapter Three. The static is exhausting. It's okay to say so.',
-  'Hopeful': 'That's the last chapter. Hold onto that — it's the hardest thing in the book.',
-  'Seen': 'Good. That means it's working. That's what this was for.',
-};
-function selectFeeling(el, label) {
-  document.querySelectorAll('.feeling-pill').forEach(p => p.classList.remove('selected'));
-  el.classList.add('selected');
-  const r = document.getElementById('feelingResponse');
-  r.style.opacity = 0;
-  setTimeout(() => { r.textContent = feelingMap[label] || ''; r.style.opacity = 1; }, 200);
-}
+/* ═══════════════════════════════════════
+   AMBIENT CANVAS: CHROME RINGS + BUTTERFLIES
+═══════════════════════════════════════ */
+(function(){
+  const cv=document.getElementById('amb'),cx=cv.getContext('2d');
+  let W,H,rings=[],butts=[];
 
-// ── BREATHING ────────────────────────────────────────────────────────
-let breathRunning = false;
-function startBreath() {
-  if (breathRunning) return;
-  breathRunning = true;
-  const circle = document.getElementById('breathCircle');
-  const label = document.getElementById('breathLabel');
-  const steps = [
-    { cls: 'inhale', text: 'Inhale… 4', dur: 4000 },
-    { cls: 'hold',   text: 'Hold… 7',   dur: 7000 },
-    { cls: 'exhale', text: 'Exhale… 8', dur: 8000 },
-  ];
-  let i = 0;
-  function runStep() {
-    const s = steps[i % steps.length];
-    circle.className = 'breath-circle ' + s.cls;
-    circle.textContent = '';
-    label.textContent = s.text;
-    i++;
-    if (i >= steps.length * 3) {
-      setTimeout(() => {
-        circle.className = 'breath-circle';
-        circle.textContent = 'Begin';
-        label.textContent = '';
-        breathRunning = false;
-      }, s.dur);
-      return;
-    }
-    setTimeout(runStep, s.dur);
+  function resize(){ W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; }
+  window.addEventListener('resize',resize); resize();
+
+  /* RINGS */
+  function mkRing(){
+    rings.push({
+      x:Math.random()*W, y:Math.random()*H,
+      r:40+Math.random()*120,
+      a:0, ma:.05+Math.random()*.07, phase:'in',
+      spd:.0025+Math.random()*.004,
+      sw:.7+Math.random()*1.3,
+      layers:1+Math.floor(Math.random()*3)
+    });
   }
-  runStep();
+  for(let i=0;i<7;i++) mkRing();
+
+  function drawRings(){
+    rings.forEach((r,i)=>{
+      r.phase==='in'?(r.a+=r.spd,r.a>=r.ma&&(r.phase='out')):(r.a-=r.spd*.5,r.a<=0&&(rings.splice(i,1),mkRing()));
+      for(let l=0;l<r.layers;l++){
+        const g=14*l;
+        cx.beginPath(); cx.arc(r.x,r.y,r.r+g,0,Math.PI*2);
+        const grd=cx.createLinearGradient(r.x-r.r,r.y-r.r,r.x+r.r,r.y+r.r);
+        grd.addColorStop(0,`rgba(255,255,255,${r.a*1.5})`);
+        grd.addColorStop(.5,`rgba(178,178,210,${r.a})`);
+        grd.addColorStop(1,`rgba(255,255,255,${r.a*.5})`);
+        cx.strokeStyle=grd; cx.lineWidth=r.sw; cx.stroke();
+      }
+    });
+  }
+
+  /* BUTTERFLIES */
+  function mkButt(){
+    const left=Math.random()<.5;
+    butts.push({
+      x:left?-50:W+50, y:80+Math.random()*(H*.7),
+      vx:(left?1:-1)*(.35+Math.random()*.55),
+      vy:(Math.random()-.5)*.45,
+      sz:6+Math.random()*13,
+      angle:left?0:Math.PI,
+      t:Math.random()*Math.PI*2,
+      a:0, ma:.10+Math.random()*.13,
+      life:0, ml:280+Math.random()*420
+    });
+  }
+  for(let i=0;i<5;i++) mkButt();
+
+  function drawWing(x,y,sz,angle,t){
+    cx.save(); cx.translate(x,y); cx.rotate(angle);
+    const f=Math.sin(t*3.8)*.38;
+    cx.beginPath();
+    cx.moveTo(0,0);
+    cx.bezierCurveTo(-sz,-sz*(.78+f),-sz*1.9,-sz*.18,0,sz*.28);
+    cx.bezierCurveTo(sz*1.9,-sz*.18,sz,-sz*(.78+f),0,0);
+    cx.moveTo(0,sz*.18);
+    cx.bezierCurveTo(-sz*.75,sz*(.45+f*.45),-sz*1.3,sz*1.1,0,sz*.75);
+    cx.bezierCurveTo(sz*1.3,sz*1.1,sz*.75,sz*(.45+f*.45),0,sz*.18);
+    cx.restore();
+  }
+
+  function drawButts(){
+    butts.forEach((b,i)=>{
+      b.t+=.038; b.life++; b.x+=b.vx; b.y+=b.vy+Math.sin(b.t*.48)*.28;
+      b.angle=Math.atan2(b.vy,b.vx);
+      if(b.life<40) b.a=(b.life/40)*b.ma;
+      else if(b.life>b.ml-40) b.a=((b.ml-b.life)/40)*b.ma;
+      else b.a=b.ma;
+      if(b.life>=b.ml||b.x<-90||b.x>W+90){
+        butts.splice(i,1);
+        setTimeout(mkButt,1800+Math.random()*4200); return;
+      }
+      cx.save(); cx.globalAlpha=b.a;
+      const grd=cx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.sz*2.2);
+      grd.addColorStop(0,'rgba(255,255,255,.88)');
+      grd.addColorStop(.5,'rgba(208,208,232,.55)');
+      grd.addColorStop(1,'rgba(166,166,200,.12)');
+      drawWing(b.x,b.y,b.sz,b.angle,b.t);
+      cx.fillStyle=grd; cx.fill();
+      drawWing(b.x,b.y,b.sz,b.angle,b.t);
+      cx.strokeStyle=`rgba(220,220,242,${b.a*.75})`; cx.lineWidth=.55; cx.stroke();
+      cx.save(); cx.translate(b.x,b.y); cx.rotate(b.angle);
+      cx.beginPath(); cx.ellipse(0,0,b.sz*.07,b.sz*.52,0,0,Math.PI*2);
+      cx.fillStyle=`rgba(178,178,210,.45)`; cx.fill(); cx.restore();
+      cx.restore();
+    });
+  }
+
+  (function loop(){ cx.clearRect(0,0,W,H); drawRings(); drawButts(); requestAnimationFrame(loop); })();
+})();
+
+/* ── ROTATING QUOTES ── */
+const rqItems=document.querySelectorAll('.rq-txt');
+const rqAttrEl=document.getElementById('rqAttr');
+let curRQ=0;
+function showRQ(idx){
+  rqItems[curRQ].classList.remove('active');
+  curRQ=(idx+rqItems.length)%rqItems.length;
+  rqItems[curRQ].classList.add('active');
+  rqAttrEl.textContent=rqItems[curRQ].dataset.attr;
+}
+function nextRQ(d){ showRQ(curRQ+d); }
+setInterval(()=>nextRQ(1),7000);
+function copyRQ(){
+  navigator.clipboard?.writeText(rqItems[curRQ].textContent.trim()).catch(()=>{});
+  const b=document.getElementById('cpyBtn'); b.textContent='Copied ✓';
+  setTimeout(()=>{ b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy'; },1800);
+}
+function shareRQ(){
+  const t=rqItems[curRQ].textContent.trim();
+  navigator.share?navigator.share({text:t}):navigator.clipboard?.writeText(t).catch(()=>{});
 }
 
-// ── CHAPTERS ──────────────────────────────────────────────────────────
-const chapters = [
-  'The Fountain',
-  'The Colour-Coded Life',
-  'Low Frequency',
-  'Privately, With Rules',
-  'Both Sides',
-  'Every Seven to Ten Days',
-  'What You Wear',
-  'The Night Everything Broke',
-  'The Room Without Armor',
-  'After',
-  'The Warmest Room',
-];
-const done = new Set();
-function renderChapters() {
-  const list = document.getElementById('chapterList');
-  list.innerHTML = chapters.map((name, i) => `
-    <div class="ch-row${done.has(i) ? ' done' : ''}" onclick="toggleChapter(${i})">
-      <span class="ch-num">${String(i+1).padStart(2,'0')}</span>
-      <span class="ch-name">${name}</span>
-      <div class="ch-check">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-    </div>`).join('');
-  document.getElementById('progressBar').style.width = (done.size / chapters.length * 100) + '%';
+/* ── FEELING ── */
+const fmap={
+  'Overwhelmed':"That's Luke. Chapter Two. He colour-codes everything so the overwhelm has somewhere to go.",
+  'Numb':"That's Tristan. Chapter Seven. He learned silence from someone who called it strength.",
+  'Anxious':"That's Liv. Chapter Six. Every reinvention is just anxiety wearing a new outfit.",
+  'Lonely':"That's the whole book. You're not as alone in that room as you think.",
+  'Fine (but not really)':"That's Emily. Chapter Five. She has a whole performance for \"fine.\"",
+  'Tired':"That's Marcus. Chapter Three. The static is exhausting. It's okay to say so.",
+  'Hopeful':"That's the last chapter. Hold onto that — it's the hardest thing in the book.",
+  'Seen':"Good. That means it's working. That's what this was for.",
+};
+function selF(el,label){
+  document.querySelectorAll('.fp').forEach(p=>p.classList.remove('sel')); el.classList.add('sel');
+  const r=document.getElementById('feelResp'); r.style.opacity=0;
+  setTimeout(()=>{ r.textContent=fmap[label]||''; r.style.opacity=1; },220);
 }
-function toggleChapter(i) { done.has(i) ? done.delete(i) : done.add(i); renderChapters(); }
-renderChapters();
 
-// ── READER WALL ───────────────────────────────────────────────────────
-const seedMsgs = [
-  "I read Chapter Nine three times. I'm still not okay about it.",
-  "Marcus is my best friend and he doesn't know I exist.",
-  "I finally told someone. It wasn't as hard as I thought.",
-];
-const wallEl = document.getElementById('wallMessages');
-function renderWall(msgs) {
-  wallEl.innerHTML = msgs.map(m => `<div class="wall-msg">${m}<div class="wall-anon">Anonymous reader</div></div>`).join('');
+/* ── BREATHING ── */
+let brun=false;
+function startBreath(){
+  if(brun) return; brun=true;
+  const c=document.getElementById('bcirc'),l=document.getElementById('blbl');
+  const steps=[{cls:'inhale',t:'Inhale… 4',d:4000},{cls:'hold',t:'Hold… 7',d:7000},{cls:'exhale',t:'Exhale… 8',d:8000}];
+  let i=0;
+  function step(){
+    const s=steps[i%3]; c.className='bcirc '+s.cls; c.textContent=''; l.textContent=s.t; i++;
+    if(i>=9){ setTimeout(()=>{ c.className='bcirc'; c.textContent='Begin'; l.textContent=''; brun=false; },s.d); return; }
+    setTimeout(step,s.d);
+  }
+  step();
 }
-renderWall(seedMsgs);
-function postWall() {
-  const inp = document.getElementById('wallInput');
-  const val = inp.value.trim();
-  if (!val) return;
-  seedMsgs.unshift(val);
-  renderWall(seedMsgs);
-  inp.value = '';
-}
-document.getElementById('wallInput').addEventListener('keydown', e => { if (e.key === 'Enter') postWall(); });
 
-// ── FAVOURITE QUOTES ──────────────────────────────────────────────────
-const fqData = [
-  { text: '"She moved like a woman crossing a room full of tripwires only she could see."', votes: 142 },
-  { text: '"The fountain in the center of the quad is a liar. It doesn\'t look like one."', votes: 98 },
-  { text: '"There is only the small, specific bravery of staying in the room."', votes: 211 },
-  { text: '"The room without armor is also, somehow, the warmest one in the house."', votes: 176 },
-  { text: '"The silence between them has texture now — words inside it, not just absence."', votes: 89 },
-];
-let votedIdx = -1;
-function renderFQ() {
-  document.getElementById('fqList').innerHTML = fqData.map((q,i) => `
-    <div class="fq-item${votedIdx===i?' voted':''}" onclick="castVote(${i})">
-      <div class="fq-radio"></div>
-      <div><div class="fq-text">${q.text}</div><div class="fq-votes">${q.votes} votes</div></div>
-    </div>`).join('');
+/* ── READER WALL ── */
+const seeds=["I read Chapter Nine three times. I'm still not okay about it.","Marcus is my best friend and he doesn't know I exist.","I finally told someone. It wasn't as hard as I thought."];
+const wel=document.getElementById('wallMsgs');
+function renderWall(msgs){ wel.innerHTML=msgs.map(m=>`<div class="wmsg cc">${m}<div class="wanon">Anonymous reader</div></div>`).join(''); }
+renderWall(seeds);
+function postWall(){
+  const inp=document.getElementById('wallIn'),v=inp.value.trim(); if(!v) return;
+  seeds.unshift(v); if(seeds.length>8) seeds.pop(); renderWall(seeds); inp.value='';
 }
-function castVote(i) {
-  if (votedIdx !== -1) { fqData[votedIdx].votes--; }
-  votedIdx = i;
-  fqData[i].votes++;
-  renderFQ();
-}
-renderFQ();
+document.getElementById('wallIn').addEventListener('keydown',e=>{ if(e.key==='Enter') postWall(); });
 
-// ── QUIZ ──────────────────────────────────────────────────────────────
-const quizQs = [
-  {
-    q: 'When something is wrong, your first instinct is to…',
-    opts: ['Organise everything around me','Follow a quiet ritual','Go somewhere loud','Reinvent something','Say nothing — wait','Wear strength and push through']
-  },
-  {
-    q: 'The thing you find hardest to say out loud is…',
-    opts: ['I\'m losing control','I have rules no one knows about','My grief has a sound','I have two faces','I don\'t know who I am','I need help']
-  },
-  {
-    q: 'Your relationship with control is…',
-    opts: ['It\'s everything — I live by it','It\'s quiet and precise','It\'s something I lost','It\'s a performance','It changes every week','It\'s the armour I wear']
-  },
-  {
-    q: 'The chapter that would be about you is titled…',
-    opts: ['The Colour-Coded Life','Privately, With Rules','Low Frequency','Both Sides','Every Seven to Ten Days','What You Wear']
-  },
-  {
-    q: 'When you imagine putting something down for good…',
-    opts: ['I need to colour-code what happens next','I check if the ritual still works','The static gets louder for a moment','My smile slips','I become someone new again','I feel exposed — but lighter']
-  },
+/* ── QUIZ ── */
+const qqs=[
+  {q:'When something is wrong, your first instinct is to…',opts:['Organise everything around me','Follow a quiet ritual','Go somewhere loud','Reinvent something','Say nothing — wait','Wear strength and push through']},
+  {q:'The thing you find hardest to say out loud is…',opts:["I'm losing control","I have rules no one knows about","My grief has a sound","I have two faces","I don't know who I am","I need help"]},
+  {q:'Your relationship with control is…',opts:["It's everything","Quiet and precise","Something I lost","A performance","It changes every week","The armour I wear"]},
+  {q:'The chapter that would be about you is titled…',opts:['The Colour-Coded Life','Privately, With Rules','Low Frequency','Both Sides','Every Seven to Ten Days','What You Wear']},
+  {q:'When you imagine putting something down for good…',opts:['I need to plan what happens next','I check if the ritual still works','The static gets louder','My smile slips','I become someone new again','I feel exposed — but lighter']},
 ];
-const chars = [
-  { name: 'Luke', desc: 'You colour-code. You organise. You are terrified of what happens when the system fails. Chapter Two is yours.' },
-  { name: 'Stephanie', desc: 'You have rituals. Private, precise, never spoken about. Chapter Four is yours.' },
-  { name: 'Marcus', desc: 'You carry something heavy and old. The Static. It has a low frequency and a specific address. Chapter Three is yours.' },
-  { name: 'Emily', desc: 'You perform fine. You have a smile for every room and a ritual for the one room no one enters. Chapter Five is yours.' },
-  { name: 'Liv', desc: 'You reinvent. Every version is real until it isn\'t. Chapter Six is yours.' },
-  { name: 'Tristan', desc: 'You wear strength like armour. Putting it down feels like defeat. Chapter Seven is yours.' },
+const chars=[
+  {name:'Luke',desc:'You colour-code. You organise. You are terrified of what happens when the system fails. Chapter Two is yours.'},
+  {name:'Stephanie',desc:'You have rituals. Private, precise, never spoken about. Chapter Four is yours.'},
+  {name:'Marcus',desc:"You carry something heavy and old — The Static. Chapter Three is yours."},
+  {name:'Emily',desc:'You perform fine. You have a smile for every room and a ritual for the one no one enters. Chapter Five is yours.'},
+  {name:'Liv',desc:"You reinvent. Every version is real until it isn't. Chapter Six is yours."},
+  {name:'Tristan',desc:'You wear strength like armour. Putting it down feels like defeat. Chapter Seven is yours.'},
 ];
-let quizStep = 0, scores = [0,0,0,0,0,0];
-function renderQuiz() {
-  const qd = quizQs[quizStep];
-  document.getElementById('quizNum').textContent = `Question ${quizStep+1} of ${quizQs.length}`;
-  document.getElementById('quizQ').textContent = qd.q;
-  document.getElementById('quizOpts').innerHTML = qd.opts.map((o,i) =>
-    `<button class="quiz-opt" onclick="quizAnswer(${i})">${o}</button>`).join('');
-  document.getElementById('quizResult').classList.remove('show');
+let qstep=0,qsc=[0,0,0,0,0,0];
+function renderQ(){
+  const q=qqs[qstep];
+  document.getElementById('qznum').textContent=`Question ${qstep+1} of ${qqs.length}`;
+  document.getElementById('qzq').textContent=q.q;
+  document.getElementById('qzopts').innerHTML=q.opts.map((o,i)=>`<button class="qzopt" onclick="qans(${i})">${o}</button>`).join('');
+  document.getElementById('qzres').classList.remove('show');
 }
-function quizAnswer(i) {
-  scores[i]++;
-  quizStep++;
-  if (quizStep >= quizQs.length) {
-    const winner = scores.indexOf(Math.max(...scores));
-    const c = chars[winner];
-    document.getElementById('quizOpts').innerHTML = '';
-    document.getElementById('quizNum').textContent = 'You are —';
-    document.getElementById('quizQ').textContent = '';
-    document.getElementById('qrName').textContent = c.name;
-    document.getElementById('qrDesc').textContent = c.desc;
-    document.getElementById('quizResult').classList.add('show');
-  } else { renderQuiz(); }
+function qans(i){
+  qsc[i]++; qstep++;
+  if(qstep>=qqs.length){
+    const w=qsc.indexOf(Math.max(...qsc)),c=chars[w];
+    document.getElementById('qzopts').innerHTML='';
+    document.getElementById('qznum').textContent='You are —';
+    document.getElementById('qzq').textContent='';
+    document.getElementById('qrname').textContent=c.name;
+    document.getElementById('qrdesc').textContent=c.desc;
+    document.getElementById('qzres').classList.add('show');
+  } else renderQ();
 }
-function restartQuiz() { quizStep = 0; scores = [0,0,0,0,0,0]; renderQuiz(); }
-renderQuiz();
-
-// ── FIND YOURSELF ────────────────────────────────────────────────────
-function fySelect(el, char, msg) {
-  document.querySelectorAll('.fy-chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  const r = document.getElementById('fyResult');
-  r.style.opacity = 0;
-  setTimeout(() => { r.textContent = `You are ${char}. ${msg}`; r.style.opacity = 1; }, 200);
-}
+function restartQuiz(){ qstep=0; qsc=[0,0,0,0,0,0]; renderQ(); }
+renderQ();
 </script>
 </body>
 </html>
