@@ -1,1149 +1,869 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Weary Souls — Beneath the Surface</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weary Souls — Beneath the Surface</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet">
-
-<!-- Tailwind -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: {
-        heading: ['"Instrument Serif"', 'serif'],
-        body: ['Barlow', 'sans-serif'],
-        display: ['"Cormorant Garamond"', 'serif'],
-      },
-      borderRadius: { DEFAULT: '9999px' },
-    }
+  :root {
+    --bg:        #d6d6da;
+    --bg-light:  #e4e4e8;
+    --chrome-hi: #ffffff;
+    --chrome-lo: #9898a8;
+    --chrome-mid:#c0c0cc;
+    --ink:       rgba(16,14,26,0.88);
+    --ink-soft:  rgba(16,14,26,0.48);
+    --ink-faint: rgba(16,14,26,0.16);
+    --glass:     rgba(255,255,255,0.20);
+    --glow:      rgba(255,255,255,0.75);
+    --font-d: 'Cormorant Garamond', Georgia, serif;
+    --font-b: 'DM Sans', ui-sans-serif, sans-serif;
+    --rcard: 28px;
+    --rpill: 999px;
   }
-}
-</script>
 
-<!-- React + Babel + Framer Motion -->
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/framer-motion@11.11.17/dist/framer-motion.js"></script>
-<script>window.Motion = window.FramerMotion;</script>
+  html { scroll-behavior: smooth; }
 
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-b);
+    background-color: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+    font-weight: 300;
+  }
 
-:root {
-  --bg: #0a0a0e;
-  --chrome-hi: #ffffff;
-  --chrome-lo: #9898b8;
-  --ink: rgba(255,255,255,0.92);
-  --ink-soft: rgba(255,255,255,0.55);
-  --ink-faint: rgba(255,255,255,0.18);
-  --font-d: 'Instrument Serif', serif;
-  --font-b: 'Barlow', sans-serif;
-}
+  /* ── CANVAS ── */
+  #amb {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    width: 100%; height: 100%;
+  }
 
-html { scroll-behavior: smooth; }
-body { background: #000; overflow-x: hidden; font-family: var(--font-b); }
+  /* ── STICKY NAV ── */
+  .snav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 13px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    transform: translateY(-100%);
+    transition: transform .4s cubic-bezier(.4,0,.2,1);
+    background: rgba(210,210,218,.74);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border-bottom: 1px solid rgba(255,255,255,.38);
+    box-shadow: 0 1px 0 rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  .snav.vis { transform: translateY(0); }
+  .snav-logo { font-family:var(--font-d); font-size:1.12rem; font-weight:400; color:var(--ink); letter-spacing:-.01em; }
+  .snav-links { display:flex; gap:22px; list-style:none; }
+  .snav-links a { font-size:11px; color:var(--ink-soft); text-decoration:none; letter-spacing:.08em; text-transform:uppercase; transition:color .2s; }
+  .snav-links a:hover { color:var(--ink); }
+  @media(max-width:600px){ .snav-links{display:none;} }
 
-/* ── AMBIENT CANVAS ── */
-#amb { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+  /* ── HERO WRAP ── */
+  .hwrap {
+    position:relative; z-index:1;
+    width:100%; height:100svh;
+    display:flex; align-items:center; justify-content:center;
+    padding:14px;
+  }
+  @media(min-width:768px){ .hwrap{ padding:22px; } }
 
-/* ══ LIQUID GLASS ══ */
-.liquid-glass {
-  background: rgba(255,255,255,0.01);
-  background-blend-mode: luminosity;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: none;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
-  position: relative;
-  overflow: hidden;
-}
-.liquid-glass::before {
-  content: "";
-  position: absolute; inset: 0;
-  border-radius: inherit;
-  padding: 1.4px;
-  background: linear-gradient(180deg,
-    rgba(255,255,255,0.45) 0%,
-    rgba(255,255,255,0.15) 20%,
-    rgba(255,255,255,0) 40%,
-    rgba(255,255,255,0) 60%,
-    rgba(255,255,255,0.15) 80%,
-    rgba(255,255,255,0.45) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
+  .hsec {
+    position:relative; width:100%; max-width:1536px; height:100%;
+    border-radius:32px; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center;
+    background: linear-gradient(135deg,rgba(255,255,255,.34) 0%,rgba(196,196,212,.18) 45%,rgba(155,155,175,.20) 100%);
+    border:1px solid rgba(255,255,255,.58);
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,.72),
+      inset 0 -1px 0 rgba(0,0,0,.07),
+      0 24px 80px rgba(0,0,0,.17),
+      0 4px 16px rgba(0,0,0,.10);
+  }
+  @media(min-width:768px){ .hsec{ border-radius:52px; } }
 
-.liquid-glass-strong {
-  background: rgba(255,255,255,0.01);
-  background-blend-mode: luminosity;
-  backdrop-filter: blur(50px);
-  -webkit-backdrop-filter: blur(50px);
-  border: none;
-  box-shadow: 4px 4px 4px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.15);
-  position: relative;
-  overflow: hidden;
-}
-.liquid-glass-strong::before {
-  content: "";
-  position: absolute; inset: 0;
-  border-radius: inherit;
-  padding: 1.4px;
-  background: linear-gradient(180deg,
-    rgba(255,255,255,0.5) 0%,
-    rgba(255,255,255,0.2) 20%,
-    rgba(255,255,255,0) 40%,
-    rgba(255,255,255,0) 60%,
-    rgba(255,255,255,0.2) 80%,
-    rgba(255,255,255,0.5) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
+  .hvid {
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; object-position:65%; z-index:0;
+    opacity:.48; mix-blend-mode:luminosity;
+  }
+  @media(min-width:1024px){ .hvid{ object-position:center; } }
 
-/* ── CHROME SURFACE (for below-fold sections) ── */
-.chrome-surface {
-  background: linear-gradient(145deg,rgba(255,255,255,0.54) 0%,rgba(218,218,234,0.28) 60%,rgba(188,188,210,0.22) 100%);
-  border: 1px solid rgba(255,255,255,0.72);
-  border-radius: 28px;
-  box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.90), inset 0 -1px 0 rgba(0,0,0,0.05), 0 8px 32px rgba(0,0,0,0.14);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  position: relative; overflow: hidden;
-}
-.chrome-surface::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent);
-}
+  .hov {
+    position:absolute; inset:0; z-index:1;
+    background:linear-gradient(160deg,rgba(228,228,238,.60) 0%,rgba(196,196,214,.26) 55%,rgba(136,136,158,.28) 100%);
+  }
 
-/* Chrome section bg (silver, not black) */
-.chrome-bg {
-  background: linear-gradient(160deg, #d2d2d8 0%, #c8c8d2 50%, #d0d0d8 100%);
-  color: rgba(16,14,26,0.88);
-}
-.chrome-bg .ink   { color: rgba(16,14,26,0.88); }
-.chrome-bg .soft  { color: rgba(16,14,26,0.50); }
-.chrome-bg .faint { color: rgba(16,14,26,0.20); }
+  .hcon { position:relative; z-index:10; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; }
 
-/* ── TICKER ── */
-.ticker-wrap { width:100%; overflow:hidden; padding:11px 0; background:rgba(255,255,255,0.06); border-top:1px solid rgba(255,255,255,0.12); border-bottom:1px solid rgba(255,255,255,0.08); }
-.ticker-track { display:flex; gap:60px; width:max-content; animation:ticker 36s linear infinite; }
-.ticker-item { font-family:var(--font-d); font-size:13px; font-style:italic; color:rgba(255,255,255,0.45); white-space:nowrap; letter-spacing:0.02em; }
-@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  /* navbar */
+  .navbar { display:flex; align-items:center; justify-content:space-between; padding:24px; width:100%; z-index:10; }
+  @media(min-width:768px){ .navbar{padding:24px 40px;} }
+  .nsp { flex:1; display:none; }
+  @media(min-width:768px){ .nsp{display:block;} }
+  .nmenu { display:none; list-style:none; gap:32px; align-items:center; font-size:11px; font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); }
+  @media(min-width:768px){ .nmenu{display:flex;} }
+  .nmenu li { cursor:pointer; opacity:.62; transition:opacity .2s; display:flex; align-items:center; gap:4px; }
+  .nmenu li:hover { opacity:1; }
+  .nmobi { display:block; font-family:var(--font-d); font-size:22px; font-weight:400; letter-spacing:-.02em; color:var(--ink); }
+  @media(min-width:768px){ .nmobi{display:none;} }
+  .nright { flex:1; display:flex; justify-content:flex-end; }
+  .ncta {
+    display:flex; align-items:center; gap:10px;
+    background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(198,198,216,.48));
+    border:1px solid rgba(255,255,255,.82); border-radius:var(--rpill);
+    padding:8px 20px 8px 8px; cursor:pointer;
+    font-family:var(--font-b); font-size:11px; font-weight:400; color:var(--ink);
+    letter-spacing:.06em; text-transform:uppercase;
+    box-shadow:0 2px 8px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.9);
+    transition:box-shadow .2s,transform .15s;
+  }
+  .ncta:hover{ transform:scale(1.02); box-shadow:0 4px 16px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.9); }
+  .ncta:active{ transform:scale(.98); }
+  .ncta-ic { background:rgba(255,255,255,.52); padding:6px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.7); }
+  .ncta-ic svg { width:14px; height:14px; color:var(--ink); }
 
-/* chrome bg ticker */
-.chrome-bg .ticker-wrap { background:rgba(255,255,255,0.22); border-color:rgba(255,255,255,0.55); }
-.chrome-bg .ticker-item { color:rgba(16,14,26,0.38); }
+  /* hero text */
+  .htxt { width:100%; display:flex; flex-direction:column; align-items:center; padding:28px 24px 0; text-align:center; max-width:860px; }
+  .hbadge {
+    display:flex; align-items:center; gap:8px; padding:8px 18px; border-radius:var(--rpill);
+    background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(218,218,234,.48));
+    border:1px solid rgba(255,255,255,.82);
+    box-shadow:0 2px 8px rgba(0,0,0,.08),inset 0 1px 0 var(--glow);
+    margin-bottom:18px;
+    animation:fadeUp .7s ease-out both;
+  }
+  .hbadge svg { width:14px; height:14px; opacity:.55; }
+  .hbadge span { font-size:11px; font-weight:400; color:var(--ink); letter-spacing:.10em; text-transform:uppercase; }
 
-/* ── CHROME DIVIDER ── */
-.cdivr { height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.28) 20%,rgba(255,255,255,0.55) 50%,rgba(255,255,255,0.28) 80%,transparent); }
-.chrome-bg .cdivr { background:linear-gradient(90deg,transparent,rgba(16,14,26,0.12) 20%,rgba(16,14,26,0.22) 50%,rgba(16,14,26,0.12) 80%,transparent); }
+  .hh1 {
+    font-family:var(--font-d); font-size:clamp(3rem,8vw,6rem); font-weight:300;
+    letter-spacing:-.025em; line-height:1.02; margin-bottom:14px;
+    animation:fadeScale .9s ease-out .2s both;
+    background:linear-gradient(160deg,#16142a 0%,#484868 50%,#16142a 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .hsub {
+    font-size:clamp(.88rem,1.4vw,1.05rem); color:var(--ink-soft); line-height:1.7;
+    max-width:500px; font-weight:300;
+    animation:fadeIn .9s ease-out .4s both;
+  }
 
-/* ── BOOK MODAL ── */
-.modal-bg {
-  position: fixed; inset: 0; z-index: 9999;
-  background: rgba(0,0,0,0.82);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 16px;
-  animation: fadeIn .3s ease-out both;
-}
-.modal-inner {
-  position: relative;
-  width: 100%; max-width: 640px;
-  background: linear-gradient(145deg,rgba(255,255,255,0.12),rgba(200,200,220,0.07));
-  border: 1px solid rgba(255,255,255,0.22);
-  border-radius: 24px;
-  box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.35), 0 32px 80px rgba(0,0,0,0.55);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  overflow: hidden;
-  animation: slideUp .35s cubic-bezier(.4,0,.2,1) both;
-}
-.modal-close {
-  position: absolute; top: 14px; right: 14px; z-index: 10;
-  width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.22);
-  color: rgba(255,255,255,0.8);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 18px; line-height: 1;
-  transition: background .2s;
-}
-.modal-close:hover { background: rgba(255,255,255,0.22); }
-.modal-iframe-wrap {
-  position: relative; width: 100%; height: 0;
-  padding-top: 141.8919%;
-  overflow: hidden;
-  border-radius: 16px;
-}
-.modal-iframe-wrap iframe { position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; }
-.modal-footer {
-  padding: 14px 20px;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  border-top: 1px solid rgba(255,255,255,0.10);
-}
-.modal-footer-text { font-family: var(--font-b); font-size: 12px; color: rgba(255,255,255,0.45); letter-spacing: 0.04em; }
-.modal-dl-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.28);
-  border-radius: 999px;
-  padding: 8px 18px;
-  font-family: var(--font-b); font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.9);
-  text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase;
-  cursor: pointer; transition: background .2s, transform .15s;
-}
-.modal-dl-btn:hover { background: rgba(255,255,255,0.20); transform: scale(1.02); }
-.modal-dl-btn svg { width: 14px; height: 14px; }
+  /* bottom-left card */
+  .blc {
+    position:absolute; bottom:108px; right:14px;
+    padding:18px; border-radius:26px;
+    background:linear-gradient(135deg,rgba(255,255,255,.54),rgba(208,208,224,.34));
+    backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,.72);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.8),0 12px 40px rgba(0,0,0,.12);
+    display:flex; flex-direction:column; gap:12px; min-width:148px;
+    animation:slideInLeft .9s ease-out .2s both;
+  }
+  @media(min-width:768px){ .blc{left:24px;right:auto;bottom:24px;border-radius:32px;min-width:168px;} }
+  @media(min-width:1024px){ .blc{left:40px;bottom:40px;border-radius:40px;min-width:192px;gap:16px;padding:24px;} }
+  .blc-stat {
+    font-family:var(--font-d); font-size:3rem; font-weight:300; letter-spacing:-.04em; line-height:1;
+    background:linear-gradient(160deg,#16142a 0%,#606088 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .blc-lbl { font-size:10px; font-weight:400; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.14em; margin-top:2px; }
+  .blc-btn {
+    display:flex; align-items:center;
+    background:linear-gradient(135deg,rgba(255,255,255,.84),rgba(218,218,234,.58));
+    border:1px solid rgba(255,255,255,.9); border-radius:var(--rpill);
+    padding:7px 18px 7px 7px; gap:8px; cursor:pointer;
+    font-family:var(--font-b); font-size:12px; font-weight:400; color:var(--ink);
+    box-shadow:0 2px 8px rgba(0,0,0,.09),inset 0 1px 0 var(--glow);
+    transition:box-shadow .2s,transform .15s; align-self:flex-start; letter-spacing:.04em;
+  }
+  .blc-btn:hover{ transform:scale(1.02); }
+  .blc-btn-ic { background:rgba(255,255,255,.52); padding:5px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .blc-btn-ic svg { width:13px; height:13px; color:var(--ink-soft); }
 
-/* Chrome-bg modal adjustments */
-.chrome-modal .modal-inner { background: linear-gradient(145deg,rgba(255,255,255,0.55),rgba(210,210,228,0.32)); border-color:rgba(255,255,255,0.72); }
-.chrome-modal .modal-footer { border-color:rgba(0,0,0,0.08); }
-.chrome-modal .modal-footer-text { color:rgba(16,14,26,0.42); }
-.chrome-modal .modal-dl-btn { background:rgba(255,255,255,0.55); border-color:rgba(255,255,255,0.8); color:rgba(16,14,26,0.88); }
-.chrome-modal .modal-dl-btn:hover { background:rgba(255,255,255,0.75); }
-.chrome-modal .modal-close { background:rgba(255,255,255,0.55); border-color:rgba(255,255,255,0.8); color:rgba(16,14,26,0.7); }
+  /* bottom-right corner */
+  .brc {
+    position:absolute; bottom:0; right:0;
+    padding:18px 12px 12px 30px;
+    background:var(--bg); border-top-left-radius:24px;
+    display:flex; align-items:center; gap:14px;
+    animation:slideInUp .9s ease-out .4s both;
+    box-shadow:-4px -4px 20px rgba(0,0,0,.06);
+  }
+  @media(min-width:640px){ .brc{padding:22px 16px 16px 40px;border-top-left-radius:32px;gap:18px;} }
+  @media(min-width:768px){ .brc{padding:30px 24px 24px 54px;border-top-left-radius:56px;gap:22px;} }
+  .cmask-t { position:absolute; top:-24px; right:0; width:24px; height:24px; pointer-events:none; }
+  .cmask-l { position:absolute; bottom:0; left:-24px; width:24px; height:24px; pointer-events:none; }
+  @media(min-width:640px){ .cmask-t{top:-32px;width:32px;height:32px;} .cmask-l{left:-32px;width:32px;height:32px;} }
+  @media(min-width:768px){ .cmask-t{top:-56px;width:56px;height:56px;} .cmask-l{left:-56px;width:56px;height:56px;} }
+  .brc-ic {
+    background:linear-gradient(135deg,rgba(255,255,255,.52),rgba(198,198,218,.28));
+    width:44px; height:44px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid rgba(255,255,255,.7);
+    box-shadow:0 2px 8px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.9);
+    flex-shrink:0;
+  }
+  @media(min-width:768px){ .brc-ic{width:56px;height:56px;} }
+  .brc-ic svg { width:17px; height:17px; color:var(--ink-soft); }
+  .brc-title { font-family:var(--font-d); font-size:16px; font-weight:400; color:var(--ink); letter-spacing:-.01em; }
+  @media(min-width:768px){ .brc-title{font-size:20px;} }
+  .brc-sub { display:flex; align-items:center; gap:4px; color:var(--ink-soft); cursor:pointer; transition:color .2s; margin-top:2px; }
+  .brc-sub:hover{ color:var(--ink); }
+  .brc-sub span { font-size:11px; font-weight:400; letter-spacing:.05em; }
+  .brc-sub svg { width:12px; height:12px; }
 
-/* ── TAG CHIP ── */
-.tag-chip {
-  font-family: var(--font-b); font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.75);
-  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 999px; padding: 4px 13px; letter-spacing: 0.04em;
-}
-.chrome-bg .tag-chip {
-  color: rgba(16,14,26,0.56); background: rgba(255,255,255,0.42);
-  border-color: rgba(255,255,255,0.68);
-}
+  /* ── TICKER ── */
+  .ticker {
+    position:relative; z-index:1; width:100%; overflow:hidden; padding:12px 0;
+    background:linear-gradient(90deg,rgba(255,255,255,.28),rgba(198,198,218,.16),rgba(255,255,255,.28));
+    border-top:1px solid rgba(255,255,255,.55);
+    border-bottom:1px solid rgba(255,255,255,.32);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 8px rgba(0,0,0,.05);
+  }
+  .ticker-track { display:flex; gap:60px; width:max-content; animation:ticker 32s linear infinite; }
+  .ticker-item { font-family:var(--font-d); font-size:13px; font-style:italic; color:var(--ink-soft); white-space:nowrap; letter-spacing:.02em; }
+  @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-/* ── KEYFRAMES ── */
-@keyframes fadeIn  { from{opacity:0} to{opacity:1} }
-@keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-@keyframes fadeUp  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+  /* ── SECTION BASE ── */
+  .sw { position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 28px; }
+  section { padding:88px 0; }
+  @media(min-width:768px){ section{padding:108px 0;} }
+  h2.lbl { font-family:var(--font-b); font-size:10px; font-weight:500; letter-spacing:.20em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:12px; }
+  h3.ttl { font-family:var(--font-d); font-size:clamp(2rem,4vw,3rem); font-weight:300; color:var(--ink); letter-spacing:-.025em; line-height:1.08; margin-bottom:22px; }
+  p.body { font-size:15px; line-height:1.78; color:var(--ink-soft); font-weight:300; max-width:600px; }
+  .divr { position:relative; z-index:1; max-width:1180px; margin:0 auto; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.7) 20%,rgba(178,178,200,.4) 50%,rgba(255,255,255,.7) 80%,transparent); }
 
-/* ── CAPABILITY CARDS ── */
-.cap-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 20px; padding: 24px;
-  min-height: 360px; display: flex; flex-direction: column;
-  position: relative; overflow: hidden;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.22);
-  transition: transform .25s, box-shadow .25s;
-}
-.cap-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent); }
-.cap-card:hover { transform: translateY(-4px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 20px 60px rgba(0,0,0,0.32); }
+  /* ── CHROME CARD ── */
+  .cc {
+    background:linear-gradient(145deg,rgba(255,255,255,.54) 0%,rgba(218,218,234,.28) 60%,rgba(188,188,210,.23) 100%);
+    border:1px solid rgba(255,255,255,.72); border-radius:var(--rcard);
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.90),inset 0 -1px 0 rgba(0,0,0,.05),0 8px 32px rgba(0,0,0,.10);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  }
 
-.cap-icon-wrap {
-  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
-}
+  /* ── SUMMARY ── */
+  .sg { display:grid; grid-template-columns:1fr; gap:48px; }
+  @media(min-width:768px){ .sg{grid-template-columns:1fr 1fr;align-items:start;gap:80px;} }
+  .spull {
+    font-family:var(--font-d); font-size:clamp(1.2rem,2.2vw,1.65rem); font-weight:300; font-style:italic; color:var(--ink);
+    line-height:1.42; padding:24px 28px; border-radius:20px; position:relative;
+  }
+  .spull::before { content:''; position:absolute; left:0; top:12px; bottom:12px; width:2px; background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(158,158,180,.4),rgba(255,255,255,.9)); border-radius:999px; }
+  .stags { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
+  .tag {
+    font-size:11px; font-weight:400; color:var(--ink-soft);
+    background:linear-gradient(135deg,rgba(255,255,255,.54),rgba(208,208,224,.28));
+    border:1px solid rgba(255,255,255,.68); border-radius:var(--rpill); padding:5px 15px;
+    letter-spacing:.05em; box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 2px 5px rgba(0,0,0,.05);
+  }
 
-/* ── CHARACTER CARDS (chrome bg) ── */
-.char-card {
-  padding: 22px 18px 18px; border-radius: 22px;
-  display: flex; flex-direction: column; gap: 5px;
-  transition: transform .25s, box-shadow .25s; cursor: default;
-  background: linear-gradient(145deg,rgba(255,255,255,0.54) 0%,rgba(218,218,234,0.28) 60%,rgba(188,188,210,0.22) 100%);
-  border: 1px solid rgba(255,255,255,0.72);
-  box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.90), 0 4px 16px rgba(0,0,0,0.07);
-  position: relative; overflow: hidden;
-}
-.char-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.9),transparent); }
-.char-card:hover { transform:translateY(-5px); box-shadow:0 16px 48px rgba(0,0,0,0.10); }
-.char-initial { font-family:var(--font-d); font-size:2.6rem; font-weight:300; line-height:1; margin-bottom:4px; background:linear-gradient(160deg,#16142a 0%,#6868a0 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.char-name { font-size:13px; font-weight:500; color:rgba(16,14,26,0.88); letter-spacing:.02em; }
-.char-trait { font-size:11px; font-weight:300; color:rgba(16,14,26,0.50); line-height:1.55; margin-top:3px; }
+  /* ── CHARACTERS ── */
+  .cg { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:12px; }
+  @media(min-width:640px){ .cg{grid-template-columns:repeat(3,1fr);} }
+  @media(min-width:1024px){ .cg{grid-template-columns:repeat(6,1fr);gap:10px;} }
+  .chcard { padding:22px 18px 18px; border-radius:22px; display:flex; flex-direction:column; gap:5px; transition:transform .25s,box-shadow .25s; cursor:default; position:relative; overflow:hidden; }
+  .chcard::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent); }
+  .chcard:hover { transform:translateY(-5px); box-shadow:0 16px 48px rgba(0,0,0,.13); }
+  .chin { font-family:var(--font-d); font-size:2.6rem; font-weight:300; line-height:1; margin-bottom:4px; background:linear-gradient(160deg,#16142a 0%,#6868a0 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .chname { font-size:13px; font-weight:500; color:var(--ink); letter-spacing:.02em; }
+  .chtrait { font-size:11px; font-weight:300; color:var(--ink-soft); line-height:1.55; margin-top:3px; }
 
-/* ── QUOTE CARD ── */
-.rq-card {
-  position:relative; padding:52px 36px 36px; border-radius:30px; overflow:hidden;
-  background:linear-gradient(145deg,rgba(255,255,255,0.44) 0%,rgba(216,216,232,0.28) 60%,rgba(188,188,212,0.22) 100%);
-  border:1px solid rgba(255,255,255,0.74);
-  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.95),inset 0 -1px 0 rgba(0,0,0,0.05),0 24px 64px rgba(0,0,0,0.10);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-}
-.rq-dot { position:absolute; border-radius:50%; background:rgba(155,155,188,0.30); pointer-events:none; }
-.rq-marks { position:absolute; top:18px; left:24px; font-family:var(--font-d); font-size:3.6rem; font-weight:500; color:rgba(16,14,26,0.88); line-height:1; letter-spacing:-.06em; opacity:.70; user-select:none; }
-.rq-txtwrap { min-height:110px; display:flex; align-items:center; justify-content:center; position:relative; }
-.rq-txt { font-family:var(--font-d); font-size:clamp(1.1rem,2.2vw,1.4rem); font-style:italic; font-weight:300; color:rgba(16,14,26,0.88); line-height:1.56; text-align:center; opacity:0; transform:translateY(7px); transition:opacity .55s ease,transform .55s ease; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:0 6px; }
-.rq-txt.active { opacity:1; transform:translateY(0); position:relative; inset:auto; }
-.rq-pill { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,rgba(255,255,255,0.58),rgba(208,208,228,0.38)); border:1px solid rgba(255,255,255,0.80); border-radius:999px; padding:7px 18px; font-size:10px; font-weight:400; letter-spacing:.12em; text-transform:uppercase; color:rgba(16,14,26,0.52); box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 6px rgba(0,0,0,0.06); }
-.rq-pill::before { content:'—'; opacity:.45; margin-right:4px; }
-.rq-actions { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
-.rq-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; background:linear-gradient(135deg,rgba(255,255,255,0.52),rgba(208,208,228,0.28)); border:1px solid rgba(255,255,255,0.74); border-radius:999px; padding:12px 20px; font-family:var(--font-b); font-size:11px; font-weight:400; letter-spacing:.10em; text-transform:uppercase; color:rgba(16,14,26,0.80); cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 8px rgba(0,0,0,0.06); transition:box-shadow .2s,transform .15s; }
-.rq-btn:hover { transform:scale(1.015); box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 4px 14px rgba(0,0,0,0.10); }
-.rq-btn:active { transform:scale(.98); }
-.rq-btnrow { display:flex; gap:10px; }
-.rq-btnrow .rq-btn { flex:1; }
-.rq-btn svg { width:13px; height:13px; opacity:.55; }
-.rq-sparkle { position:absolute; bottom:-10px; right:-10px; width:80px; height:80px; opacity:.07; pointer-events:none; }
+  /* ── PULL QUOTE BLOCK ── */
+  .pqwrap {
+    position:relative; z-index:1;
+    background:linear-gradient(160deg,#16142a 0%,#28264a 60%,#16142a 100%);
+    padding:90px 48px; display:flex; flex-direction:column; align-items:center; text-align:center; overflow:hidden;
+  }
+  .pqwrap::after { content:''; position:absolute; right:-80px; bottom:-80px; width:360px; height:360px; border-radius:50%; border:1px solid rgba(255,255,255,.05); box-shadow:0 0 0 40px rgba(255,255,255,.02),0 0 0 80px rgba(255,255,255,.01); pointer-events:none; }
+  .bq { font-family:var(--font-d); font-size:clamp(1.5rem,3.2vw,2.6rem); font-weight:300; font-style:italic; color:rgba(230,230,244,.88); line-height:1.45; max-width:760px; letter-spacing:-.01em; position:relative; z-index:1; }
+  .bqa { margin-top:22px; font-size:11px; font-weight:400; letter-spacing:.15em; text-transform:uppercase; color:rgba(198,198,220,.32); position:relative; z-index:1; }
 
-/* ── GENERAL CARDS / WALL ── */
-.chrome-card { background:linear-gradient(145deg,rgba(255,255,255,0.54),rgba(218,218,234,0.28),rgba(188,188,210,0.22)); border:1px solid rgba(255,255,255,0.72); border-radius:22px; box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.90),0 4px 16px rgba(0,0,0,0.07); position:relative; overflow:hidden; }
-.chrome-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.85),transparent); }
+  /* ══ QUOTE CARD (reference-image style) ══ */
+  #from-pages { text-align:center; }
+  .rq-outer { position:relative; display:inline-block; margin:40px auto 0; width:100%; max-width:520px; }
 
-.wall-msg { padding:16px 20px; border-radius:16px; font-family:var(--font-d); font-size:1rem; font-style:italic; color:rgba(16,14,26,0.88); line-height:1.6; animation:fadeUp .4s ease-out both; }
-.wall-anon { font-size:10px; font-weight:400; color:rgba(16,14,26,0.32); font-style:normal; font-family:var(--font-b); letter-spacing:.08em; margin-top:7px; text-transform:uppercase; }
+  .rq-card {
+    position:relative; padding:52px 36px 36px; border-radius:30px; overflow:hidden;
+    background:linear-gradient(145deg,rgba(255,255,255,.44) 0%,rgba(216,216,232,.28) 60%,rgba(188,188,212,.22) 100%);
+    border:1px solid rgba(255,255,255,.74);
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(0,0,0,.05),0 24px 64px rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.07);
+    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  }
+  /* floating dots */
+  .rq-dot { position:absolute; border-radius:50%; background:rgba(155,155,188,.32); pointer-events:none; }
+  .rq-dot:nth-child(1){ width:7px;height:7px;top:44%;right:22px; }
+  .rq-dot:nth-child(2){ width:5px;height:5px;bottom:24%;right:40px; }
+  .rq-dot:nth-child(3){ width:6px;height:6px;bottom:16%;left:48%; }
+  .rq-dot:nth-child(4){ width:4px;height:4px;top:32%;left:20px; }
 
-/* ── INPUTS (chrome bg) ── */
-.chrome-input { flex:1; border:1px solid rgba(255,255,255,0.65); border-radius:14px; padding:13px 18px; font-family:var(--font-b); font-size:13px; color:rgba(16,14,26,0.88); background:linear-gradient(135deg,rgba(255,255,255,0.55),rgba(210,210,228,0.28)); outline:none; box-shadow:inset 0 1px 0 rgba(255,255,255,0.85),inset 0 2px 6px rgba(0,0,0,0.04); }
-.chrome-input:focus { border-color:rgba(255,255,255,0.9); }
-.chrome-input::placeholder { color:rgba(16,14,26,0.30); }
-.chrome-post-btn { background:linear-gradient(135deg,rgba(16,14,40,0.88),rgba(48,44,80,0.82)); color:rgba(232,232,244,0.92); border:1px solid rgba(78,74,118,0.35); border-radius:14px; padding:13px 22px; font-family:var(--font-b); font-size:12px; font-weight:400; letter-spacing:.05em; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.14); transition:all .2s; white-space:nowrap; }
-.chrome-post-btn:hover { transform:scale(1.02); }
+  /* big quote marks */
+  .rq-marks { position:absolute; top:18px; left:24px; font-family:var(--font-d); font-size:3.6rem; font-weight:500; color:var(--ink); line-height:1; letter-spacing:-.06em; opacity:.72; user-select:none; }
 
-/* ── BREATHE ── */
-.bcirc { width:120px; height:120px; border-radius:50%; background:linear-gradient(145deg,rgba(255,255,255,0.54),rgba(198,198,220,0.30)); border:1px solid rgba(255,255,255,0.78); box-shadow:inset 0 2px 0 rgba(255,255,255,0.9),0 8px 32px rgba(0,0,0,0.10); display:flex; align-items:center; justify-content:center; font-family:var(--font-d); font-size:.95rem; font-style:italic; color:rgba(16,14,26,0.55); transition:transform 4s ease-in-out,box-shadow 2s; cursor:pointer; user-select:none; }
-.bcirc.inhale { transform:scale(1.38); box-shadow:inset 0 2px 0 rgba(255,255,255,0.9),0 16px 60px rgba(138,138,200,0.18); }
-.bcirc.hold   { transform:scale(1.38); }
-.bcirc.exhale { transform:scale(1.0); box-shadow:inset 0 2px 0 rgba(255,255,255,0.9),0 4px 12px rgba(0,0,0,0.07); }
-.blbl { font-size:12px; color:rgba(16,14,26,0.50); letter-spacing:.08em; text-transform:uppercase; margin-top:20px; min-height:20px; text-align:center; }
+  /* quote text zone */
+  .rq-txtwrap { min-height:110px; display:flex; align-items:center; justify-content:center; position:relative; }
+  .rq-txt {
+    font-family:var(--font-d); font-size:clamp(1.1rem,2.2vw,1.4rem); font-style:italic; font-weight:300; color:var(--ink);
+    line-height:1.56; text-align:center;
+    opacity:0; transform:translateY(7px);
+    transition:opacity .55s ease,transform .55s ease;
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:0 6px;
+  }
+  .rq-txt.active { opacity:1; transform:translateY(0); position:relative; inset:auto; }
 
-/* ── SECTION LABELS (chrome bg) ── */
-.lbl  { font-family:var(--font-b); font-size:10px; font-weight:500; letter-spacing:.20em; text-transform:uppercase; color:rgba(16,14,26,0.48); margin-bottom:12px; }
-.ttl  { font-family:var(--font-d); font-size:clamp(2rem,4vw,3rem); font-weight:300; color:rgba(16,14,26,0.88); letter-spacing:-.025em; line-height:1.08; margin-bottom:22px; }
-.sbod { font-size:15px; line-height:1.78; color:rgba(16,14,26,0.50); font-weight:300; max-width:600px; }
+  /* attribution pill */
+  .rq-attr { display:flex; align-items:center; justify-content:center; margin-top:24px; }
+  .rq-pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(208,208,228,.38));
+    border:1px solid rgba(255,255,255,.80); border-radius:var(--rpill);
+    padding:7px 18px; font-size:10px; font-weight:400; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-soft);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 6px rgba(0,0,0,.06);
+    transition:opacity .4s;
+  }
+  .rq-pill::before { content:'—'; opacity:.45; margin-right:4px; }
 
-/* ── SUPPORT / GET SUPPORT ── */
-.gs-wrap { background:linear-gradient(160deg,#16142a 0%,#28264a 60%,#16142a 100%); padding:90px 48px; text-align:center; overflow:hidden; position:relative; z-index:1; }
-.sit { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:20px; padding:22px 24px; text-align:left; transition:background .2s; }
-.sit:hover { background:rgba(255,255,255,0.08); }
-.sit-t { font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(200,200,220,0.35); margin-bottom:7px; }
-.sit-v { font-family:var(--font-d); font-size:1.15rem; color:rgba(232,232,244,0.88); font-weight:300; }
-.sit-d { font-size:12px; color:rgba(200,200,220,0.35); margin-top:5px; line-height:1.55; }
+  /* action buttons */
+  .rq-actions { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+  .rq-btn {
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+    background:linear-gradient(135deg,rgba(255,255,255,.50),rgba(208,208,228,.30));
+    border:1px solid rgba(255,255,255,.74); border-radius:var(--rpill);
+    padding:12px 20px;
+    font-family:var(--font-b); font-size:11px; font-weight:400; letter-spacing:.10em; text-transform:uppercase;
+    color:var(--ink); cursor:pointer;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 8px rgba(0,0,0,.07);
+    transition:box-shadow .2s,transform .15s;
+  }
+  .rq-btn:hover{ transform:scale(1.015); box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 14px rgba(0,0,0,.10); }
+  .rq-btn:active{ transform:scale(.98); }
+  .rq-btnrow { display:flex; gap:10px; }
+  .rq-btnrow .rq-btn { flex:1; }
+  .rq-btn svg { width:13px; height:13px; opacity:.55; }
 
-/* ── FOOTER ── */
-footer { padding:36px 48px; border-top:1px solid rgba(255,255,255,0.22); display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; background:linear-gradient(0deg,rgba(212,212,218,1),rgba(220,220,226,0.55)); }
-.ftlogo { font-family:var(--font-d); font-size:1.5rem; font-weight:300; color:rgba(16,14,26,0.88); letter-spacing:-.02em; }
-.ftcopy { font-size:11px; color:rgba(16,14,26,0.28); letter-spacing:.05em; line-height:1.8; }
-.ftcris { font-size:12px; color:rgba(16,14,26,0.50); line-height:1.8; }
-.ftcris a { color:rgba(16,14,26,0.80); text-decoration:underline; text-decoration-color:rgba(16,14,26,0.22); }
-</style>
+  /* corner sparkle */
+  .rq-sparkle { position:absolute; bottom:-10px; right:-10px; width:80px; height:80px; opacity:.07; pointer-events:none; }
+
+  /* ── CHECK IN ── */
+  #check-in { text-align:center; }
+  .fg { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:32px; }
+  .fp {
+    font-family:var(--font-b); font-size:12px; font-weight:400; letter-spacing:.05em; color:var(--ink);
+    background:linear-gradient(135deg,rgba(255,255,255,.54),rgba(208,208,228,.30));
+    border:1px solid rgba(255,255,255,.70); border-radius:var(--rpill); padding:10px 22px;
+    cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 6px rgba(0,0,0,.06); transition:all .2s;
+  }
+  .fp:hover,.fp.sel { background:linear-gradient(135deg,rgba(22,18,48,.88),rgba(58,54,90,.82)); color:rgba(230,230,244,.92); border-color:rgba(22,18,48,.4); box-shadow:0 4px 16px rgba(0,0,0,.18); }
+  .fr { margin-top:28px; font-family:var(--font-d); font-size:1.1rem; font-style:italic; color:var(--ink-soft); min-height:36px; transition:opacity .3s; max-width:520px; margin-left:auto; margin-right:auto; line-height:1.6; }
+
+  /* ── BREATHE ── */
+  #breathe { text-align:center; }
+  .bwrap { display:flex; align-items:center; justify-content:center; margin:44px auto 0; }
+  .bring { position:relative; width:160px; height:160px; display:flex; align-items:center; justify-content:center; }
+  .bring::before,.bring::after { content:''; position:absolute; border-radius:50%; border:1px solid rgba(178,178,208,.32); transition:all 4s ease-in-out; }
+  .bring::before { inset:-16px; }
+  .bring::after  { inset:-32px; border-color:rgba(178,178,208,.14); }
+  .bcirc {
+    width:120px; height:120px; border-radius:50%;
+    background:linear-gradient(145deg,rgba(255,255,255,.54),rgba(198,198,220,.30));
+    border:1px solid rgba(255,255,255,.78);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.9),0 8px 32px rgba(0,0,0,.11);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-d); font-size:.95rem; font-style:italic; color:var(--ink-soft);
+    transition:transform 4s ease-in-out,box-shadow 2s;
+    cursor:pointer; user-select:none;
+  }
+  .bcirc.inhale { transform:scale(1.38); box-shadow:inset 0 2px 0 rgba(255,255,255,.9),0 16px 60px rgba(138,138,200,.20); }
+  .bcirc.hold   { transform:scale(1.38); }
+  .bcirc.exhale { transform:scale(1.0); box-shadow:inset 0 2px 0 rgba(255,255,255,.9),0 4px 12px rgba(0,0,0,.08); }
+  .blbl { font-size:12px; color:var(--ink-soft); letter-spacing:.08em; text-transform:uppercase; margin-top:20px; min-height:20px; }
+
+  /* ── BOOK ── */
+  #book { text-align:center; }
+  .bkcard { display:inline-flex; flex-direction:column; align-items:center; gap:20px; padding:48px 40px; border-radius:32px; margin-top:44px; max-width:440px; width:100%; position:relative; overflow:hidden; }
+  .bkcard::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent); }
+  .bkicon { font-size:3.2rem; }
+  .bkcard h4 { font-family:var(--font-d); font-size:1.9rem; font-weight:300; color:var(--ink); letter-spacing:-.025em; }
+  .bkcard p { font-size:13px; color:var(--ink-soft); line-height:1.75; max-width:300px; }
+  .dlbtn {
+    display:inline-flex; align-items:center; gap:10px;
+    background:linear-gradient(135deg,rgba(18,14,40,.90),rgba(48,44,80,.84));
+    color:rgba(230,230,244,.92); border:1px solid rgba(78,74,118,.38); border-radius:var(--rpill);
+    padding:14px 30px; font-family:var(--font-b); font-size:13px; font-weight:400; cursor:pointer; text-decoration:none;
+    letter-spacing:.05em; box-shadow:0 4px 20px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.12); transition:all .2s;
+  }
+  .dlbtn:hover{ transform:scale(1.02); box-shadow:0 8px 28px rgba(0,0,0,.24); }
+  .dlbtn svg { width:15px; height:15px; }
+  .dlnote { font-size:11px; color:var(--ink-faint); letter-spacing:.07em; }
+
+  /* ── BOOK SUPPORT ── */
+  .snote { border-radius:16px; padding:16px 22px; font-size:13px; color:var(--ink-soft); line-height:1.7; margin-top:24px; max-width:580px; border-left:2px solid rgba(198,198,218,.55); background:rgba(255,255,255,.20); }
+  .scards { display:grid; grid-template-columns:1fr; gap:14px; margin-top:36px; }
+  @media(min-width:640px){ .scards{grid-template-columns:1fr 1fr;} }
+  @media(min-width:1024px){ .scards{grid-template-columns:repeat(3,1fr);} }
+  .sc { padding:22px 20px; border-radius:20px; position:relative; overflow:hidden; }
+  .sc::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent); }
+  .sc-c { font-size:10px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:10px; }
+  .sc-t { font-family:var(--font-d); font-size:1.05rem; font-style:italic; color:var(--ink); line-height:1.6; }
+
+  /* ── WARNINGS ── */
+  .wgrid { display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+  .wchip { font-size:11px; font-weight:400; color:var(--ink-soft); background:linear-gradient(135deg,rgba(255,255,255,.46),rgba(208,208,228,.26)); border:1px solid rgba(255,255,255,.64); border-radius:var(--rpill); padding:6px 16px; letter-spacing:.04em; box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
+
+  /* ── READER WALL ── */
+  .wirow { display:flex; gap:10px; margin-top:30px; max-width:560px; }
+  .winput { flex:1; border:1px solid rgba(255,255,255,.62); border-radius:14px; padding:13px 18px; font-family:var(--font-b); font-size:13px; color:var(--ink); background:linear-gradient(135deg,rgba(255,255,255,.52),rgba(208,208,228,.26)); outline:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.84),inset 0 2px 6px rgba(0,0,0,.05); transition:border-color .2s; }
+  .winput:focus{ border-color:rgba(255,255,255,.9); }
+  .winput::placeholder{ color:var(--ink-faint); }
+  .wpostbtn { background:linear-gradient(135deg,rgba(18,14,40,.88),rgba(48,44,80,.82)); color:rgba(230,230,244,.9); border:1px solid rgba(78,74,118,.34); border-radius:14px; padding:13px 22px; font-family:var(--font-b); font-size:12px; font-weight:400; letter-spacing:.05em; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.18); transition:all .2s; white-space:nowrap; }
+  .wpostbtn:hover{ transform:scale(1.02); }
+  .wmsgs { display:flex; flex-direction:column; gap:10px; margin-top:20px; max-width:560px; }
+  .wmsg { padding:16px 20px; border-radius:16px; font-family:var(--font-d); font-size:1rem; font-style:italic; color:var(--ink); line-height:1.6; animation:fadeUp .4s ease-out both; position:relative; overflow:hidden; }
+  .wmsg::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent); }
+  .wanon { font-size:10px; font-weight:400; color:var(--ink-faint); font-style:normal; font-family:var(--font-b); letter-spacing:.08em; margin-top:7px; text-transform:uppercase; }
+
+  /* ── QUIZ ── */
+  #quiz { text-align:center; }
+  .qzcard { display:inline-block; max-width:560px; width:100%; text-align:left; margin-top:44px; padding:36px; border-radius:28px; position:relative; overflow:hidden; }
+  .qzcard::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent); }
+  .qznum { font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:10px; font-family:var(--font-b); }
+  .qzq { font-family:var(--font-d); font-size:1.35rem; font-weight:300; color:var(--ink); margin-bottom:22px; line-height:1.4; }
+  .qzopts { display:flex; flex-direction:column; gap:9px; }
+  .qzopt { background:linear-gradient(135deg,rgba(255,255,255,.50),rgba(208,208,228,.26)); border:1px solid rgba(255,255,255,.66); border-radius:14px; padding:13px 18px; font-size:13px; color:var(--ink); cursor:pointer; text-align:left; box-shadow:inset 0 1px 0 rgba(255,255,255,.84),0 2px 6px rgba(0,0,0,.06); transition:all .18s; }
+  .qzopt:hover { background:linear-gradient(135deg,rgba(18,14,40,.88),rgba(48,44,80,.82)); color:rgba(230,230,244,.92); border-color:rgba(78,74,118,.34); box-shadow:0 4px 16px rgba(0,0,0,.18); }
+  .qzres { margin-top:24px; padding:24px; border-radius:18px; display:none; }
+  .qzres.show{ display:block; }
+  .qrname { font-family:var(--font-d); font-size:2rem; color:var(--ink); font-weight:300; }
+  .qrdesc { font-size:13px; color:var(--ink-soft); line-height:1.75; margin-top:8px; }
+  .qrst { margin-top:16px; background:none; border:1px solid rgba(255,255,255,.58); border-radius:var(--rpill); padding:9px 22px; font-family:var(--font-b); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); cursor:pointer; transition:all .2s; box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
+  .qrst:hover{ background:rgba(18,14,40,.85); color:rgba(230,230,244,.9); }
+
+  /* ── ABOUT ── */
+  .ag { display:grid; grid-template-columns:1fr; gap:40px; }
+  @media(min-width:768px){ .ag{grid-template-columns:1fr 1fr;align-items:center;gap:80px;} }
+  .aauth { font-family:var(--font-d); font-size:4.5rem; font-weight:300; line-height:.95; letter-spacing:-.05em; background:linear-gradient(160deg,rgba(22,18,48,.16),rgba(22,18,48,.06)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .igbtn { display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,rgba(18,14,40,.88),rgba(48,44,80,.82)); color:rgba(230,230,244,.9); border:1px solid rgba(78,74,118,.34); border-radius:var(--rpill); padding:14px 28px; font-family:var(--font-b); font-size:13px; font-weight:400; cursor:pointer; margin-top:24px; text-decoration:none; letter-spacing:.04em; box-shadow:0 4px 20px rgba(0,0,0,.18); transition:all .2s; }
+  .igbtn:hover{ transform:scale(1.02); box-shadow:0 8px 28px rgba(0,0,0,.24); }
+  .igbtn svg { width:17px; height:17px; }
+
+  /* ── GET SUPPORT ── */
+  .gswrap { position:relative; z-index:1; background:linear-gradient(160deg,#16142a 0%,#28264a 60%,#16142a 100%); padding:90px 48px; text-align:center; overflow:hidden; }
+  .gswrap h2.lbl { color:rgba(198,198,220,.32); }
+  .gswrap h3.ttl { color:rgba(230,230,244,.88); margin:0 auto 12px; }
+  .gswrap p.body { color:rgba(198,198,220,.44); margin:0 auto 44px; text-align:center; }
+  .sgrid { display:grid; grid-template-columns:1fr; gap:12px; max-width:680px; margin:0 auto; position:relative; z-index:1; }
+  @media(min-width:640px){ .sgrid{grid-template-columns:1fr 1fr;} }
+  .sit { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:22px 24px; text-align:left; transition:background .2s; box-shadow:inset 0 1px 0 rgba(255,255,255,.07); }
+  .sit:hover{ background:rgba(255,255,255,.08); }
+  .sit-t { font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(198,198,220,.32); margin-bottom:7px; }
+  .sit-v { font-family:var(--font-d); font-size:1.15rem; color:rgba(230,230,244,.88); font-weight:300; }
+  .sit-d { font-size:12px; color:rgba(198,198,220,.32); margin-top:5px; line-height:1.55; }
+
+  /* ── FOOTER ── */
+  footer { position:relative; z-index:1; padding:36px 48px; border-top:1px solid rgba(255,255,255,.26); display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; background:linear-gradient(0deg,rgba(214,214,218,1) 0%,rgba(222,222,226,.55) 100%); }
+  .ftlogo { font-family:var(--font-d); font-size:1.5rem; font-weight:300; color:var(--ink); letter-spacing:-.02em; }
+  .ftcopy { font-size:11px; color:var(--ink-faint); letter-spacing:.05em; line-height:1.8; }
+  .ftcris { font-size:12px; color:var(--ink-soft); line-height:1.8; }
+  .ftcris a { color:var(--ink); text-decoration:underline; text-decoration-color:rgba(16,14,26,.22); }
+  .ftcris a:hover{ text-decoration-color:var(--ink); }
+
+  /* ── KEYFRAMES ── */
+  @keyframes fadeUp    { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeScale { from{opacity:0;transform:scale(.97)}       to{opacity:1;transform:scale(1)} }
+  @keyframes fadeIn    { from{opacity:0}                             to{opacity:1} }
+  @keyframes slideInLeft { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes slideInUp   { from{opacity:0;transform:translateY(20px)}  to{opacity:1;transform:translateY(0)} }
+  </style>
 </head>
 <body>
 
-<!-- Ambient canvas: chrome rings + butterflies -->
 <canvas id="amb"></canvas>
 
-<div id="root"></div>
+<!-- sticky nav -->
+<nav class="snav" id="snav">
+  <span class="snav-logo">Weary Souls</span>
+  <ul class="snav-links">
+    <li><a href="#summary">Story</a></li>
+    <li><a href="#characters">Characters</a></li>
+    <li><a href="#book">Book</a></li>
+    <li><a href="#check-in">Check In</a></li>
+    <li><a href="#get-support">Support</a></li>
+  </ul>
+</nav>
 
-<!-- ══════════════════════════════════
-     REACT APP
-══════════════════════════════════ -->
-<script type="text/babel">
-const { useRef, useEffect, useState, useCallback } = React;
-const { motion, useInView, AnimatePresence } = window.Motion;
+<main>
 
-// Suppress benign Framer warnings
-const _ce = console.error;
-console.error = (...a) => { if (typeof a[0] === 'string' && a[0].includes('motion')) return; _ce(...a); };
-
-/* ══ CANVA BOOK URL ══ */
-const CANVA_VIEW = 'https://www.canva.com/design/DAHDyAkhEBA/RkeIA3Zr323SnxenmYuxqQ/view';
-const CANVA_EMBED = 'https://www.canva.com/design/DAHDyAkhEBA/RkeIA3Zr323SnxenmYuxqQ/view?embed';
-
-/* ══ FADING VIDEO ══ */
-const FADE_MS = 500;
-const FADE_OUT_LEAD = 0.55;
-
-function FadingVideo({ src, className, style }) {
-  const vidRef = useRef(null);
-  const rafRef = useRef(null);
-  const fadingOutRef = useRef(false);
-
-  const fadeTo = useCallback((target, duration) => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    const vid = vidRef.current;
-    if (!vid) return;
-    const start = performance.now();
-    const from = parseFloat(vid.style.opacity) || 0;
-    function step(now) {
-      const t = Math.min((now - start) / duration, 1);
-      vid.style.opacity = from + (target - from) * t;
-      if (t < 1) rafRef.current = requestAnimationFrame(step);
-    }
-    rafRef.current = requestAnimationFrame(step);
-  }, []);
-
-  useEffect(() => {
-    const vid = vidRef.current;
-    if (!vid) return;
-    vid.style.opacity = '0';
-
-    function onLoaded() { vid.play().catch(() => {}); fadeTo(1, FADE_MS); }
-    function onTimeUpdate() {
-      if (!fadingOutRef.current && vid.duration && vid.duration - vid.currentTime <= FADE_OUT_LEAD && vid.duration - vid.currentTime > 0) {
-        fadingOutRef.current = true;
-        fadeTo(0, FADE_MS);
-      }
-    }
-    function onEnded() {
-      vid.style.opacity = '0';
-      setTimeout(() => {
-        vid.currentTime = 0;
-        vid.play().catch(() => {});
-        fadingOutRef.current = false;
-        fadeTo(1, FADE_MS);
-      }, 100);
-    }
-
-    vid.addEventListener('loadeddata', onLoaded);
-    vid.addEventListener('timeupdate', onTimeUpdate);
-    vid.addEventListener('ended', onEnded);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      vid.removeEventListener('loadeddata', onLoaded);
-      vid.removeEventListener('timeupdate', onTimeUpdate);
-      vid.removeEventListener('ended', onEnded);
-    };
-  }, [fadeTo]);
-
-  return (
-    <video ref={vidRef} src={src} muted playsInline preload="auto" className={className} style={{ opacity: 0, ...style }} />
-  );
-}
-
-/* ══ BLUR TEXT (word-by-word) ══ */
-function BlurText({ text, className }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-  const words = text.split(' ');
-  return (
-    <p ref={ref} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', rowGap: '0.1em' }} className={className}>
-      {words.map((word, i) => (
-        <motion.span key={i}
-          style={{ display: 'inline-block', marginRight: '0.28em' }}
-          initial={{ filter: 'blur(10px)', opacity: 0, y: 50 }}
-          animate={isInView ? { filter: ['blur(10px)','blur(5px)','blur(0px)'], opacity: [0,0.5,1], y: [50,-5,0] } : {}}
-          transition={{ duration: 0.7, times: [0,0.5,1], ease: 'easeOut', delay: (i * 100) / 1000 }}
-        >{word}</motion.span>
-      ))}
-    </p>
-  );
-}
-
-/* ══ BOOK MODAL ══ */
-function BookModal({ onClose, dark }) {
-  useEffect(() => {
-    const esc = e => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', esc);
-    document.body.style.overflow = 'hidden';
-    return () => { document.removeEventListener('keydown', esc); document.body.style.overflow = ''; };
-  }, [onClose]);
-
-  return (
-    <div className={`modal-bg ${!dark ? 'chrome-modal' : ''}`} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal-inner">
-        <button className="modal-close" onClick={onClose} aria-label="Close">×</button>
-        <div style={{ padding: '20px 20px 0' }}>
-          <div className="modal-iframe-wrap">
-            <iframe loading="lazy" src={CANVA_EMBED} allowFullScreen allow="fullscreen" title="Beneath the Surface — Weary Souls" />
-          </div>
-        </div>
-        <div className="modal-footer">
-          <span className="modal-footer-text">Beneath the Surface · Weary Souls Vol. I</span>
-          <a href={CANVA_VIEW} target="_blank" rel="noopener noreferrer" className="modal-dl-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            Open Full Book
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ══ ICONS ══ */
-const ArrowUpRight = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
-  </svg>
-);
-const PlayIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <polygon points="6 4 20 12 6 20 6 4"/>
-  </svg>
-);
-
-/* ══ SECTION 1: HERO ══ */
-function Hero({ onBook }) {
-  const motBase = { initial: { filter: 'blur(10px)', opacity: 0, y: 20 }, animate: { filter: 'blur(0px)', opacity: 1, y: 0 }, transition: { ease: 'easeOut' } };
-
-  return (
-    <section style={{ position: 'relative', minHeight: '100vh', background: '#000', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      {/* Video BG */}
-      <FadingVideo
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260428_193507_4286c423-2fd9-4efd-92bd-91a939453fc1.mp4"
-        className="absolute top-0 object-cover object-top z-0"
-        style={{ left: '50%', transform: 'translateX(-50%)', width: '120%', height: '120%' }}
-      />
-
-      {/* z-10 layer */}
-      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-
-        {/* NAVBAR */}
-        <nav style={{ position: 'fixed', top: '16px', left: 0, right: 0, zIndex: 50, padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {/* Logo */}
-          <div className="liquid-glass" style={{ width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <span style={{ fontFamily: '"Instrument Serif"', fontStyle: 'italic', fontSize: '1.2rem', color: 'rgba(255,255,255,0.9)' }}>ws</span>
-          </div>
-
-          {/* Center pill (desktop) */}
-          <div className="liquid-glass" style={{ borderRadius: 999, padding: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            {['Home','Chapters','Characters','About','Read'].map(l => (
-              <button key={l} onClick={l === 'Read' ? onBook : undefined}
-                style={{ padding: '8px 12px', fontSize: '13px', fontFamily: 'Barlow', fontWeight: 500, color: 'rgba(255,255,255,0.9)', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 999, whiteSpace: 'nowrap' }}>
-                {l}
-              </button>
-            ))}
-            <button onClick={onBook}
-              style={{ background: '#fff', color: '#000', borderRadius: 999, padding: '8px 16px', fontSize: '13px', fontFamily: 'Barlow', fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap', marginLeft: 4 }}>
-              Read Book <ArrowUpRight />
-            </button>
-          </div>
-
-          {/* Spacer */}
-          <div style={{ width: 48, flexShrink: 0 }} />
-        </nav>
-
-        {/* HERO CONTENT */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: '96px', paddingLeft: '16px', paddingRight: '16px', textAlign: 'center' }}>
-
-          {/* Badge */}
-          <motion.div {...motBase} transition={{ ...motBase.transition, duration: 0.7, delay: 0.4 }}>
-            <div className="liquid-glass" style={{ borderRadius: 999, padding: '6px 6px', display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
-              <span style={{ background: '#fff', color: '#000', borderRadius: 999, padding: '4px 12px', fontSize: '11px', fontFamily: 'Barlow', fontWeight: 600 }}>New</span>
-              <span style={{ fontSize: '13px', fontFamily: 'Barlow', color: 'rgba(255,255,255,0.9)', paddingRight: 12 }}>Beneath the Surface — Volume I Now Available</span>
-            </div>
-          </motion.div>
-
-          {/* Headline */}
-          <BlurText
-            text="Venture Past Our Sky Beneath the Surface"
-            className="font-heading italic text-white max-w-2xl"
-            style={{ fontSize: 'clamp(3rem,8vw,5.5rem)', letterSpacing: '-4px', lineHeight: 0.85 }}
-          />
-
-          {/* Sub */}
-          <motion.p {...motBase} transition={{ ...motBase.transition, duration: 0.7, delay: 0.8 }}
-            style={{ marginTop: 16, fontSize: 'clamp(0.88rem,1.4vw,1rem)', color: 'rgba(255,255,255,0.75)', maxWidth: 560, fontFamily: 'Barlow', fontWeight: 300, lineHeight: 1.65 }}>
-            Six students. One fountain that lies. A slow-burning semester in which every performance finally stops holding — and six weary souls discover the warmest room is the one without armour.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div {...motBase} transition={{ ...motBase.transition, duration: 0.7, delay: 1.1 }}
-            style={{ display: 'flex', alignItems: 'center', gap: 24, marginTop: 28, flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button onClick={onBook} className="liquid-glass-strong"
-              style={{ borderRadius: 999, padding: '10px 22px', fontSize: '14px', fontFamily: 'Barlow', fontWeight: 500, color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-              Read Beneath the Surface <ArrowUpRight />
-            </button>
-            <button onClick={onBook}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', fontFamily: 'Barlow', fontWeight: 400, color: 'rgba(255,255,255,0.85)', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <PlayIcon /> Download Free PDF
-            </button>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div {...motBase} transition={{ ...motBase.transition, duration: 0.7, delay: 1.3 }}
-            style={{ display: 'flex', alignItems: 'stretch', gap: 16, marginTop: 36, flexWrap: 'wrap', justifyContent: 'center' }}>
-            {[
-              { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, num: '11', label: 'Chapters in Volume I' },
-              { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>, num: '6', label: 'Characters Beneath the Surface' },
-            ].map((s, i) => (
-              <div key={i} className="liquid-glass" style={{ padding: '20px', width: 200, borderRadius: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {s.icon}
-                <div style={{ fontFamily: '"Instrument Serif"', fontStyle: 'italic', fontSize: '2.5rem', color: '#fff', letterSpacing: '-1px', lineHeight: 1 }}>{s.num}</div>
-                <div style={{ fontFamily: 'Barlow', fontSize: '11px', color: 'rgba(255,255,255,0.6)', fontWeight: 300 }}>{s.label}</div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* PARTNERS ROW */}
-        <motion.div {...motBase} transition={{ ...motBase.transition, duration: 0.7, delay: 1.4 }}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, paddingBottom: 32 }}>
-          <div className="liquid-glass" style={{ borderRadius: 999, padding: '4px 14px', fontSize: '11px', fontFamily: 'Barlow', fontWeight: 500, color: 'rgba(255,255,255,0.75)' }}>
-            A story told by three souls — Mariam, Omar & Ganah
-          </div>
-          <div style={{ display: 'flex', gap: 40, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-            {['Luke','Stephanie','Marcus','Emily','Liv','Tristan'].map(n => (
-              <span key={n} style={{ fontFamily: '"Instrument Serif"', fontStyle: 'italic', color: 'rgba(255,255,255,0.6)', fontSize: 'clamp(1.2rem,2.5vw,1.8rem)', letterSpacing: '-0.02em' }}>{n}</span>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Ticker */}
-      <div style={{ position: 'relative', zIndex: 10 }}>
-        <div className="ticker-wrap">
-          <div className="ticker-track">
-            {['"The fountain in the center of the quad is a liar."','✦ Eleven Chapters','"She moved like a woman crossing a room full of tripwires only she could see."','✦ Six Voices','"The silence between them has texture now — words inside it."','✦ One Quiet Catastrophe','"The room without armor is also, somehow, the warmest one in the house."','✦ Hope, Eventually',
-              '"The fountain in the center of the quad is a liar."','✦ Eleven Chapters','"She moved like a woman crossing a room full of tripwires only she could see."','✦ Six Voices','"The silence between them has texture now — words inside it."','✦ One Quiet Catastrophe','"The room without armor is also, somehow, the warmest one in the house."','✦ Hope, Eventually'
-            ].map((t, i) => <span key={i} className="ticker-item">{t}</span>)}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ══ SECTION 2: CAPABILITIES (dark, cinematic) ══ */
-function Capabilities({ onBook }) {
-  const cards = [
-    {
-      icon: <svg viewBox="0 0 24 24" fill="currentColor" style={{width:24,height:24,color:'#fff'}}><path d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21H5Zm1-4h12l-3.75-5-3 4L9 13l-3 4Z"/></svg>,
-      tags: ['Six Voices','Photo Realism','Quiet Catastrophe','Eco-Vibe'],
-      title: 'The Characters',
-      body: 'Luke. Stephanie. Marcus. Emily. Liv. Tristan. Six students carrying what they've never said out loud — orbiting a fountain and each other across one slow-burning semester.',
-    },
-    {
-      icon: <svg viewBox="0 0 24 24" fill="currentColor" style={{width:24,height:24,color:'#fff'}}><path d="M4 6.47 5.76 10H20v8H4V6.47M22 4h-4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.89-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4Z"/></svg>,
-      tags: ['Scale Fast','Visual Consistency','Time Saver','Ready to Read'],
-      title: 'Eleven Chapters',
-      body: 'Each chapter a hairline crack. Not dramatic. Not at once. The performances stop holding one by one — until the night everything breaks and the real sentences finally get said.',
-    },
-    {
-      icon: <svg viewBox="0 0 24 24" fill="currentColor" style={{width:24,height:24,color:'#fff'}}><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1Zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7Z"/></svg>,
-      tags: ['Ray Tracing','Hope Eventually','Studio Quality','Stays With You'],
-      title: 'The Turn',
-      body: 'What they find isn\'t a fix. There is no clean recovery scene. There is only the small, specific bravery of staying in the room — and letting another person carry a corner.',
-    },
-  ];
-
-  return (
-    <section style={{ position: 'relative', minHeight: '100vh', background: '#000', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      <FadingVideo
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260428_193507_4286c423-2fd9-4efd-92bd-91a939453fc1.mp4"
-        className="absolute inset-0 w-full h-full object-cover z-0"
-        style={{}}
-      />
-
-      <div style={{ position: 'relative', zIndex: 10, padding: '96px 32px 40px', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        {/* Header */}
-        <div style={{ marginBottom: 'auto' }}>
-          <p style={{ fontSize: '13px', fontFamily: 'Barlow', color: 'rgba(255,255,255,0.65)', marginBottom: 24, letterSpacing: '0.05em' }}>// Beneath the Surface</p>
-          <h2 style={{ fontFamily: '"Instrument Serif"', fontStyle: 'italic', color: '#fff', fontSize: 'clamp(3.5rem,7vw,6rem)', lineHeight: 0.9, letterSpacing: '-3px', fontWeight: 400 }}>
-            The story<br/>beneath
-          </h2>
-        </div>
-
-        {/* Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20, marginTop: 60 }}>
-          {cards.map((c, i) => (
-            <motion.div key={i} className="cap-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.65, delay: i * 0.14, ease: 'easeOut' }}>
-              {/* Top row */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                <div className="cap-icon-wrap">{c.icon}</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 6, maxWidth: '65%' }}>
-                  {c.tags.map(t => <span key={t} className="tag-chip">{t}</span>)}
-                </div>
-              </div>
-              <div style={{ flex: 1 }} />
-              {/* Bottom */}
-              <div style={{ marginTop: 24 }}>
-                <h3 style={{ fontFamily: '"Instrument Serif"', fontStyle: 'italic', color: '#fff', fontSize: 'clamp(1.8rem,3vw,2.4rem)', letterSpacing: '-1px', lineHeight: 1 }}>{c.title}</h3>
-                <p style={{ marginTop: 12, fontSize: '13px', color: 'rgba(255,255,255,0.75)', fontFamily: 'Barlow', fontWeight: 300, lineHeight: 1.6, maxWidth: '32ch' }}>{c.body}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* CTA row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 40, flexWrap: 'wrap' }}>
-          <button onClick={onBook} className="liquid-glass-strong"
-            style={{ borderRadius: 999, padding: '11px 24px', fontSize: '13px', fontFamily: 'Barlow', fontWeight: 500, color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-            Read Beneath the Surface <ArrowUpRight />
+<!-- ── HERO ── -->
+<div class="hwrap">
+  <section class="hsec" style="padding:0;max-width:1536px;">
+    <video class="hvid" autoplay muted loop playsinline>
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260428_193507_4286c423-2fd9-4efd-92bd-91a939453fc1.mp4" type="video/mp4">
+    </video>
+    <div class="hov"></div>
+    <div class="hcon">
+      <nav class="navbar">
+        <div class="nsp"></div>
+        <ul class="nmenu">
+          <li onclick="sto('summary')">Story</li>
+          <li onclick="sto('characters')">Characters <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></li>
+          <li onclick="sto('book')">Book</li>
+          <li onclick="sto('get-support')">Support <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></li>
+        </ul>
+        <div class="nmobi">Weary Souls</div>
+        <div class="nright">
+          <button class="ncta" onclick="sto('book')">
+            <div class="ncta-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+            Download Free
           </button>
-          <a href="https://www.instagram.com/wearysouls11" target="_blank" rel="noopener"
-            style={{ fontSize: '13px', fontFamily: 'Barlow', fontWeight: 400, color: 'rgba(255,255,255,0.65)', display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            @wearysouls11
-          </a>
         </div>
-      </div>
-    </section>
-  );
-}
+      </nav>
 
-/* ══ CHROME SECTIONS (silver bg) ══ */
-function ChromeSections({ onBook }) {
-  /* Rotating quotes */
-  const quotes = [
-    { text: '"She moved like a woman crossing a room full of tripwires only she could see."', attr: 'Chapter One, Weary Souls' },
-    { text: '"None of them are villains. All of them are good at hiding."', attr: 'Chapter Three, Weary Souls' },
-    { text: '"There is only the small, specific bravery of staying in the room."', attr: 'Chapter Nine, Weary Souls' },
-    { text: '"The room without armor is also, somehow, the warmest one in the house."', attr: 'Chapter Eleven, Weary Souls' },
-    { text: '"The mirror is a liar. But it\'s a liar I\'ve learned to trust."', attr: 'Chapter Four, Weary Souls' },
-  ];
-  const [curQ, setCurQ] = useState(0);
-  const nextQ = (d) => setCurQ(q => (q + d + quotes.length) % quotes.length);
-  useEffect(() => { const t = setInterval(() => nextQ(1), 7000); return () => clearInterval(t); }, []);
-
-  /* Feeling */
-  const fmap = {
-    'Overwhelmed': "That's Luke. Chapter Two. He colour-codes everything so the overwhelm has somewhere to go.",
-    'Numb': "That's Tristan. Chapter Seven. He learned silence from someone who called it strength.",
-    'Anxious': "That's Liv. Chapter Six. Every reinvention is just anxiety wearing a new outfit.",
-    'Lonely': "That's the whole book. You're not as alone in that room as you think.",
-    'Fine (but not really)': 'That\'s Emily. Chapter Five. She has a whole performance for "fine."',
-    'Tired': "That's Marcus. Chapter Three. The static is exhausting. It's okay to say so.",
-    'Hopeful': "That's the last chapter. Hold onto that — it's the hardest thing in the book.",
-    'Seen': "Good. That means it's working. That's what this was for.",
-  };
-  const [selFeeling, setSelFeeling] = useState(null);
-
-  /* Breathing */
-  const [breathState, setBreathState] = useState({ cls: '', label: '', active: false });
-  const breathTimer = useRef(null);
-  function startBreath() {
-    if (breathState.active) return;
-    const steps = [{ cls: 'inhale', label: 'Inhale… 4', d: 4000 }, { cls: 'hold', label: 'Hold… 7', d: 7000 }, { cls: 'exhale', label: 'Exhale… 8', d: 8000 }];
-    let i = 0;
-    setBreathState({ cls: steps[0].cls, label: steps[0].label, active: true });
-    function next() {
-      i++;
-      if (i >= steps.length * 3) { setBreathState({ cls: '', label: '', active: false }); return; }
-      const s = steps[i % 3];
-      setBreathState({ cls: s.cls, label: s.label, active: true });
-      breathTimer.current = setTimeout(next, s.d);
-    }
-    breathTimer.current = setTimeout(next, steps[0].d);
-  }
-  useEffect(() => () => { if (breathTimer.current) clearTimeout(breathTimer.current); }, []);
-
-  /* Reader wall */
-  const [wallMsgs, setWallMsgs] = useState(["I read Chapter Nine three times. I'm still not okay about it.", "Marcus is my best friend and he doesn't know I exist.", "I finally told someone. It wasn't as hard as I thought."]);
-  const [wallInput, setWallInput] = useState('');
-  function postWall() {
-    if (!wallInput.trim()) return;
-    setWallMsgs(m => [wallInput.trim(), ...m.slice(0, 7)]);
-    setWallInput('');
-  }
-
-  /* Quiz */
-  const qqs = [
-    { q: 'When something is wrong, your first instinct is to…', opts: ['Organise everything', 'Follow a quiet ritual', 'Go somewhere loud', 'Reinvent something', 'Say nothing — wait', 'Wear strength and push through'] },
-    { q: 'The thing you find hardest to say out loud is…', opts: ["I'm losing control", "I have rules no one knows about", "My grief has a sound", "I have two faces", "I don't know who I am", "I need help"] },
-    { q: 'Your relationship with control is…', opts: ["It's everything", "Quiet and precise", "Something I lost", "A performance", "Changes every week", "The armour I wear"] },
-    { q: 'The chapter about you would be titled…', opts: ['The Colour-Coded Life', 'Privately, With Rules', 'Low Frequency', 'Both Sides', 'Every Seven to Ten Days', 'What You Wear'] },
-    { q: 'When you imagine putting something down for good…', opts: ['I need to plan what's next', 'I check if the ritual still works', 'The static gets louder', 'My smile slips', 'I become someone new again', 'I feel exposed — but lighter'] },
-  ];
-  const chars = [
-    { name: 'Luke', desc: 'You colour-code. You organise. You are terrified of what happens when the system fails. Chapter Two is yours.' },
-    { name: 'Stephanie', desc: 'You have rituals. Private, precise, never spoken about. Chapter Four is yours.' },
-    { name: 'Marcus', desc: 'You carry something heavy and old — The Static. Chapter Three is yours.' },
-    { name: 'Emily', desc: 'You perform fine. You have a smile for every room and a ritual for the one no one enters. Chapter Five is yours.' },
-    { name: 'Liv', desc: "You reinvent. Every version is real until it isn't. Chapter Six is yours." },
-    { name: 'Tristan', desc: 'You wear strength like armour. Putting it down feels like defeat. Chapter Seven is yours.' },
-  ];
-  const [qStep, setQStep] = useState(0);
-  const [qScores, setQScores] = useState([0,0,0,0,0,0]);
-  const [qResult, setQResult] = useState(null);
-  function qAns(i) {
-    const ns = [...qScores]; ns[i]++;
-    if (qStep + 1 >= qqs.length) {
-      const w = ns.indexOf(Math.max(...ns));
-      setQResult(chars[w]); setQScores(ns);
-    } else { setQScores(ns); setQStep(s => s + 1); }
-  }
-  function qRestart() { setQStep(0); setQScores([0,0,0,0,0,0]); setQResult(null); }
-
-  const sw = { position: 'relative', zIndex: 1, maxWidth: 1180, margin: '0 auto', padding: '0 28px' };
-  const secStyle = { padding: '88px 0' };
-
-  return (
-    <div style={{ background: 'linear-gradient(160deg,#d2d2d8,#c8c8d2,#d0d0d8)', position: 'relative', zIndex: 1 }}>
-
-      {/* TICKER (chrome) */}
-      <div style={{ background: 'rgba(255,255,255,0.22)', borderTop: '1px solid rgba(255,255,255,0.55)', borderBottom: '1px solid rgba(255,255,255,0.32)', overflow: 'hidden', padding: '11px 0' }}>
-        <div className="ticker-track" style={{ gap: 60 }}>
-          {['"The fountain in the center of the quad is a liar."','✦ Eleven Chapters','"She moved like a woman crossing a room full of tripwires."','✦ Six Voices','"The silence between them has texture now."','✦ Hope, Eventually',
-            '"The fountain in the center of the quad is a liar."','✦ Eleven Chapters','"She moved like a woman crossing a room full of tripwires."','✦ Six Voices','"The silence between them has texture now."','✦ Hope, Eventually'
-          ].map((t, i) => <span key={i} style={{ fontFamily: '"Cormorant Garamond"', fontStyle: 'italic', fontSize: '13px', color: 'rgba(16,14,26,0.38)', whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>{t}</span>)}
+      <div class="htxt">
+        <div class="hbadge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l1.912 5.813a2 2 0 001.272 1.272L21 12l-5.816 1.916a2 2 0 00-1.272 1.272L12 21l-1.912-5.812a2 2 0 00-1.272-1.272L3 12l5.816-1.915a2 2 0 001.272-1.272L12 3z"/></svg>
+          <span>Beneath the Surface — Volume I</span>
         </div>
+        <h1 class="hh1">Weary Souls</h1>
+        <p class="hsub">Six students. One fountain that lies. A slow-burning semester in which every performance finally stops holding.</p>
       </div>
 
-      {/* SUMMARY */}
-      <div style={sw}><section id="summary" style={secStyle}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 64 }}>
-          <div>
-            <p className="lbl">The Story</p>
-            <h3 className="ttl">Beneath the Surface</h3>
-            <p className="sbod">On a university campus that looks the way good lies look — polished, sunny, frictionless — six students orbit each other and a fountain in the middle of the quad. From the outside they are fine. From the inside, each one is carrying something they have never said out loud.</p>
-            <p className="sbod" style={{ marginTop: 16 }}>Beneath the Surface follows them across one slow-burning semester in which the performances stop holding. Not all at once. Not dramatically. Just a hairline crack.</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 28 }}>
-              {['Mental Health','University Life','Coming-of-Age','Identity','Grief','Recovery','Friendship'].map(t => (
-                <span key={t} style={{ fontSize:'11px',fontWeight:400,color:'rgba(16,14,26,0.52)',background:'linear-gradient(135deg,rgba(255,255,255,0.54),rgba(208,208,224,0.28))',border:'1px solid rgba(255,255,255,0.68)',borderRadius:999,padding:'5px 15px',letterSpacing:'.05em',boxShadow:'inset 0 1px 0 rgba(255,255,255,0.8),0 2px 5px rgba(0,0,0,0.04)' }}>{t}</span>
-              ))}
-            </div>
-          </div>
-          <div>
-            <blockquote className="chrome-surface" style={{ padding: '24px 28px', borderRadius: 20, fontFamily: '"Cormorant Garamond"', fontSize: 'clamp(1.15rem,2.2vw,1.65rem)', fontStyle: 'italic', color: 'rgba(16,14,26,0.88)', lineHeight: 1.42, marginTop: 8, fontWeight: 300, position: 'relative', borderLeft: '2px solid rgba(255,255,255,0.8)' }}>
-              "This is a book about the loneliness of being surrounded. About the particular ache of being seen without being known."
-            </blockquote>
-            <p className="sbod" style={{ marginTop: 24 }}>The final chapter doesn't promise healing — it promises something quieter: that the performance is finally over.</p>
-          </div>
+      <!-- BL card -->
+      <div class="blc cc">
+        <div>
+          <div class="blc-stat">6</div>
+          <div class="blc-lbl">Characters</div>
         </div>
-      </section></div>
-
-      {/* DIVIDER */}
-      <div style={{ ...sw }}><div className="cdivr" /></div>
-
-      {/* CHARACTERS */}
-      <div style={sw}><section id="characters" style={secStyle}>
-        <p className="lbl">The Six Planets</p>
-        <h3 className="ttl">Characters</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 12 }}>
-          {[
-            { i:'L', n:'Luke', t:'Color-codes his life so nothing can break.' },
-            { i:'S', n:'Stephanie', t:'Eats the way other people pray — privately, with rules.' },
-            { i:'M', n:'Marcus', t:'Carries something he calls The Static.' },
-            { i:'E', n:'Emily', t:'A ritual in the bathroom. A smile everywhere else.' },
-            { i:'L', n:'Liv', t:'Reinventing herself every seven to ten days.' },
-            { i:'T', n:'Tristan', t:'Inherited a silence from a father who called it strength.' },
-          ].map((c, idx) => (
-            <motion.div key={idx} className="char-card"
-              initial={{ opacity:0,y:20 }} whileInView={{ opacity:1,y:0 }}
-              viewport={{ once:true,amount:.15 }} transition={{ duration:.55,delay:idx*.09,ease:'easeOut' }}>
-              <div className="char-initial">{c.i}</div>
-              <div className="char-name">{c.n}</div>
-              <div className="char-trait">{c.t}</div>
-            </motion.div>
-          ))}
-        </div>
-      </section></div>
-
-      {/* DARK PULL QUOTE */}
-      <div style={{ background: 'linear-gradient(160deg,#16142a,#28264a,#16142a)', padding: '80px 48px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', right: -80, bottom: -80, width: 360, height: 360, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', boxShadow: '0 0 0 40px rgba(255,255,255,0.02),0 0 0 80px rgba(255,255,255,0.01)', pointerEvents: 'none' }} />
-        <p style={{ fontFamily: '"Instrument Serif"', fontStyle: 'italic', fontSize: 'clamp(1.5rem,3.2vw,2.6rem)', fontWeight: 400, color: 'rgba(230,230,244,0.88)', lineHeight: 1.45, maxWidth: 760, margin: '0 auto', letterSpacing: '-0.01em', position: 'relative', zIndex: 1 }}>
-          "The fountain in the center of the quad is a liar. It doesn't look like one. That's the thing about good liars — they commit."
-        </p>
-        <p style={{ marginTop: 22, fontSize: '11px', fontFamily: 'Barlow', fontWeight: 400, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(198,198,220,0.32)', position: 'relative', zIndex: 1 }}>— Opening Line, Weary Souls</p>
+        <button class="blc-btn" onclick="sto('characters')">
+          <div class="blc-btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+          Meet Them
+        </button>
       </div>
 
-      {/* QUOTES CARD */}
-      <div style={sw}><section id="from-pages" style={{ ...secStyle, textAlign: 'center' }}>
-        <p className="lbl" style={{ textAlign:'center' }}>From the Pages</p>
-        <h3 className="ttl" style={{ textAlign:'center', margin:'0 auto 8px' }}>Lines That Stay</h3>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: '100%', maxWidth: 520, marginTop: 40 }}>
-            <div className="rq-card">
-              <div className="rq-dot" style={{ width:7,height:7,top:'44%',right:22 }} />
-              <div className="rq-dot" style={{ width:5,height:5,bottom:'24%',right:40 }} />
-              <div className="rq-dot" style={{ width:6,height:6,bottom:'16%',left:'48%' }} />
-              <div className="rq-dot" style={{ width:4,height:4,top:'32%',left:20 }} />
-              <div className="rq-marks">❝❝</div>
-              <div className="rq-txtwrap">
-                {quotes.map((q, i) => (
-                  <p key={i} className={`rq-txt${i === curQ ? ' active' : ''}`}>{q.text}</p>
-                ))}
-              </div>
-              <div style={{ display:'flex',alignItems:'center',justifyContent:'center',marginTop:24 }}>
-                <div className="rq-pill">{quotes[curQ].attr}</div>
-              </div>
-              <div className="rq-actions">
-                <button className="rq-btn" onClick={() => nextQ(1)}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5.61"/></svg>
-                  Another
-                </button>
-                <div className="rq-btnrow">
-                  <button className="rq-btn" onClick={() => navigator.clipboard?.writeText(quotes[curQ].text)}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                    Copy
-                  </button>
-                  <button className="rq-btn" onClick={() => navigator.share?.({ text: quotes[curQ].text }).catch(() => navigator.clipboard?.writeText(quotes[curQ].text))}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-                    Share
-                  </button>
-                </div>
-              </div>
-              <svg className="rq-sparkle" viewBox="0 0 80 80" fill="none"><path d="M40 5 L43 37 L75 40 L43 43 L40 75 L37 43 L5 40 L37 37 Z" fill="rgba(22,18,48,0.18)"/></svg>
-            </div>
-          </div>
-        </div>
-      </section></div>
-
-      <div style={sw}><div className="cdivr" /></div>
-
-      {/* CHECK IN */}
-      <div style={sw}><section id="check-in" style={{ ...secStyle, textAlign:'center' }}>
-        <p className="lbl">Check In</p>
-        <h3 className="ttl">How Are You Feeling?</h3>
-        <p className="sbod" style={{ margin:'0 auto',textAlign:'center' }}>We see you. Pick what resonates.</p>
-        <div style={{ display:'flex',flexWrap:'wrap',gap:10,justifyContent:'center',marginTop:32 }}>
-          {Object.keys(fmap).map(label => (
-            <button key={label} onClick={() => setSelFeeling(label)}
-              style={{ fontFamily:'Barlow',fontSize:'12px',fontWeight:400,letterSpacing:'.05em',color:selFeeling===label?'rgba(232,232,244,0.92)':'rgba(16,14,26,0.80)',background:selFeeling===label?'linear-gradient(135deg,rgba(22,18,48,0.88),rgba(58,54,90,0.82))':'linear-gradient(135deg,rgba(255,255,255,0.54),rgba(208,208,228,0.30))',border:'1px solid '+(selFeeling===label?'rgba(22,18,48,0.4)':'rgba(255,255,255,0.70)'),borderRadius:999,padding:'10px 22px',cursor:'pointer',boxShadow:'inset 0 1px 0 rgba(255,255,255,0.9)',transition:'all .2s' }}>
-              {label}
-            </button>
-          ))}
-        </div>
-        {selFeeling && (
-          <p style={{ marginTop:28,fontFamily:'"Cormorant Garamond"',fontStyle:'italic',fontSize:'1.1rem',color:'rgba(16,14,26,0.52)',maxWidth:520,margin:'28px auto 0',lineHeight:1.6 }}>{fmap[selFeeling]}</p>
-        )}
-      </section></div>
-
-      <div style={sw}><div className="cdivr" /></div>
-
-      {/* BREATHE */}
-      <div style={sw}><section id="breathe" style={{ ...secStyle, textAlign:'center' }}>
-        <p className="lbl">Take a Moment</p>
-        <h3 className="ttl">Breathe With Us</h3>
-        <p className="sbod" style={{ margin:'0 auto',textAlign:'center' }}>A 4-7-8 breathing exercise. Used by the characters when the static gets too loud.</p>
-        <div style={{ display:'flex',alignItems:'center',justifyContent:'center',marginTop:44 }}>
-          <div>
-            <div style={{ position:'relative',width:160,height:160,display:'flex',alignItems:'center',justifyContent:'center' }}>
-              <div style={{ position:'absolute',inset:-16,borderRadius:'50%',border:'1px solid rgba(178,178,208,0.30)',transition:'all 4s ease-in-out' }} />
-              <div style={{ position:'absolute',inset:-32,borderRadius:'50%',border:'1px solid rgba(178,178,208,0.12)',transition:'all 4s ease-in-out' }} />
-              <div className={`bcirc${breathState.cls ? ' '+breathState.cls : ''}`} onClick={startBreath}>
-                {breathState.active ? '' : 'Begin'}
-              </div>
-            </div>
-            <div className="blbl">{breathState.label}</div>
-          </div>
-        </div>
-      </section></div>
-
-      <div style={sw}><div className="cdivr" /></div>
-
-      {/* BOOK */}
-      <div style={sw}><section id="book" style={{ ...secStyle, textAlign:'center' }}>
-        <p className="lbl">The Book</p>
-        <h3 className="ttl">Beneath the Surface</h3>
-        <div style={{ display:'flex',justifyContent:'center' }}>
-          <div className="chrome-surface" style={{ display:'inline-flex',flexDirection:'column',alignItems:'center',gap:20,padding:'48px 40px',maxWidth:440,width:'100%' }}>
-            <span style={{ fontSize:'3.2rem' }}>📖</span>
-            <h4 style={{ fontFamily:'"Cormorant Garamond"',fontSize:'1.9rem',fontWeight:300,color:'rgba(16,14,26,0.88)',letterSpacing:'-.025em' }}>Beneath the Surface</h4>
-            <p style={{ fontSize:'13px',color:'rgba(16,14,26,0.50)',lineHeight:1.75,maxWidth:300,textAlign:'center' }}>Weary Souls — Volume I<br/>A novel by Mariam, Omar &amp; Ganah<br/>Eleven chapters. Six characters.</p>
-            <button onClick={onBook}
-              style={{ display:'inline-flex',alignItems:'center',gap:10,background:'linear-gradient(135deg,rgba(18,14,40,0.90),rgba(48,44,80,0.84))',color:'rgba(230,230,244,0.92)',border:'1px solid rgba(78,74,118,0.38)',borderRadius:999,padding:'14px 30px',fontFamily:'Barlow',fontSize:'13px',fontWeight:400,cursor:'pointer',letterSpacing:'.05em',boxShadow:'0 4px 20px rgba(0,0,0,0.18)',transition:'all .2s' }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Read / Download PDF — Free
-            </button>
-            <span style={{ fontSize:'11px',color:'rgba(16,14,26,0.28)',letterSpacing:'.07em' }}>Opens in a reader · No sign-up required</span>
-          </div>
-        </div>
-      </section></div>
-
-      <div style={sw}><div className="cdivr" /></div>
-
-      {/* BOOK SUPPORT */}
-      <div style={sw}><section id="book-support" style={secStyle}>
-        <p className="lbl">Within the Pages</p>
-        <h3 className="ttl">Book Support</h3>
-        <p className="sbod">How the characters found support — or how support found them. These are moments from the book, not prescriptions for real life.</p>
-        <div style={{ borderRadius:16,padding:'16px 22px',fontSize:'13px',color:'rgba(16,14,26,0.50)',lineHeight:1.7,marginTop:24,maxWidth:580,borderLeft:'2px solid rgba(255,255,255,0.55)',background:'rgba(255,255,255,0.22)' }}>
-          These are fictional depictions. If you're struggling, please see the Get Support section. You deserve actual help, not just a story about it.
-        </div>
-        <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:14,marginTop:36 }}>
-          {[
-            { c:'Luke', t:'"He started with the smallest drawer. Not because it mattered, but because it was something he could finish."' },
-            { c:'Marcus', t:'"He named the static. That was the first step — giving the hum a word so it couldn\'t be everything."' },
-            { c:'Emily', t:'"She told one person. Not everything. Just enough that the secret had company."' },
-            { c:'Stephanie', t:'"She sat at the table without a plan for once. That counted."' },
-            { c:'Liv', t:'"She stopped changing her hair. Stayed in one version of herself long enough to ask: is this one real?"' },
-            { c:'Tristan', t:'"He put the armour down. Not forever. Just for the length of that room."' },
-          ].map((s, i) => (
-            <div key={i} className="chrome-card" style={{ padding:'22px 20px' }}>
-              <div style={{ fontSize:'10px',fontWeight:500,letterSpacing:'.12em',textTransform:'uppercase',color:'rgba(16,14,26,0.50)',marginBottom:10 }}>{s.c}</div>
-              <div style={{ fontFamily:'"Cormorant Garamond"',fontSize:'1.05rem',fontStyle:'italic',color:'rgba(16,14,26,0.88)',lineHeight:1.6 }}>{s.t}</div>
-            </div>
-          ))}
-        </div>
-      </section></div>
-
-      <div style={sw}><div className="cdivr" /></div>
-
-      {/* CONTENT WARNINGS */}
-      <div style={sw}><section id="warnings" style={secStyle}>
-        <p className="lbl">Please Read First</p>
-        <h3 className="ttl">Content Warnings</h3>
-        <p className="sbod">This book was written with care, honesty, and love. It deals with real things. If you are struggling — you are not alone.</p>
-        <div style={{ display:'flex',flexWrap:'wrap',gap:8,marginTop:26 }}>
-          {['Disordered Eating','Grief & Loss','Depression','Anxiety','Self-Harm (referenced)','Mental Health Crisis','Parental Loss','Identity Distress'].map(w => (
-            <span key={w} style={{ fontSize:'11px',fontWeight:400,color:'rgba(16,14,26,0.50)',background:'linear-gradient(135deg,rgba(255,255,255,0.46),rgba(208,208,228,0.26))',border:'1px solid rgba(255,255,255,0.64)',borderRadius:999,padding:'6px 16px',letterSpacing:'.04em',boxShadow:'inset 0 1px 0 rgba(255,255,255,0.8)' }}>{w}</span>
-          ))}
-        </div>
-      </section></div>
-
-      <div style={sw}><div className="cdivr" /></div>
-
-      {/* READER WALL */}
-      <div style={sw}><section id="reader-wall" style={secStyle}>
-        <p className="lbl">Reader Wall</p>
-        <h3 className="ttl">How Did This Make You Feel?</h3>
-        <p className="sbod">Leave an anonymous message. You are not alone in this.</p>
-        <div style={{ display:'flex',gap:10,marginTop:30,maxWidth:560 }}>
-          <input className="chrome-input" value={wallInput} onChange={e => setWallInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') postWall(); }}
-            maxLength={200} placeholder="Say something…" />
-          <button className="chrome-post-btn" onClick={postWall}>Post</button>
-        </div>
-        <div style={{ display:'flex',flexDirection:'column',gap:10,marginTop:20,maxWidth:560 }}>
-          {wallMsgs.map((m, i) => (
-            <div key={i} className="wall-msg chrome-card">{m}<div className="wall-anon">Anonymous reader</div></div>
-          ))}
-        </div>
-      </section></div>
-
-      <div style={sw}><div className="cdivr" /></div>
-
-      {/* QUIZ */}
-      <div style={sw}><section id="quiz" style={{ ...secStyle, textAlign:'center' }}>
-        <p className="lbl">Discover Yourself</p>
-        <h3 className="ttl">Which Character Are You?</h3>
-        <p className="sbod" style={{ margin:'0 auto',textAlign:'center' }}>Five questions. One honest answer.</p>
-        <div style={{ display:'flex',justifyContent:'center' }}>
-          <div className="chrome-surface" style={{ maxWidth:560,width:'100%',textAlign:'left',marginTop:44,padding:36,borderRadius:28 }}>
-            {qResult ? (
-              <div>
-                <p style={{ fontSize:'10px',fontWeight:500,letterSpacing:'.14em',textTransform:'uppercase',color:'rgba(16,14,26,0.48)',marginBottom:10,fontFamily:'Barlow' }}>You are —</p>
-                <div style={{ fontFamily:'"Cormorant Garamond"',fontSize:'2rem',color:'rgba(16,14,26,0.88)',fontWeight:300 }}>{qResult.name}</div>
-                <div style={{ fontSize:'13px',color:'rgba(16,14,26,0.50)',lineHeight:1.75,marginTop:8 }}>{qResult.desc}</div>
-                <button onClick={qRestart} style={{ marginTop:16,background:'none',border:'1px solid rgba(255,255,255,0.58)',borderRadius:999,padding:'9px 22px',fontFamily:'Barlow',fontSize:'11px',letterSpacing:'.08em',textTransform:'uppercase',color:'rgba(16,14,26,0.52)',cursor:'pointer',boxShadow:'inset 0 1px 0 rgba(255,255,255,0.8)' }}>Start Over</button>
-              </div>
-            ) : (
-              <div>
-                <p style={{ fontSize:'10px',fontWeight:500,letterSpacing:'.14em',textTransform:'uppercase',color:'rgba(16,14,26,0.48)',marginBottom:10,fontFamily:'Barlow' }}>Question {qStep+1} of {qqs.length}</p>
-                <p style={{ fontFamily:'"Cormorant Garamond"',fontSize:'1.35rem',fontWeight:300,color:'rgba(16,14,26,0.88)',marginBottom:22,lineHeight:1.4 }}>{qqs[qStep].q}</p>
-                <div style={{ display:'flex',flexDirection:'column',gap:9 }}>
-                  {qqs[qStep].opts.map((o, i) => (
-                    <button key={i} onClick={() => qAns(i)}
-                      style={{ background:'linear-gradient(135deg,rgba(255,255,255,0.50),rgba(208,208,228,0.26))',border:'1px solid rgba(255,255,255,0.66)',borderRadius:14,padding:'13px 18px',fontSize:'13px',color:'rgba(16,14,26,0.80)',cursor:'pointer',textAlign:'left',boxShadow:'inset 0 1px 0 rgba(255,255,255,0.84)',transition:'all .18s' }}
-                      onMouseEnter={e => { e.target.style.background='linear-gradient(135deg,rgba(22,18,48,0.88),rgba(48,44,80,0.82))'; e.target.style.color='rgba(232,232,244,0.92)'; }}
-                      onMouseLeave={e => { e.target.style.background='linear-gradient(135deg,rgba(255,255,255,0.50),rgba(208,208,228,0.26))'; e.target.style.color='rgba(16,14,26,0.80)'; }}>
-                      {o}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section></div>
-
-      <div style={sw}><div className="cdivr" /></div>
-
-      {/* ABOUT */}
-      <div style={sw}><section id="about" style={secStyle}>
-        <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:64,alignItems:'center' }}>
-          <div>
-            <p className="lbl">The Minds Behind the Madness</p>
-            <h3 className="ttl">About Us</h3>
-            <p className="sbod">Three souls. One shared obsession with the things people carry quietly.</p>
-            <p className="sbod" style={{ marginTop:16 }}>We wrote this book because we couldn't find the words anywhere else — so we made them.</p>
-            <a href="https://www.instagram.com/wearysouls11" target="_blank" rel="noopener"
-              style={{ display:'inline-flex',alignItems:'center',gap:10,background:'linear-gradient(135deg,rgba(18,14,40,0.88),rgba(48,44,80,0.82))',color:'rgba(232,232,244,0.92)',border:'1px solid rgba(78,74,118,0.34)',borderRadius:999,padding:'14px 28px',fontFamily:'Barlow',fontSize:'13px',fontWeight:400,cursor:'pointer',marginTop:24,textDecoration:'none',letterSpacing:'.04em',boxShadow:'0 4px 20px rgba(0,0,0,0.14)' }}>
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-              @wearysouls11
-            </a>
-          </div>
-          <div style={{ display:'flex',alignItems:'center',justifyContent:'center' }}>
-            <div style={{ fontFamily:'"Cormorant Garamond"',fontSize:'4.5rem',fontWeight:300,lineHeight:.95,letterSpacing:'-.05em',background:'linear-gradient(160deg,rgba(22,18,48,0.14),rgba(22,18,48,0.05))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text' }}>M<br/>O<br/>G</div>
-          </div>
-        </div>
-      </section></div>
-
-      {/* GET SUPPORT */}
-      <div className="gs-wrap" id="get-support">
-        <p style={{ fontFamily:'Barlow',fontSize:'10px',fontWeight:500,letterSpacing:'.20em',textTransform:'uppercase',color:'rgba(198,198,220,0.32)',marginBottom:12 }}>You Don't Have to Carry This Alone</p>
-        <h3 style={{ fontFamily:'"Instrument Serif"',fontStyle:'italic',fontSize:'clamp(2rem,4vw,3rem)',fontWeight:400,color:'rgba(232,232,244,0.88)',letterSpacing:'-.025em',lineHeight:1.08,marginBottom:12 }}>Get Support</h3>
-        <p style={{ fontSize:15,lineHeight:1.78,color:'rgba(198,198,220,0.45)',fontWeight:300,maxWidth:560,margin:'0 auto 44px' }}>Real resources for real things.</p>
-        <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12,maxWidth:680,margin:'0 auto',position:'relative',zIndex:1 }}>
-          {[
-            { t:'Crisis Line', v:'988 Lifeline', d:'Call or text 988 · 24/7' },
-            { t:'Crisis Text', v:'Text HOME to 741741', d:'Crisis Text Line · Free & confidential' },
-            { t:'Eating Disorders', v:'1-800-931-2237', d:'National Alliance for Eating Disorders' },
-            { t:'Find a Therapist', v:'Psychology Today', d:'psychologytoday.com/us/therapists' },
-          ].map((s, i) => (
-            <div key={i} className="sit">
-              <div className="sit-t">{s.t}</div>
-              <div className="sit-v">{s.v}</div>
-              <div className="sit-d">{s.d}</div>
-            </div>
-          ))}
+      <!-- BR corner -->
+      <div class="brc">
+        <div class="cmask-t"><svg width="100%" height="100%" viewBox="0 0 56 56" fill="none"><path d="M56 56V0C56 30.9279 30.9279 56 0 56H56Z" fill="#d6d6da"/></svg></div>
+        <div class="cmask-l"><svg width="100%" height="100%" viewBox="0 0 56 56" fill="none"><path d="M56 56H0C30.9279 56 56 30.9279 56 0V56Z" fill="#d6d6da"/></svg></div>
+        <div class="brc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+        <div>
+          <div class="brc-title">Read the Book</div>
+          <div class="brc-sub" onclick="sto('book')"><span>Free PDF</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
         </div>
       </div>
-
-      {/* FOOTER */}
-      <footer>
-        <div className="ftlogo">Weary Souls</div>
-        <div className="ftcopy">© 2026 Mariam, Omar &amp; Ganah · All Rights Reserved<br/>Beneath the Surface — Volume I</div>
-        <div className="ftcris">
-          If you're struggling: <a href="tel:988">988 Lifeline</a> · <a href="sms:741741">Text HOME to 741741</a> · Eating Disorders: <a href="tel:18009312237">1-800-931-2237</a>
-        </div>
-      </footer>
 
     </div>
-  );
-}
+  </section>
+</div>
 
-/* ══ ROOT APP ══ */
-function App() {
-  const [bookOpen, setBookOpen] = useState(false);
-  const openBook = useCallback(() => setBookOpen(true), []);
-  const closeBook = useCallback(() => setBookOpen(false), []);
+<!-- ticker -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">"The fountain in the center of the quad is a liar. It doesn't look like one."</span>
+    <span class="ticker-item">✦ Eleven Chapters</span>
+    <span class="ticker-item">"She moved like a woman crossing a room full of tripwires only she could see."</span>
+    <span class="ticker-item">✦ Six Voices</span>
+    <span class="ticker-item">"The silence between them has texture now — words inside it, not just absence."</span>
+    <span class="ticker-item">✦ One Quiet Catastrophe</span>
+    <span class="ticker-item">"The room without armor is also, somehow, the warmest one in the house."</span>
+    <span class="ticker-item">✦ Hope, Eventually</span>
+    <span class="ticker-item">"The fountain in the center of the quad is a liar. It doesn't look like one."</span>
+    <span class="ticker-item">✦ Eleven Chapters</span>
+    <span class="ticker-item">"She moved like a woman crossing a room full of tripwires only she could see."</span>
+    <span class="ticker-item">✦ Six Voices</span>
+    <span class="ticker-item">"The silence between them has texture now — words inside it, not just absence."</span>
+    <span class="ticker-item">✦ One Quiet Catastrophe</span>
+    <span class="ticker-item">"The room without armor is also, somehow, the warmest one in the house."</span>
+    <span class="ticker-item">✦ Hope, Eventually</span>
+  </div>
+</div>
 
-  return (
-    <>
-      <AnimatePresence>
-        {bookOpen && <BookModal onClose={closeBook} dark={false} />}
-      </AnimatePresence>
-      <Hero onBook={openBook} />
-      <Capabilities onBook={openBook} />
-      <ChromeSections onBook={openBook} />
-    </>
-  );
-}
+<!-- ── SUMMARY ── -->
+<div class="sw"><section id="summary">
+  <div class="sg">
+    <div>
+      <h2 class="lbl">The Story</h2>
+      <h3 class="ttl">Beneath the Surface</h3>
+      <p class="body">On a university campus that looks the way good lies look — polished, sunny, frictionless — six students orbit each other and a fountain in the middle of the quad. From the outside they are fine. From the inside, each one is carrying something they have never said out loud.</p>
+      <p class="body" style="margin-top:16px;">Beneath the Surface follows them across one slow-burning semester in which the performances stop holding. Not all at once. Not dramatically. Just a hairline crack.</p>
+      <div class="stags">
+        <span class="tag">Mental Health</span><span class="tag">University Life</span><span class="tag">Coming-of-Age</span>
+        <span class="tag">Identity</span><span class="tag">Grief</span><span class="tag">Recovery</span><span class="tag">Friendship</span>
+      </div>
+    </div>
+    <div>
+      <blockquote class="spull cc">"This is a book about the loneliness of being surrounded. About the particular ache of being seen without being known."</blockquote>
+      <p class="body" style="margin-top:24px;">The final chapter doesn't promise healing — it promises something quieter: that the performance is finally over.</p>
+    </div>
+  </div>
+</section></div>
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-</script>
+<div class="divr"></div>
 
-<!-- ══════════════════════════════════
-     AMBIENT CANVAS: CHROME RINGS + BUTTERFLIES
-══════════════════════════════════ -->
+<!-- ── CHARACTERS ── -->
+<div class="sw"><section id="characters">
+  <h2 class="lbl">The Six Planets</h2>
+  <h3 class="ttl">Characters</h3>
+  <div class="cg">
+    <div class="chcard cc"><div class="chin">L</div><div class="chname">Luke</div><div class="chtrait">Color-codes his life so nothing can break.</div></div>
+    <div class="chcard cc"><div class="chin">S</div><div class="chname">Stephanie</div><div class="chtrait">Eats the way other people pray — privately, with rules.</div></div>
+    <div class="chcard cc"><div class="chin">M</div><div class="chname">Marcus</div><div class="chtrait">Carries something he calls The Static.</div></div>
+    <div class="chcard cc"><div class="chin">E</div><div class="chname">Emily</div><div class="chtrait">A ritual she performs in the bathroom. A smile everywhere else.</div></div>
+    <div class="chcard cc"><div class="chin">L</div><div class="chname">Liv</div><div class="chtrait">Reinventing herself every seven to ten days.</div></div>
+    <div class="chcard cc"><div class="chin">T</div><div class="chname">Tristan</div><div class="chtrait">Inherited a silence from a father who called it strength.</div></div>
+  </div>
+</section></div>
+
+<!-- ── PULL QUOTE ── -->
+<div class="pqwrap">
+  <p class="bq">"The fountain in the center of the quad is a liar. It doesn't look like one. That's the thing about good liars — they commit."</p>
+  <p class="bqa">— Opening Line, Weary Souls</p>
+</div>
+
+<!-- ── FROM THE PAGES (reference-style card) ── -->
+<div class="sw"><section id="from-pages" style="text-align:center;">
+  <h2 class="lbl">From the Pages</h2>
+  <h3 class="ttl" style="text-align:center;margin:0 auto 8px;">Lines That Stay</h3>
+
+  <div class="rq-outer">
+    <div class="rq-card">
+      <div class="rq-dot"></div><div class="rq-dot"></div><div class="rq-dot"></div><div class="rq-dot"></div>
+      <div class="rq-marks">❝❝</div>
+
+      <div class="rq-txtwrap" id="rqWrap">
+        <p class="rq-txt active" data-attr="Chapter One, Weary Souls">"She moved like a woman crossing a room full of tripwires only she could see."</p>
+        <p class="rq-txt" data-attr="Chapter Three, Weary Souls">"None of them are villains. All of them are good at hiding. That's the problem the book is interested in."</p>
+        <p class="rq-txt" data-attr="Chapter Nine, Weary Souls">"There is only the small, specific bravery of staying in the room."</p>
+        <p class="rq-txt" data-attr="Chapter Eleven, Weary Souls">"The room without armor is also, somehow, the warmest one in the house."</p>
+        <p class="rq-txt" data-attr="Chapter Four, Weary Souls">"The mirror is a liar. But it's a liar I've learned to trust."</p>
+      </div>
+
+      <div class="rq-attr"><div class="rq-pill" id="rqAttr">Chapter One, Weary Souls</div></div>
+
+      <div class="rq-actions">
+        <button class="rq-btn" onclick="nextRQ(1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5.61"/></svg>
+          Another
+        </button>
+        <div class="rq-btnrow">
+          <button class="rq-btn" id="cpyBtn" onclick="copyRQ()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+          <button class="rq-btn" onclick="shareRQ()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            Share
+          </button>
+        </div>
+      </div>
+
+      <svg class="rq-sparkle" viewBox="0 0 80 80" fill="none">
+        <path d="M40 5 L43 37 L75 40 L43 43 L40 75 L37 43 L5 40 L37 37 Z" fill="rgba(22,18,48,0.18)"/>
+      </svg>
+    </div>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── CHECK IN ── -->
+<div class="sw"><section id="check-in" style="text-align:center;">
+  <h2 class="lbl">Check In</h2>
+  <h3 class="ttl">How Are You Feeling?</h3>
+  <p class="body" style="margin:0 auto;text-align:center;">We see you. Pick what resonates.</p>
+  <div class="fg">
+    <button class="fp" onclick="selF(this,'Overwhelmed')">Overwhelmed</button>
+    <button class="fp" onclick="selF(this,'Numb')">Numb</button>
+    <button class="fp" onclick="selF(this,'Anxious')">Anxious</button>
+    <button class="fp" onclick="selF(this,'Lonely')">Lonely</button>
+    <button class="fp" onclick="selF(this,'Fine (but not really)')">Fine (but not really)</button>
+    <button class="fp" onclick="selF(this,'Tired')">Tired</button>
+    <button class="fp" onclick="selF(this,'Hopeful')">Hopeful</button>
+    <button class="fp" onclick="selF(this,'Seen')">Seen</button>
+  </div>
+  <div class="fr" id="feelResp"></div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── BREATHE ── -->
+<div class="sw"><section id="breathe" style="text-align:center;">
+  <h2 class="lbl">Take a Moment</h2>
+  <h3 class="ttl">Breathe With Us</h3>
+  <p class="body" style="margin:0 auto;text-align:center;">A 4-7-8 breathing exercise. Used by the characters when the static gets too loud.</p>
+  <div class="bwrap">
+    <div>
+      <div class="bring">
+        <div class="bcirc" id="bcirc" onclick="startBreath()">Begin</div>
+      </div>
+      <div class="blbl" id="blbl"></div>
+    </div>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── BOOK ── -->
+<div class="sw"><section id="book" style="text-align:center;">
+  <h2 class="lbl">The Book</h2>
+  <h3 class="ttl">Beneath the Surface</h3>
+  <div style="display:flex;justify-content:center;">
+    <div class="bkcard cc">
+      <div class="bkicon">📖</div>
+      <h4>Beneath the Surface</h4>
+      <p>Weary Souls — Volume I<br>A novel by Mariam, Omar &amp; Ganah<br>Eleven chapters. Six characters. One fountain that doesn't lie.</p>
+      <a href="#" class="dlbtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PDF — Free
+      </a>
+      <span class="dlnote">PDF · Instant download · No sign-up required</span>
+    </div>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── BOOK SUPPORT ── -->
+<div class="sw"><section id="book-support">
+  <h2 class="lbl">Within the Pages</h2>
+  <h3 class="ttl">Book Support</h3>
+  <p class="body">How the characters found support — or how support found them. Moments from the book, not prescriptions for real life.</p>
+  <div class="snote">These are fictional depictions of support. If you're struggling, please see the Get Support section. You deserve actual help, not just a story about it.</div>
+  <div class="scards">
+    <div class="sc cc"><div class="sc-c">Luke</div><div class="sc-t">"He started with the smallest drawer. Not because it mattered, but because it was something he could finish."</div></div>
+    <div class="sc cc"><div class="sc-c">Marcus</div><div class="sc-t">"He named the static. That was the first step — giving the hum a word so it couldn't be everything."</div></div>
+    <div class="sc cc"><div class="sc-c">Emily</div><div class="sc-t">"She told one person. Not everything. Just enough that the secret had company."</div></div>
+    <div class="sc cc"><div class="sc-c">Stephanie</div><div class="sc-t">"She sat at the table without a plan for once. That counted."</div></div>
+    <div class="sc cc"><div class="sc-c">Liv</div><div class="sc-t">"She stopped changing her hair. Stayed in one version of herself long enough to ask: is this one real?"</div></div>
+    <div class="sc cc"><div class="sc-c">Tristan</div><div class="sc-t">"He put the armour down. Not forever. Just for the length of that room."</div></div>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── CONTENT WARNINGS ── -->
+<div class="sw"><section id="warnings">
+  <h2 class="lbl">Please Read First</h2>
+  <h3 class="ttl">Content Warnings</h3>
+  <p class="body">This book was written with care, honesty, and love. It deals with real things. If you are struggling — you are not alone.</p>
+  <div class="wgrid">
+    <span class="wchip">Disordered Eating</span><span class="wchip">Grief &amp; Loss</span><span class="wchip">Depression</span>
+    <span class="wchip">Anxiety</span><span class="wchip">Self-Harm (referenced)</span><span class="wchip">Mental Health Crisis</span>
+    <span class="wchip">Parental Loss</span><span class="wchip">Identity Distress</span>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── READER WALL ── -->
+<div class="sw"><section id="reader-wall">
+  <h2 class="lbl">Reader Wall</h2>
+  <h3 class="ttl">How Did This Make You Feel?</h3>
+  <p class="body">Leave an anonymous message. You are not alone in this.</p>
+  <div class="wirow">
+    <input class="winput" id="wallIn" type="text" maxlength="200" placeholder="Say something…"/>
+    <button class="wpostbtn" onclick="postWall()">Post</button>
+  </div>
+  <div class="wmsgs" id="wallMsgs"></div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── QUIZ ── -->
+<div class="sw"><section id="quiz" style="text-align:center;">
+  <h2 class="lbl">Discover Yourself</h2>
+  <h3 class="ttl">Which Character Are You?</h3>
+  <p class="body" style="margin:0 auto;text-align:center;">Five questions. One honest answer.</p>
+  <div class="qzcard cc" id="qzcard">
+    <div class="qznum" id="qznum">Question 1 of 5</div>
+    <div class="qzq" id="qzq"></div>
+    <div class="qzopts" id="qzopts"></div>
+    <div class="qzres cc" id="qzres">
+      <div class="qrname" id="qrname"></div>
+      <div class="qrdesc" id="qrdesc"></div>
+      <button class="qrst" onclick="restartQuiz()">Start Over</button>
+    </div>
+  </div>
+</section></div>
+
+<div class="divr"></div>
+
+<!-- ── ABOUT ── -->
+<div class="sw"><section id="about">
+  <div class="ag">
+    <div>
+      <h2 class="lbl">The Minds Behind the Madness</h2>
+      <h3 class="ttl">About Us</h3>
+      <p class="body">Three souls. One shared obsession with the things people carry quietly.</p>
+      <p class="body" style="margin-top:16px;">We wrote this book because we couldn't find the words anywhere else — so we made them.</p>
+      <a href="https://www.instagram.com/wearysouls11" target="_blank" rel="noopener" class="igbtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        @wearysouls11
+      </a>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;">
+      <div class="aauth">M<br>O<br>G</div>
+    </div>
+  </div>
+</section></div>
+
+<!-- ── GET SUPPORT ── -->
+<div class="gswrap" id="get-support">
+  <h2 class="lbl">You Don't Have to Carry This Alone</h2>
+  <h3 class="ttl">Get Support</h3>
+  <p class="body">Real resources for real things.</p>
+  <div class="sgrid">
+    <div class="sit"><div class="sit-t">Crisis Line</div><div class="sit-v">988 Lifeline</div><div class="sit-d">Call or text 988 · 24/7</div></div>
+    <div class="sit"><div class="sit-t">Crisis Text</div><div class="sit-v">Text HOME to 741741</div><div class="sit-d">Crisis Text Line · Free &amp; confidential</div></div>
+    <div class="sit"><div class="sit-t">Eating Disorders</div><div class="sit-v">1-800-931-2237</div><div class="sit-d">National Alliance for Eating Disorders</div></div>
+    <div class="sit"><div class="sit-t">Find a Therapist</div><div class="sit-v">Psychology Today</div><div class="sit-d">psychologytoday.com/us/therapists</div></div>
+  </div>
+</div>
+
+<footer>
+  <div class="ftlogo">Weary Souls</div>
+  <div class="ftcopy">© 2026 Mariam, Omar &amp; Ganah · All Rights Reserved<br>Beneath the Surface — Volume I</div>
+  <div class="ftcris">
+    If you're struggling: <a href="tel:988">988 Lifeline</a> · <a href="sms:741741">Text HOME to 741741</a> · Eating Disorders: <a href="tel:18009312237">1-800-931-2237</a>
+  </div>
+</footer>
+
+</main>
+
 <script>
+/* ── UTIL ── */
+function sto(id){ document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }
+
+/* ── STICKY NAV ── */
+new IntersectionObserver(([e])=>document.getElementById('snav').classList.toggle('vis',!e.isIntersecting),{threshold:.1})
+  .observe(document.querySelector('.hwrap'));
+
+/* ═══════════════════════════════════════
+   AMBIENT CANVAS: CHROME RINGS + BUTTERFLIES
+═══════════════════════════════════════ */
 (function(){
-  const cv = document.getElementById('amb');
-  const cx = cv.getContext('2d');
-  let W, H, rings = [], butts = [];
+  const cv=document.getElementById('amb'),cx=cv.getContext('2d');
+  let W,H,rings=[],butts=[];
 
-  function resize(){ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
-  window.addEventListener('resize', resize); resize();
+  function resize(){ W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; }
+  window.addEventListener('resize',resize); resize();
 
+  /* RINGS */
   function mkRing(){
     rings.push({
-      x: Math.random()*W, y: Math.random()*H,
-      r: 40 + Math.random()*130,
-      a: 0, ma: .04 + Math.random()*.07, phase: 'in',
-      spd: .002 + Math.random()*.004,
-      sw: .7 + Math.random()*1.4,
-      layers: 1 + Math.floor(Math.random()*3)
+      x:Math.random()*W, y:Math.random()*H,
+      r:40+Math.random()*120,
+      a:0, ma:.05+Math.random()*.07, phase:'in',
+      spd:.0025+Math.random()*.004,
+      sw:.7+Math.random()*1.3,
+      layers:1+Math.floor(Math.random()*3)
     });
   }
-  for(let i=0;i<8;i++) mkRing();
+  for(let i=0;i<7;i++) mkRing();
 
   function drawRings(){
     rings.forEach((r,i)=>{
@@ -1153,27 +873,28 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
         cx.beginPath(); cx.arc(r.x,r.y,r.r+g,0,Math.PI*2);
         const grd=cx.createLinearGradient(r.x-r.r,r.y-r.r,r.x+r.r,r.y+r.r);
         grd.addColorStop(0,`rgba(255,255,255,${r.a*1.5})`);
-        grd.addColorStop(.5,`rgba(180,180,220,${r.a})`);
+        grd.addColorStop(.5,`rgba(178,178,210,${r.a})`);
         grd.addColorStop(1,`rgba(255,255,255,${r.a*.5})`);
         cx.strokeStyle=grd; cx.lineWidth=r.sw; cx.stroke();
       }
     });
   }
 
+  /* BUTTERFLIES */
   function mkButt(){
     const left=Math.random()<.5;
     butts.push({
-      x:left?-50:W+50, y:80+Math.random()*(H*.75),
-      vx:(left?1:-1)*(.3+Math.random()*.6),
+      x:left?-50:W+50, y:80+Math.random()*(H*.7),
+      vx:(left?1:-1)*(.35+Math.random()*.55),
       vy:(Math.random()-.5)*.45,
-      sz:7+Math.random()*14,
+      sz:6+Math.random()*13,
       angle:left?0:Math.PI,
       t:Math.random()*Math.PI*2,
-      a:0, ma:.08+Math.random()*.12,
-      life:0, ml:260+Math.random()*440
+      a:0, ma:.10+Math.random()*.13,
+      life:0, ml:280+Math.random()*420
     });
   }
-  for(let i=0;i<6;i++) mkButt();
+  for(let i=0;i<5;i++) mkButt();
 
   function drawWing(x,y,sz,angle,t){
     cx.save(); cx.translate(x,y); cx.rotate(angle);
@@ -1195,27 +916,132 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
       if(b.life<40) b.a=(b.life/40)*b.ma;
       else if(b.life>b.ml-40) b.a=((b.ml-b.life)/40)*b.ma;
       else b.a=b.ma;
-      if(b.life>=b.ml||b.x<-100||b.x>W+100){
-        butts.splice(i,1); setTimeout(mkButt,1500+Math.random()*4000); return;
+      if(b.life>=b.ml||b.x<-90||b.x>W+90){
+        butts.splice(i,1);
+        setTimeout(mkButt,1800+Math.random()*4200); return;
       }
       cx.save(); cx.globalAlpha=b.a;
       const grd=cx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.sz*2.2);
-      grd.addColorStop(0,'rgba(255,255,255,0.88)');
-      grd.addColorStop(.5,'rgba(210,210,240,0.52)');
-      grd.addColorStop(1,'rgba(170,170,210,0.10)');
+      grd.addColorStop(0,'rgba(255,255,255,.88)');
+      grd.addColorStop(.5,'rgba(208,208,232,.55)');
+      grd.addColorStop(1,'rgba(166,166,200,.12)');
       drawWing(b.x,b.y,b.sz,b.angle,b.t);
       cx.fillStyle=grd; cx.fill();
       drawWing(b.x,b.y,b.sz,b.angle,b.t);
-      cx.strokeStyle=`rgba(224,224,248,${b.a*.7})`; cx.lineWidth=.55; cx.stroke();
+      cx.strokeStyle=`rgba(220,220,242,${b.a*.75})`; cx.lineWidth=.55; cx.stroke();
       cx.save(); cx.translate(b.x,b.y); cx.rotate(b.angle);
       cx.beginPath(); cx.ellipse(0,0,b.sz*.07,b.sz*.52,0,0,Math.PI*2);
-      cx.fillStyle=`rgba(180,180,215,0.42)`; cx.fill();
-      cx.restore(); cx.restore();
+      cx.fillStyle=`rgba(178,178,210,.45)`; cx.fill(); cx.restore();
+      cx.restore();
     });
   }
 
   (function loop(){ cx.clearRect(0,0,W,H); drawRings(); drawButts(); requestAnimationFrame(loop); })();
 })();
+
+/* ── ROTATING QUOTES ── */
+const rqItems=document.querySelectorAll('.rq-txt');
+const rqAttrEl=document.getElementById('rqAttr');
+let curRQ=0;
+function showRQ(idx){
+  rqItems[curRQ].classList.remove('active');
+  curRQ=(idx+rqItems.length)%rqItems.length;
+  rqItems[curRQ].classList.add('active');
+  rqAttrEl.textContent=rqItems[curRQ].dataset.attr;
+}
+function nextRQ(d){ showRQ(curRQ+d); }
+setInterval(()=>nextRQ(1),7000);
+function copyRQ(){
+  navigator.clipboard?.writeText(rqItems[curRQ].textContent.trim()).catch(()=>{});
+  const b=document.getElementById('cpyBtn'); b.textContent='Copied ✓';
+  setTimeout(()=>{ b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy'; },1800);
+}
+function shareRQ(){
+  const t=rqItems[curRQ].textContent.trim();
+  navigator.share?navigator.share({text:t}):navigator.clipboard?.writeText(t).catch(()=>{});
+}
+
+/* ── FEELING ── */
+const fmap={
+  'Overwhelmed':"That's Luke. Chapter Two. He colour-codes everything so the overwhelm has somewhere to go.",
+  'Numb':"That's Tristan. Chapter Seven. He learned silence from someone who called it strength.",
+  'Anxious':"That's Liv. Chapter Six. Every reinvention is just anxiety wearing a new outfit.",
+  'Lonely':"That's the whole book. You're not as alone in that room as you think.",
+  'Fine (but not really)':"That's Emily. Chapter Five. She has a whole performance for \"fine.\"",
+  'Tired':"That's Marcus. Chapter Three. The static is exhausting. It's okay to say so.",
+  'Hopeful':"That's the last chapter. Hold onto that — it's the hardest thing in the book.",
+  'Seen':"Good. That means it's working. That's what this was for.",
+};
+function selF(el,label){
+  document.querySelectorAll('.fp').forEach(p=>p.classList.remove('sel')); el.classList.add('sel');
+  const r=document.getElementById('feelResp'); r.style.opacity=0;
+  setTimeout(()=>{ r.textContent=fmap[label]||''; r.style.opacity=1; },220);
+}
+
+/* ── BREATHING ── */
+let brun=false;
+function startBreath(){
+  if(brun) return; brun=true;
+  const c=document.getElementById('bcirc'),l=document.getElementById('blbl');
+  const steps=[{cls:'inhale',t:'Inhale… 4',d:4000},{cls:'hold',t:'Hold… 7',d:7000},{cls:'exhale',t:'Exhale… 8',d:8000}];
+  let i=0;
+  function step(){
+    const s=steps[i%3]; c.className='bcirc '+s.cls; c.textContent=''; l.textContent=s.t; i++;
+    if(i>=9){ setTimeout(()=>{ c.className='bcirc'; c.textContent='Begin'; l.textContent=''; brun=false; },s.d); return; }
+    setTimeout(step,s.d);
+  }
+  step();
+}
+
+/* ── READER WALL ── */
+const seeds=["I read Chapter Nine three times. I'm still not okay about it.","Marcus is my best friend and he doesn't know I exist.","I finally told someone. It wasn't as hard as I thought."];
+const wel=document.getElementById('wallMsgs');
+function renderWall(msgs){ wel.innerHTML=msgs.map(m=>`<div class="wmsg cc">${m}<div class="wanon">Anonymous reader</div></div>`).join(''); }
+renderWall(seeds);
+function postWall(){
+  const inp=document.getElementById('wallIn'),v=inp.value.trim(); if(!v) return;
+  seeds.unshift(v); if(seeds.length>8) seeds.pop(); renderWall(seeds); inp.value='';
+}
+document.getElementById('wallIn').addEventListener('keydown',e=>{ if(e.key==='Enter') postWall(); });
+
+/* ── QUIZ ── */
+const qqs=[
+  {q:'When something is wrong, your first instinct is to…',opts:['Organise everything around me','Follow a quiet ritual','Go somewhere loud','Reinvent something','Say nothing — wait','Wear strength and push through']},
+  {q:'The thing you find hardest to say out loud is…',opts:["I'm losing control","I have rules no one knows about","My grief has a sound","I have two faces","I don't know who I am","I need help"]},
+  {q:'Your relationship with control is…',opts:["It's everything","Quiet and precise","Something I lost","A performance","It changes every week","The armour I wear"]},
+  {q:'The chapter that would be about you is titled…',opts:['The Colour-Coded Life','Privately, With Rules','Low Frequency','Both Sides','Every Seven to Ten Days','What You Wear']},
+  {q:'When you imagine putting something down for good…',opts:['I need to plan what happens next','I check if the ritual still works','The static gets louder','My smile slips','I become someone new again','I feel exposed — but lighter']},
+];
+const chars=[
+  {name:'Luke',desc:'You colour-code. You organise. You are terrified of what happens when the system fails. Chapter Two is yours.'},
+  {name:'Stephanie',desc:'You have rituals. Private, precise, never spoken about. Chapter Four is yours.'},
+  {name:'Marcus',desc:"You carry something heavy and old — The Static. Chapter Three is yours."},
+  {name:'Emily',desc:'You perform fine. You have a smile for every room and a ritual for the one no one enters. Chapter Five is yours.'},
+  {name:'Liv',desc:"You reinvent. Every version is real until it isn't. Chapter Six is yours."},
+  {name:'Tristan',desc:'You wear strength like armour. Putting it down feels like defeat. Chapter Seven is yours.'},
+];
+let qstep=0,qsc=[0,0,0,0,0,0];
+function renderQ(){
+  const q=qqs[qstep];
+  document.getElementById('qznum').textContent=`Question ${qstep+1} of ${qqs.length}`;
+  document.getElementById('qzq').textContent=q.q;
+  document.getElementById('qzopts').innerHTML=q.opts.map((o,i)=>`<button class="qzopt" onclick="qans(${i})">${o}</button>`).join('');
+  document.getElementById('qzres').classList.remove('show');
+}
+function qans(i){
+  qsc[i]++; qstep++;
+  if(qstep>=qqs.length){
+    const w=qsc.indexOf(Math.max(...qsc)),c=chars[w];
+    document.getElementById('qzopts').innerHTML='';
+    document.getElementById('qznum').textContent='You are —';
+    document.getElementById('qzq').textContent='';
+    document.getElementById('qrname').textContent=c.name;
+    document.getElementById('qrdesc').textContent=c.desc;
+    document.getElementById('qzres').classList.add('show');
+  } else renderQ();
+}
+function restartQuiz(){ qstep=0; qsc=[0,0,0,0,0,0]; renderQ(); }
+renderQ();
 </script>
 </body>
 </html>
